@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<head>
+    <title>Manager Page</title>
+    <link rel="stylesheet" href="/css/manager.css">
+</head>
+<body>
+    <div class="main-container">
+
+        <!-- Menu Items -->
+        <div class="data-section">
+            <input type="checkbox" id="toggle-menu" class="toggle-section">
+            <label for="toggle-menu" class="section-header">
+                <h2>Menu Items</h2>
+                <div class="section-controls">
+                    <button class="add-btn">+</button>
+                    <button class="delete-btn">-</button>
+                    <button class="update-btn">Edit</button>
+                </div>
+            </label>
+            <div class="data-grid">
+                <% menuItems.forEach(item => { %>
+                    <div class="data-row" data-id="<%= item.itemid %>">
+                        <div class="cell" data-column="itemname"><%= item.itemname %></div>
+                        <div class="cell" data-column="itemprice"><%= item.itemprice %></div>
+
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Inventory Items -->
+        <div class="data-section">
+            <input type="checkbox" id="toggle-inventory" class="toggle-section">
+            <label for="toggle-inventory" class="section-header">
+                <h2>Inventory Items</h2>
+                <div class="section-controls">
+                    <button class="add-btn">+</button>
+                    <button class="delete-btn">-</button>
+                    <button class="update-btn">Edit</button>
+                </div>
+            </label>
+            <div class="data-grid">
+                <% inventoryItems.forEach(item => { %>
+                    <div class="data-row" data-id="<%= item.inventoryid %>">
+                        <div class="cell" data-column="ingredientname"><%= item.ingredientname %></div>
+                        <div class="cell" data-column="ingredientquantity"><%= item.ingredientquantity %></div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Employees -->
+        <div class="data-section">
+            <input type="checkbox" id="toggle-employees" class="toggle-section">
+            <label for="toggle-employees" class="section-header">
+                <h2>Employees</h2>
+                <div class="section-controls">
+                    <button class="add-btn">+</button>
+                    <button class="delete-btn">-</button>
+                    <button class="update-btn">Edit</button>
+                </div>
+            </label>
+            <div class="data-grid">
+                <% employees.forEach(emp => { %>
+                    <div class="data-row" data-id="<%= emp.employeeid %>">
+                        <div class="cell" data-column="employeename"><%= emp.employeename %></div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Generic modal -->
+        <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Add New Item</h3>
+            <form id="addForm">
+            
+            <!-- Name field (all sections) -->
+            <div class="form-field" data-section="menuitems inventory employees">
+                <label>Name:</label>
+                <input type="text" name="name" required>
+            </div>
+
+            <!-- Description field (menuitems only) -->
+            <div class="form-field" data-section="menuitems">
+                <label>Description:</label>
+                <input type="text" name="description">
+            </div>
+
+            <!-- Price field (menuitems only) -->
+            <div class="form-field" data-section="menuitems">
+                <label>Price:</label>
+                <input type="number" step="0.01" name="price">
+            </div>
+
+            <!-- Quantity field (inventory only) -->
+            <div class="form-field" data-section="inventory">
+                <label>Quantity:</label>
+                <input type="number" step="0.01" name="ingredientquantity">
+            </div>
+
+            <!-- Unit field (inventory only) -->
+            <div class="form-field" data-section="inventory">
+                <label>Unit:</label>
+                <input type="text" name="unit">
+            </div>
+
+            <button type="submit">Add</button>
+            </form>
+        </div>
+        </div>
+
+
+    <script src="/js/manager.js"></script>
+
+</body>
+</html>
