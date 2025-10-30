@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function enterEditMode(section, sectionName, editBtn, dataGrid) {
+    
     // Replace Edit with Save + Cancel
     const saveBtn = document.createElement('button');
     saveBtn.textContent = 'Save';
@@ -35,55 +36,80 @@ function enterEditMode(section, sectionName, editBtn, dataGrid) {
         cell.classList.add('editable');
     });
 
-    // Handle Save click
-saveBtn.addEventListener('click', async () => {
-    const newData = {};
-    newRow.querySelectorAll('.cell').forEach(cell => {
-        let val = cell.textContent.trim();
-        if (['itemprice', 'ingredientquantity'].includes(cell.dataset.column)) val = Number(val) || 0;
-        newData[cell.dataset.column] = val;
+    // Hide delete buttons
+    dataGrid.querySelectorAll('button.hidden').forEach(btn => {
+        btn.style.display = 'none';
     });
-    if (sectionName === 'menuitems' && descInput) newData['itemdescription'] = descInput.value.trim();
 
-    try {
-        const res = await fetch(`/manager/${sectionName}/add`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newData)
-        });
+    dataGrid.classList.add('editing');
+    dataGrid.classList.remove('show-deletes');
 
-        if (res.ok) {
-            const savedItem = await res.json(); // <-- get the row with its DB ID
-            newRow.dataset.id = savedItem[`${sectionName === 'employees' ? 'employeeid' : sectionName === 'menuitems' ? 'itemid' : 'inventoryid'}`];
+    // Cancel returns to normal mode without saving
+    cancelBtn.addEventListener('click', () => {
+        exitEditMode(dataGrid, saveBtn, cancelBtn, controls);
+    });
 
-            // Disable editing and remove buttons
-            newRow.querySelectorAll('.cell').forEach(cell => {
-                cell.contentEditable = false;
-                cell.classList.remove('editable');
+    // Save edits to the database
+    saveBtn.addEventListener('click', async () => {
+        const rows = dataGrid.querySelectorAll('.data-row');
+
+        for (const row of rows) {
+            const rowData = {};
+            row.querySelectorAll('.cell').forEach(cell => {
+                let val = cell.textContent.trim();
+                if (['itemprice', 'ingredientquantity'].includes(cell.dataset.column)) {
+                    val = Number(val) || 0;
+                }
+                rowData[cell.dataset.column] = val;
             });
-            saveBtn.remove();
-            cancelBtn.remove();
-            if (descInput) descInput.remove();
 
-            // Show delete button
-            deleteBtn.classList.remove('hidden');
-            newRow.appendChild(deleteBtn);
-        } else {
-            const text = await res.text();
-            alert('Failed to add item: ' + text);
+            const id = row.dataset.id;
+            if (!id) continue; // skip new/unsaved rows
+
+            try {
+                const res = await fetch(`/manager/${sectionName}/update/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rowData)
+                });
+
+                if (!res.ok) {
+                    const text = await res.text();
+                    alert(`Failed to update row ${id}: ${text}`);
+                }
+            } catch (err) {
+                console.error(`Error updating row ${id}:`, err);
+            }
         }
-    } catch (err) {
-        console.error(err);
-        alert('Error adding item');
-    }
-});
+
+        alert('All updates saved!');
+        exitEditMode(dataGrid, saveBtn, cancelBtn, controls);
+    });
 
 }
+
 
 function exitEditMode(dataGrid, saveBtn, cancelBtn, controls) {
     dataGrid.querySelectorAll('.cell').forEach(cell => {
         cell.contentEditable = false;
         cell.classList.remove('editable');
+    });
+
+    // leave editing state
+    dataGrid.classList.remove('editing');
+
+    // If delete mode was active, show deletes (CSS will handle hover display)
+    if (dataGrid.classList.contains('show-deletes')) {
+   
+    } else {
+        dataGrid.querySelectorAll('button.hidden').forEach(btn => {
+            btn.style.display = ''; // clear inline style just in case
+        });
+    }
+
+    // Show delete buttons again
+    dataGrid.querySelectorAll('button.hidden').forEach(btn => {
+        btn.style.display = '';
     });
 
     controls.removeChild(cancelBtn);
@@ -359,3 +385,30 @@ async function deleteItem(section, itemId) {
     alert("Error deleting item");
   }
 }
+
+// Delete toggle
+document.querySelectorAll('.data-section').forEach(section => {
+  const deleteToggleBtn = section.querySelector('.delete-btn'); // the "-" button
+  const dataGrid = section.querySelector('.data-grid');
+
+  if (!deleteToggleBtn || !dataGrid) return;
+
+  deleteToggleBtn.addEventListener('click', () => {
+    // Block while editing
+    if (dataGrid.classList.contains('editing')) return;
+
+    const isDeleting = dataGrid.classList.toggle('show-deletes');
+
+    if (isDeleting) {
+      // Switch "-" to "Cancel"
+      deleteToggleBtn.textContent = "Cancel";
+      deleteToggleBtn.classList.add('active');
+    } else {
+      // Switch back to "-"
+      deleteToggleBtn.textContent = "-";
+      deleteToggleBtn.classList.remove('active');
+    }
+  });
+});
+
+

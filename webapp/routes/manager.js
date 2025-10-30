@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
         const employees = await db.getAll('employees');
 
         res.render('manager', { menuItems, inventoryItems, employees });
-        console.log("✅ manager.js loaded!");
+        console.log("manager.js loaded!");
     } catch (err) {
         console.error(err);
         res.status(500).send('Database error');
