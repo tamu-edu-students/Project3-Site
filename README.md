@@ -1,5 +1,11 @@
 ## Run
 
+Make sure you are in the `webapp` directory
+
+```bash
+cd webapp
 ```
-node <name>.js
+
+```bash
+node app.js
 ```
