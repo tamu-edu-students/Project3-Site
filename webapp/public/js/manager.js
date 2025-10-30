@@ -160,3 +160,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
+async function deleteItem(section, itemId) {
+  if (!confirm("Are you sure you want to delete this item?")) return;
+
+  try {
+    const res = await fetch(`/manager/${section}/delete/${itemId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (res.ok) {
+      // Remove the item from the UI
+      document.querySelector(`[data-id='${itemId}']`).remove();
+      location.reload();
+    } else {
+      const text = await res.text();
+      alert("Failed to delete item: " + text);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error deleting item");
+  }
+}

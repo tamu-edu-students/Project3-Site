@@ -19,10 +19,10 @@
             </label>
             <div class="data-grid">
                 <% menuItems.forEach(item => { %>
-                    <div class="data-row" data-id="<%= item.itemid %>">
+                    <div id="hoverTag" class="data-row" data-id="<%= item.itemid %>">
                         <div class="cell" data-column="itemname"><%= item.itemname %></div>
                         <div class="cell" data-column="itemprice"><%= item.itemprice %></div>
-
+                        <button onClick="deleteItem('menuitems', <%= item.itemid %>)" class="hidden">DELETE</button>
                     </div>
                 <% }) %>
             </div>
@@ -41,9 +41,10 @@
             </label>
             <div class="data-grid">
                 <% inventoryItems.forEach(item => { %>
-                    <div class="data-row" data-id="<%= item.inventoryid %>">
+                    <div id="hoverTag" class="data-row" data-id="<%= item.inventoryid %>">
                         <div class="cell" data-column="ingredientname"><%= item.ingredientname %></div>
                         <div class="cell" data-column="ingredientquantity"><%= item.ingredientquantity %></div>
+                        <button onClick="deleteItem('inventory', <%= item.inventoryid %>)" class="hidden">DELETE</button>
                     </div>
                 <% }) %>
             </div>
@@ -62,8 +63,9 @@
             </label>
             <div class="data-grid">
                 <% employees.forEach(emp => { %>
-                    <div class="data-row" data-id="<%= emp.employeeid %>">
+                    <div id="hoverTag" class="data-row" data-id="<%= emp.employeeid %>">
                         <div class="cell" data-column="employeename"><%= emp.employeename %></div>
+                        <button onClick="deleteItem('employees', <%= emp.employeeid %>)" class="hidden">DELETE</button>
                     </div>
                 <% }) %>
             </div>

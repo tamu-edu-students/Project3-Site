@@ -71,8 +71,25 @@ async function addItem(table, data) {
   }
 }
 
+async function deleteItem(table, id) {
+  const idColumn =
+    table === "employees"
+      ? "employeeid"
+      : table === "menuitems"
+      ? "itemid"
+      : "inventoryid";
+
+  try {
+    await pool.query(`DELETE FROM ${table} WHERE ${idColumn} = $1`, [id]);
+    console.log(`Deleted item with ID ${id} from ${table}`);
+  } catch (err) {
+    console.error(`Error deleting item from ${table}:`, err);
+    throw err; // rethrow so the route can handle the error
+  }
+}
+
 
 // You can export more functions here
 module.exports = {
-    getAll, updateItem, addItem
+    getAll, updateItem, addItem, deleteItem
 };

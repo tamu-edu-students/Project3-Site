@@ -183,3 +183,13 @@ body {
   font-size: 20px;
   cursor: pointer;
 }
+
+.hidden {
+    display: none;
+}
+
+#hoverTag:hover button {
+    display: block;
+    background-color: red;
+    color: white;
+}
