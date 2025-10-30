@@ -1,20 +1,158 @@
+/* ===== General Page Layout ===== */
 body {
-    background-color: rgb(0, 177, 255); 
-    color: #000; 
+    background-color: rgb(0, 177, 255);
+    color: #000;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center; 
-    align-items: center;   
-    min-height: 100vh;     
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
+/* ===== Main Container ===== */
 .main-container {
-    background-color: #ffffff; 
-    border-radius: 15px;       
-    padding: 30px;      
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
-    width: 80%;              
-    max-width: 1000px;         
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 85%;
+    max-width: 1100px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* ===== Section Styling ===== */
+.data-section {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.data-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Collapsible Header ===== */
+.toggle-section {
+    display: none; /* hidden checkbox for collapse control */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e6f2ff;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 12px 12px 0 0;
+    transition: background 0.2s ease-in-out;
+}
+
+.section-header:hover {
+    background-color: #cde7ff;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #000;
+}
+
+/* ===== Button Styles ===== */
+.section-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.section-controls button {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.add-btn {
+    background-color: #28a745;
+}
+.add-btn:hover {
+    background-color: #1e7e34;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+.delete-btn:hover {
+    background-color: #b02a37;
+}
+
+.update-btn {
+    background-color: #6c757d;
+}
+.update-btn:hover {
+    background-color: #565e64;
+}
+
+/* ===== Collapsible Content ===== */
+.data-grid {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+    padding: 10px 20px;
+}
+
+.toggle-section:checked ~ .data-grid {
+    display: grid;
+}
+
+/* Chevron indicator for expand/collapse */
+.section-header::after {
+    content: '▼';
+    font-size: 14px;
+    margin-left: 10px;
+    transition: transform 0.3s;
+}
+
+.toggle-section:checked + .section-header::after {
+    transform: rotate(-180deg);
+}
+
+/* ===== Data Rows / Cards ===== */
+.data-row {
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1em;
+    min-height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.data-grid:empty::before {
+    content: "No entries yet";
+    color: #777;
+    font-style: italic;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.cell.editable {
+    background-color: #fffbe6;
+    border: 1px dashed #999;
+    padding: 8px;
 }
