@@ -23,21 +23,14 @@ router.post('/:section/add', async (req, res) => {
     const data = req.body;
 
     try {
-        // Convert empty strings to null or 0 for numeric fields
-        Object.keys(data).forEach(key => {
-            if (data[key] === '') {
-                if (key === 'price') data[key] = 0;
-                else data[key] = null;
-            }
-        });
-
-        await db.addItem(section, data);
-        res.sendStatus(200);
+        const savedItem = await db.addItem(section, data);
+        res.json(savedItem); // <-- return the full row with ID
     } catch (err) {
         console.error(`Error adding to ${section}:`, err);
         res.status(500).send('Failed to add item');
     }
 });
+
 
 
 // Delete record from a section
