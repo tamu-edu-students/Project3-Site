@@ -11,11 +11,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const editBtn = section.querySelector('.update-btn');
         const dataGrid = section.querySelector('.data-grid');
 
-        editBtn.addEventListener('click', () => enterEditMode(section, sectionName, editBtn, dataGrid));
+        editBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            // Prevent edit mode from activating if delete mode is active
+            if (dataGrid.classList.contains('show-deletes')) {
+                alert('Exit delete mode before editing.');
+                return;
+            }
+
+            enterEditMode(section, sectionName, editBtn, dataGrid);
+        });
     });
 });
 
 function enterEditMode(section, sectionName, editBtn, dataGrid) {
+
+    const controls = section.querySelector('.section-controls');
     
     // Replace Edit with Save + Cancel
     const saveBtn = document.createElement('button');
@@ -26,7 +38,7 @@ function enterEditMode(section, sectionName, editBtn, dataGrid) {
     cancelBtn.textContent = 'Cancel';
     cancelBtn.classList.add('update-btn');
 
-    const controls = editBtn.parentElement;
+    //const controls = editBtn.parentElement;
     controls.replaceChild(saveBtn, editBtn);
     controls.appendChild(cancelBtn);
 
@@ -42,15 +54,16 @@ function enterEditMode(section, sectionName, editBtn, dataGrid) {
     });
 
     dataGrid.classList.add('editing');
-    dataGrid.classList.remove('show-deletes');
 
     // Cancel returns to normal mode without saving
-    cancelBtn.addEventListener('click', () => {
-        exitEditMode(dataGrid, saveBtn, cancelBtn, controls);
+    cancelBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls);
     });
 
     // Save edits to the database
-    saveBtn.addEventListener('click', async () => {
+    saveBtn.addEventListener('click', async (event) => {
+        event.stopPropagation();
         const rows = dataGrid.querySelectorAll('.data-row');
 
         for (const row of rows) {
@@ -83,51 +96,47 @@ function enterEditMode(section, sectionName, editBtn, dataGrid) {
         }
 
         alert('All updates saved!');
-        exitEditMode(dataGrid, saveBtn, cancelBtn, controls);
+        exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls);
     });
 
 }
 
 
-function exitEditMode(dataGrid, saveBtn, cancelBtn, controls) {
+function exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls) {
+    // Make cells non-editable
     dataGrid.querySelectorAll('.cell').forEach(cell => {
         cell.contentEditable = false;
         cell.classList.remove('editable');
     });
 
-    // leave editing state
     dataGrid.classList.remove('editing');
 
-    // If delete mode was active, show deletes (CSS will handle hover display)
-    if (dataGrid.classList.contains('show-deletes')) {
-   
-    } else {
+    // Show delete buttons if delete mode is not active
+    if (!dataGrid.classList.contains('show-deletes')) {
         dataGrid.querySelectorAll('button.hidden').forEach(btn => {
-            btn.style.display = ''; // clear inline style just in case
+            btn.style.display = '';
         });
     }
 
-    // Show delete buttons again
-    dataGrid.querySelectorAll('button.hidden').forEach(btn => {
-        btn.style.display = '';
-    });
+    // Remove Cancel button
+    cancelBtn.remove();
 
-    controls.removeChild(cancelBtn);
+    // Replace Save button with Edit button
     const newEditBtn = document.createElement('button');
     newEditBtn.textContent = 'Edit';
     newEditBtn.classList.add('update-btn');
     controls.replaceChild(newEditBtn, saveBtn);
 
     // Reattach listener
-    newEditBtn.addEventListener('click', () => {
-        const section = newEditBtn.closest('.data-section');
-        const sectionMap = {
-            'menu items': 'menuitems',
-            'inventory items': 'inventory',
-            'employees': 'employees'
-        };
+    newEditBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
         const sectionName = sectionMap[section.querySelector('h2').textContent.toLowerCase()];
         const dataGrid = section.querySelector('.data-grid');
+
+        if (dataGrid.classList.contains('show-deletes')) {
+            alert('Exit delete mode before editing.');
+            return;
+        }
         enterEditMode(section, sectionName, newEditBtn, dataGrid);
     });
 }
@@ -201,7 +210,8 @@ document.querySelectorAll('.data-section').forEach(section => {
     const addBtn = section.querySelector('.add-btn');
     const dataGrid = section.querySelector('.data-grid');
 
-    addBtn.addEventListener('click', () => {
+    addBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
         addNewRow(section, sectionName, dataGrid);
     });
 });
@@ -299,7 +309,8 @@ function addNewRow(section, sectionName, dataGrid) {
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'DELETE';
     deleteBtn.classList.add('hidden');
-    deleteBtn.addEventListener('click', async() => {
+    deleteBtn.addEventListener('click', async(event) => {
+        event.stopPropagation();
         if(!newRow.dataset.id) return newRow.remove();
         await deleteItem(sectionName, newRow.dataset.id);
     });

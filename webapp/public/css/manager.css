@@ -68,7 +68,9 @@ body {
 /* ===== Button Styles ===== */
 .section-controls {
     display: flex;
+    justify-content: center;
     gap: 8px;
+    background-color: #e6f2ff;
 }
 
 .section-controls button {
