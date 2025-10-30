@@ -15,7 +15,12 @@ async function getAllCustomers() {
     return result.rows;
 }
 
+async function getAllMenuItems() {
+    const result = await pool.query('SELECT * FROM menuitems');
+    return result.rows;
+}
+
 // You can export more functions here
 module.exports = {
-    getAllCustomers,
+    getAllCustomers, getAllMenuItems
 };

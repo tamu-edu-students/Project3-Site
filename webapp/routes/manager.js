@@ -13,4 +13,14 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/', async (req, res) => {
+    try {
+        const menuItems = await db.getAllMenuItems();
+        res.render('manager', { menuItems });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Database error');
+    }
+});
+
 module.exports = router;

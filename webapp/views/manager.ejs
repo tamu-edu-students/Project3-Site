@@ -11,6 +11,13 @@
         </div>
 
         <div class="menu-items">
+            <% for (var i in menuItems) { %>
+            <p>
+                Item Name: <%= menuItems[i].itemname%>,
+                Item Price: <%= menuItems[i].itemprice %>,
+                Item Description: <%= menuItems[i].itemdescription %>
+            </p>
+            <%} %>
 
 
         </div>
