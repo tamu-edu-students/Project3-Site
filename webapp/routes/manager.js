@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
         const employees = await db.getAll('employees');
 
         res.render('manager', { menuItems, inventoryItems, employees });
+        console.log("✅ manager.js loaded!");
     } catch (err) {
         console.error(err);
         res.status(500).send('Database error');
@@ -19,16 +20,18 @@ router.get('/', async (req, res) => {
 // Add new record to a section
 router.post('/:section/add', async (req, res) => {
     const { section } = req.params;
-    const { name } = req.body;
+    const data = req.body;
 
     try {
-        await db.addItem(section, { name });
-        res.sendStatus(200);
+        const savedItem = await db.addItem(section, data);
+        res.json(savedItem); // <-- return the full row with ID
     } catch (err) {
         console.error(`Error adding to ${section}:`, err);
         res.status(500).send('Failed to add item');
     }
 });
+
+
 
 // Delete record from a section
 router.delete('/:section/delete/:id', async (req, res) => {
