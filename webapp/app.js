@@ -16,6 +16,11 @@ app.set('view engine', 'ejs');
 const managerRouter = require('./routes/manager');
 app.use('/manager', managerRouter);
 
+// Customer route
+app.get('/customer', (req, res) => {
+    res.render('customer');
+});
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });

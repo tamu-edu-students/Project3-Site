@@ -1,0 +1,264 @@
+/* Boba Tea Shop Customer Interface Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #ff9a9e;
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size: 3.5rem;
+    color: #8B4513;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tagline {
+    font-size: 1.2rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* Main Content */
+.main-content {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #8B4513;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Drinks Grid */
+.drinks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
+
+/* Drink Card Styles */
+.drink-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.drink-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.drink-card:hover::before {
+    left: 100%;
+}
+
+.drink-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border-color: #ff6b6b;
+}
+
+/* Drink Images */
+.drink-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.drink-image::after {
+    content: '🧋';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    opacity: 0.8;
+}
+
+/* Specific drink image colors */
+.classic { background: linear-gradient(45deg, #8B4513, #D2691E); }
+.brown-sugar { background: linear-gradient(45deg, #8B4513, #A0522D); }
+.taro { background: linear-gradient(45deg, #9370DB, #8A2BE2); }
+.matcha { background: linear-gradient(45deg, #90EE90, #32CD32); }
+.thai { background: linear-gradient(45deg, #FFD700, #FFA500); }
+.honeydew { background: linear-gradient(45deg, #98FB98, #90EE90); }
+.mango { background: linear-gradient(45deg, #FFD700, #FFA500); }
+.strawberry { background: linear-gradient(45deg, #FFB6C1, #FF69B4); }
+.coffee { background: linear-gradient(45deg, #8B4513, #A0522D); }
+.wintermelon { background: linear-gradient(45deg, #F0E68C, #DDA0DD); }
+.coconut { background: linear-gradient(45deg, #F5F5DC, #DEB887); }
+.lychee { background: linear-gradient(45deg, #FFB6C1, #FFC0CB); }
+.rose { background: linear-gradient(45deg, #FFB6C1, #FF69B4); }
+.oreo { background: linear-gradient(45deg, #2F4F4F, #696969); }
+.avocado { background: linear-gradient(45deg, #90EE90, #32CD32); }
+.passionfruit { background: linear-gradient(45deg, #FFD700, #FFA500); }
+.red-bean { background: linear-gradient(45deg, #DC143C, #B22222); }
+.ube { background: linear-gradient(45deg, #9370DB, #8A2BE2); }
+.almond { background: linear-gradient(45deg, #DEB887, #D2B48C); }
+.cheese-foam { background: linear-gradient(45deg, #FFF8DC, #F0E68C); }
+
+/* Drink Text Styles */
+.drink-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #8B4513;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.drink-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.4;
+    min-height: 2.8rem;
+}
+
+.price {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #ff6b6b;
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .logo {
+        font-size: 2.5rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .drinks-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .drink-card {
+        padding: 15px;
+    }
+    
+    .drink-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .drink-name {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .drinks-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .logo {
+        font-size: 2rem;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* Animation for page load */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.drink-card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.drink-card:nth-child(1) { animation-delay: 0.1s; }
+.drink-card:nth-child(2) { animation-delay: 0.2s; }
+.drink-card:nth-child(3) { animation-delay: 0.3s; }
+.drink-card:nth-child(4) { animation-delay: 0.4s; }
+.drink-card:nth-child(5) { animation-delay: 0.5s; }
+.drink-card:nth-child(6) { animation-delay: 0.6s; }
+.drink-card:nth-child(7) { animation-delay: 0.7s; }
+.drink-card:nth-child(8) { animation-delay: 0.8s; }
+.drink-card:nth-child(9) { animation-delay: 0.9s; }
+.drink-card:nth-child(10) { animation-delay: 1.0s; }
+.drink-card:nth-child(11) { animation-delay: 1.1s; }
+.drink-card:nth-child(12) { animation-delay: 1.2s; }
+.drink-card:nth-child(13) { animation-delay: 1.3s; }
+.drink-card:nth-child(14) { animation-delay: 1.4s; }
+.drink-card:nth-child(15) { animation-delay: 1.5s; }
+.drink-card:nth-child(16) { animation-delay: 1.6s; }
+.drink-card:nth-child(17) { animation-delay: 1.7s; }
+.drink-card:nth-child(18) { animation-delay: 1.8s; }
+.drink-card:nth-child(19) { animation-delay: 1.9s; }
+.drink-card:nth-child(20) { animation-delay: 2.0s; }
