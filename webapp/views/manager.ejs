@@ -11,12 +11,12 @@
             <input type="checkbox" id="toggle-menu" class="toggle-section">
             <label for="toggle-menu" class="section-header">
                 <h2>Menu Items</h2>
-                <div class="section-controls">
-                    <button class="add-btn">+</button>
-                    <button class="delete-btn">-</button>
-                    <button class="update-btn">Edit</button>
-                </div>
             </label>
+            <div class="section-controls">
+                <button class="add-btn">+</button>
+                <button class="delete-btn">-</button>
+                <button class="update-btn">Edit</button>
+            </div>
             <div class="data-grid">
                 <% menuItems.forEach(item => { %>
                     <div id="hoverTag" class="data-row" data-id="<%= item.itemid %>">
@@ -33,12 +33,12 @@
             <input type="checkbox" id="toggle-inventory" class="toggle-section">
             <label for="toggle-inventory" class="section-header">
                 <h2>Inventory Items</h2>
-                <div class="section-controls">
-                    <button class="add-btn">+</button>
-                    <button class="delete-btn">-</button>
-                    <button class="update-btn">Edit</button>
-                </div>
             </label>
+            <div class="section-controls">
+                <button class="add-btn">+</button>
+                <button class="delete-btn">-</button>
+                <button class="update-btn">Edit</button>
+            </div>
             <div class="data-grid">
                 <% inventoryItems.forEach(item => { %>
                     <div id="hoverTag" class="data-row" data-id="<%= item.inventoryid %>">
@@ -55,12 +55,12 @@
             <input type="checkbox" id="toggle-employees" class="toggle-section">
             <label for="toggle-employees" class="section-header">
                 <h2>Employees</h2>
-                <div class="section-controls">
-                    <button class="add-btn">+</button>
-                    <button class="delete-btn">-</button>
-                    <button class="update-btn">Edit</button>
-                </div>
             </label>
+            <div class="section-controls">
+                <button class="add-btn">+</button>
+                <button class="delete-btn">-</button>
+                <button class="update-btn">Edit</button>
+            </div>
             <div class="data-grid">
                 <% employees.forEach(emp => { %>
                     <div id="hoverTag" class="data-row" data-id="<%= emp.employeeid %>">
