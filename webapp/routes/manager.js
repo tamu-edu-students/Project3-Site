@@ -7,9 +7,10 @@ router.get('/', async (req, res) => {
     try {
         const menuItems = await db.getAll('menuitems');
         const inventoryItems = await db.getAll('inventory');
+        const recipes = await db.getAll('recipes');
         const employees = await db.getAll('employees');
 
-        res.render('manager', { menuItems, inventoryItems, employees });
+        res.render('manager', { menuItems, inventoryItems, recipes, employees });
         console.log("manager.js loaded!");
     } catch (err) {
         console.error(err);

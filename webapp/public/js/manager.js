@@ -2,7 +2,8 @@
 const sectionMap = {
     'menu items': 'menuitems',
     'inventory items': 'inventory',
-    'employees': 'employees'
+    'employees': 'employees',
+    'recipes': 'recipes'
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -137,7 +138,7 @@ function exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls) {
             alert('Exit delete mode before editing.');
             return;
         }
-        enterEditMode(section, sectionName, newEditBtn, dataGrid);
+        enterEditMode(section, sectionName, newEditBtn, dataGrid); 
     });
 }
 
@@ -230,7 +231,12 @@ const placeholderMap = {
     },
     employees: {
         employeename: 'Employee Name: (Ex: John Doe)'
-    }
+    },
+    recipes: { 
+        itemid: 'Menu Item ID', 
+        inventoryid: 'Inventory ID', 
+        quantity: 'Quantity', 
+        unit: 'Unit (Ex: lbs)' }
 };
 
 function addNewRow(section, sectionName, dataGrid) {
