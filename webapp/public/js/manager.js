@@ -422,4 +422,3 @@ document.querySelectorAll('.data-section').forEach(section => {
   });
 });
 
-

@@ -6,6 +6,21 @@
 <body>
     <div class="main-container">
 
+        <div class="data-section">
+            <input type="checkbox" id="toggle-chart" class="toggle-section">
+            <label for="toggle-chart" class="section-header">
+                <h2>Inventory Chart</h2>
+            </label>
+
+            <div class="section-controls">
+                <button class="refresh-btn">Refresh</button>
+            </div>
+
+            <div class="data-grid">
+                <canvas></canvas>
+            </div>
+        </div>
+
         <!-- Menu Items -->
         <div class="data-section">
             <input type="checkbox" id="toggle-menu" class="toggle-section">
@@ -112,7 +127,6 @@
             </form>
         </div>
         </div>
-
 
     <script src="/js/manager.js"></script>
 
