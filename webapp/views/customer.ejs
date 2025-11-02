@@ -175,98 +175,138 @@
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-                <!-- Ice Level Selection -->
-                <div class="customization-section">
-                    <h3>Ice Level</h3>
-                    <div class="option-group">
-                        <label class="option-btn">
-                            <input type="radio" name="iceLevel" value="no ice">
-                            <span>No Ice</span>
-                        </label>
-                        <label class="option-btn">
-                            <input type="radio" name="iceLevel" value="light ice" checked>
-                            <span>Light Ice</span>
-                        </label>
-                        <label class="option-btn">
-                            <input type="radio" name="iceLevel" value="regular">
-                            <span>Regular</span>
-                        </label>
+                <div class="customizations-column">
+                    <!-- Ice Level Selection -->
+                    <div class="customization-section">
+                        <h3>Ice Level</h3>
+                        <div class="option-group">
+                            <label class="option-btn">
+                                <input type="radio" name="iceLevel" value="no ice">
+                                <span>No Ice</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="iceLevel" value="light ice" checked>
+                                <span>Light Ice</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="iceLevel" value="regular">
+                                <span>Regular</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sugar Level Selection -->
+                    <div class="customization-section">
+                        <h3>Sugar Level</h3>
+                        <div class="option-group">
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="25%">
+                                <span>25%</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="50%" checked>
+                                <span>50%</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="75%">
+                                <span>75%</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="100%">
+                                <span>100%</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Toppings Selection -->
+                    <div class="customization-section">
+                        <h3>Toppings</h3>
+                        <div class="toppings-grid">
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Boba Pearls">
+                                <span>Boba Pearls</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Pudding">
+                                <span>Pudding</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Grass Jelly">
+                                <span>Grass Jelly</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Aloe Vera">
+                                <span>Aloe Vera</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Lychee Jelly">
+                                <span>Lychee Jelly</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Mango Popping">
+                                <span>Mango Popping</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Strawberry Popping">
+                                <span>Strawberry Popping</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Coffee Jelly">
+                                <span>Coffee Jelly</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Crystal Boba">
+                                <span>Crystal Boba</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Sugar Level Selection -->
-                <div class="customization-section">
-                    <h3>Sugar Level</h3>
-                    <div class="option-group">
-                        <label class="option-btn">
-                            <input type="radio" name="sugarLevel" value="25%">
-                            <span>25%</span>
-                        </label>
-                        <label class="option-btn">
-                            <input type="radio" name="sugarLevel" value="50%" checked>
-                            <span>50%</span>
-                        </label>
-                        <label class="option-btn">
-                            <input type="radio" name="sugarLevel" value="75%">
-                            <span>75%</span>
-                        </label>
-                        <label class="option-btn">
-                            <input type="radio" name="sugarLevel" value="100%">
-                            <span>100%</span>
-                        </label>
+                
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span class="summary-label">Drink:</span>
+                            <span id="summaryDrinkName" class="summary-value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Ice Level:</span>
+                            <span id="summaryIceLevel" class="summary-value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Sugar Level:</span>
+                            <span id="summarySugarLevel" class="summary-value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Toppings:</span>
+                            <span id="summaryToppings" class="summary-value">None</span>
+                        </div>
+                        <div class="summary-item toppings-list" id="toppingsList" style="display: none;">
+                            <ul id="toppingsListItems"></ul>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-item price-breakdown">
+                            <div class="price-line">
+                                <span class="summary-label">Base Price:</span>
+                                <span id="summaryBasePrice" class="summary-value">$0.00</span>
+                            </div>
+                            <div class="price-line" id="toppingsPriceLine" style="display: none;">
+                                <span class="summary-label">Toppings (<span id="toppingCount">0</span> × $1.00):</span>
+                                <span id="summaryToppingsPrice" class="summary-value">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="summary-item total-price">
+                            <span class="summary-label">Total:</span>
+                            <span id="summaryTotalPrice" class="summary-value total">$0.00</span>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Toppings Selection -->
-                <div class="customization-section">
-                    <h3>Toppings</h3>
-                    <div class="toppings-grid">
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Boba Pearls">
-                            <span>Boba Pearls</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Pudding">
-                            <span>Pudding</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Grass Jelly">
-                            <span>Grass Jelly</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Aloe Vera">
-                            <span>Aloe Vera</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Lychee Jelly">
-                            <span>Lychee Jelly</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Mango Popping">
-                            <span>Mango Popping</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Strawberry Popping">
-                            <span>Strawberry Popping</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Coffee Jelly">
-                            <span>Coffee Jelly</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Red Bean">
-                            <span>Red Bean</span>
-                        </label>
-                        <label class="topping-checkbox">
-                            <input type="checkbox" name="toppings" value="Crystal Boba">
-                            <span>Crystal Boba</span>
-                        </label>
+                    <div class="summary-buttons">
+                        <button class="btn-cancel">Cancel</button>
+                        <button class="btn-add-to-cart">Add to Cart</button>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel">Cancel</button>
-                <button class="btn-add-to-cart">Add to Cart</button>
             </div>
         </div>
     </div>
@@ -278,16 +318,101 @@
         const cancelBtn = document.querySelector('.btn-cancel');
         const addToCartBtn = document.querySelector('.btn-add-to-cart');
         const modalDrinkName = document.getElementById('modalDrinkName');
+        
+        // Summary elements
+        const summaryDrinkName = document.getElementById('summaryDrinkName');
+        const summaryIceLevel = document.getElementById('summaryIceLevel');
+        const summarySugarLevel = document.getElementById('summarySugarLevel');
+        const summaryToppings = document.getElementById('summaryToppings');
+        const toppingsList = document.getElementById('toppingsList');
+        const toppingsListItems = document.getElementById('toppingsListItems');
+        const summaryBasePrice = document.getElementById('summaryBasePrice');
+        const toppingsPriceLine = document.getElementById('toppingsPriceLine');
+        const toppingCount = document.getElementById('toppingCount');
+        const summaryToppingsPrice = document.getElementById('summaryToppingsPrice');
+        const summaryTotalPrice = document.getElementById('summaryTotalPrice');
+        
+        // Store base price
+        let basePrice = 0;
 
         // Add click event listeners to all drink cards
         document.querySelectorAll('.drink-card').forEach(card => {
             card.addEventListener('click', function() {
                 const drinkName = this.getAttribute('data-drink');
+                const priceText = this.querySelector('.price').textContent;
+                // Extract price from text like "$4.50"
+                basePrice = parseFloat(priceText.replace('$', ''));
+                
                 modalDrinkName.textContent = drinkName;
                 modal.style.display = 'block';
                 document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                
+                // Update summary with initial values
+                updateSummary();
             });
         });
+
+        // Setup event listeners for customization options
+        // Ice level listeners
+        document.querySelectorAll('input[name="iceLevel"]').forEach(radio => {
+            radio.addEventListener('change', updateSummary);
+        });
+        
+        // Sugar level listeners
+        document.querySelectorAll('input[name="sugarLevel"]').forEach(radio => {
+            radio.addEventListener('change', updateSummary);
+        });
+        
+        // Toppings listeners
+        document.querySelectorAll('input[name="toppings"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSummary);
+        });
+
+        // Update summary function
+        function updateSummary() {
+            const drinkName = modalDrinkName.textContent;
+            const iceLevel = document.querySelector('input[name="iceLevel"]:checked')?.value || 'Light Ice';
+            const sugarLevel = document.querySelector('input[name="sugarLevel"]:checked')?.value || '50%';
+            const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
+                .map(checkbox => checkbox.value);
+            
+            // Update summary text
+            summaryDrinkName.textContent = drinkName;
+            summaryIceLevel.textContent = iceLevel.charAt(0).toUpperCase() + iceLevel.slice(1);
+            summarySugarLevel.textContent = sugarLevel;
+            
+            // Update toppings
+            if (selectedToppings.length > 0) {
+                summaryToppings.textContent = `${selectedToppings.length} selected`;
+                toppingsList.style.display = 'block';
+                toppingsListItems.innerHTML = '';
+                selectedToppings.forEach(topping => {
+                    const li = document.createElement('li');
+                    li.textContent = topping;
+                    toppingsListItems.appendChild(li);
+                });
+            } else {
+                summaryToppings.textContent = 'None';
+                toppingsList.style.display = 'none';
+            }
+            
+            // Calculate prices
+            const toppingsPrice = selectedToppings.length * 1.00;
+            const totalPrice = basePrice + toppingsPrice;
+            
+            // Update price display
+            summaryBasePrice.textContent = `$${basePrice.toFixed(2)}`;
+            
+            if (selectedToppings.length > 0) {
+                toppingsPriceLine.style.display = 'block';
+                toppingCount.textContent = selectedToppings.length;
+                summaryToppingsPrice.textContent = `$${toppingsPrice.toFixed(2)}`;
+            } else {
+                toppingsPriceLine.style.display = 'none';
+            }
+            
+            summaryTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
+        }
 
         // Close modal when clicking X
         closeBtn.addEventListener('click', function() {
