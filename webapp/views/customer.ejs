@@ -167,16 +167,183 @@
         </footer>
     </div>
 
+    <!-- Customization Popup Modal -->
+    <div id="customizationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalDrinkName">Customize Your Drink</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Ice Level Selection -->
+                <div class="customization-section">
+                    <h3>Ice Level</h3>
+                    <div class="option-group">
+                        <label class="option-btn">
+                            <input type="radio" name="iceLevel" value="no ice">
+                            <span>No Ice</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="iceLevel" value="light ice" checked>
+                            <span>Light Ice</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="iceLevel" value="regular">
+                            <span>Regular</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sugar Level Selection -->
+                <div class="customization-section">
+                    <h3>Sugar Level</h3>
+                    <div class="option-group">
+                        <label class="option-btn">
+                            <input type="radio" name="sugarLevel" value="25%">
+                            <span>25%</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="sugarLevel" value="50%" checked>
+                            <span>50%</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="sugarLevel" value="75%">
+                            <span>75%</span>
+                        </label>
+                        <label class="option-btn">
+                            <input type="radio" name="sugarLevel" value="100%">
+                            <span>100%</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Toppings Selection -->
+                <div class="customization-section">
+                    <h3>Toppings</h3>
+                    <div class="toppings-grid">
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Boba Pearls">
+                            <span>Boba Pearls</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Pudding">
+                            <span>Pudding</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Grass Jelly">
+                            <span>Grass Jelly</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Aloe Vera">
+                            <span>Aloe Vera</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Lychee Jelly">
+                            <span>Lychee Jelly</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Mango Popping">
+                            <span>Mango Popping</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Strawberry Popping">
+                            <span>Strawberry Popping</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Coffee Jelly">
+                            <span>Coffee Jelly</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Red Bean">
+                            <span>Red Bean</span>
+                        </label>
+                        <label class="topping-checkbox">
+                            <input type="checkbox" name="toppings" value="Crystal Boba">
+                            <span>Crystal Boba</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel">Cancel</button>
+                <button class="btn-add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Get modal elements
+        const modal = document.getElementById('customizationModal');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.querySelector('.btn-cancel');
+        const addToCartBtn = document.querySelector('.btn-add-to-cart');
+        const modalDrinkName = document.getElementById('modalDrinkName');
+
         // Add click event listeners to all drink cards
         document.querySelectorAll('.drink-card').forEach(card => {
             card.addEventListener('click', function() {
                 const drinkName = this.getAttribute('data-drink');
-                console.log('Selected drink:', drinkName);
-                // TODO: Open customization popup
-                alert(`You selected: ${drinkName}\n\nCustomization popup coming soon!`);
+                modalDrinkName.textContent = drinkName;
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
             });
         });
+
+        // Close modal when clicking X
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModal();
+        });
+
+        // Close modal when clicking Cancel
+        cancelBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModal();
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                resetModal();
+            }
+        });
+
+        // Add to Cart button functionality
+        addToCartBtn.addEventListener('click', function() {
+            const drinkName = modalDrinkName.textContent;
+            const iceLevel = document.querySelector('input[name="iceLevel"]:checked').value;
+            const sugarLevel = document.querySelector('input[name="sugarLevel"]:checked').value;
+            const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
+                .map(checkbox => checkbox.value);
+
+            // Log order details (you can modify this to send to server or update cart)
+            console.log('Order Details:', {
+                drink: drinkName,
+                iceLevel: iceLevel,
+                sugarLevel: sugarLevel,
+                toppings: selectedToppings
+            });
+
+            // You can add cart functionality here later
+            alert(`Added to cart!\n\nDrink: ${drinkName}\nIce: ${iceLevel}\nSugar: ${sugarLevel}\nToppings: ${selectedToppings.length > 0 ? selectedToppings.join(', ') : 'None'}`);
+
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModal();
+        });
+
+        // Reset modal to default values
+        function resetModal() {
+            document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
+            document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
+            document.querySelectorAll('input[name="toppings"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
     </script>
 </body>
 </html>
