@@ -2,6 +2,7 @@
 <head>
     <title>Manager Page</title>
     <link rel="stylesheet" href="/css/manager.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="main-container">
@@ -13,11 +14,11 @@
             </label>
 
             <div class="section-controls">
-                <button class="refresh-btn">Refresh</button>
+                <button id="inventoryChartRefresh" class="refresh-btn">Refresh</button>
             </div>
 
             <div class="data-grid">
-                <canvas></canvas>
+                <canvas id="inventoryChart"></canvas>
             </div>
         </div>
 
