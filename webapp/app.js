@@ -21,6 +21,11 @@ app.get('/customer', (req, res) => {
     res.render('customer');
 });
 
+// Cashier route
+app.get('/cashier', (req, res) => {
+    res.render('cashier');
+});
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });

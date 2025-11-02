@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAMSA Employee - Order Your Drink</title>
+    <link rel="stylesheet" href="/css/customer.css">
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <div class="employee-selector">
+                <label for="employeeSelect">Employee:</label>
+                <select id="employeeSelect" name="employee">
+                    <option value="">Select Employee</option>
+                    <option value="Iroh">Iroh</option>
+                    <option value="Aang">Aang</option>
+                    <option value="Katara">Katara</option>
+                    <option value="Zuko">Zuko</option>
+                    <option value="Sokka">Sokka</option>
+                    <option value="Tof">Tof</option>
+                    <option value="Suki">Suki</option>
+                    <option value="Appa">Appa</option>
+                    <option value="Momo">Momo</option>
+                    <option value="Bumi">Bumi</option>
+                </select>
+            </div>
+            <a href="/manager" class="btn-manager">Manager</a>
+        </div>
+        <header class="header">
+            <h1 class="logo">🧋 VAMSA Employee</h1>
+            <p class="tagline">Choose your perfect boba experience</p>
+        </header>
+
+        <main class="main-content">
+            <section class="drinks-section">
+                <h2 class="section-title">Our Signature Drinks</h2>
+                <div class="drinks-grid">
+                    <!-- Classic Drinks -->
+                    <div class="drink-card" data-drink="Classic Milk Tea">
+                        <div class="drink-image classic"></div>
+                        <h3 class="drink-name">Classic Milk Tea</h3>
+                        <p class="drink-description">Traditional black tea with creamy milk</p>
+                        <div class="price">$4.50</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Brown Sugar Milk Tea">
+                        <div class="drink-image brown-sugar"></div>
+                        <h3 class="drink-name">Brown Sugar Milk Tea</h3>
+                        <p class="drink-description">Rich brown sugar with fresh milk</p>
+                        <div class="price">$5.00</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Taro Milk Tea">
+                        <div class="drink-image taro"></div>
+                        <h3 class="drink-name">Taro Milk Tea</h3>
+                        <p class="drink-description">Purple taro root with creamy milk</p>
+                        <div class="price">$5.25</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Matcha Green Tea Latte Boba">
+                        <div class="drink-image matcha"></div>
+                        <h3 class="drink-name">Matcha Green Tea Latte Boba</h3>
+                        <p class="drink-description">Premium matcha with steamed milk</p>
+                        <div class="price">$5.75</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Thai Milk Tea">
+                        <div class="drink-image thai"></div>
+                        <h3 class="drink-name">Thai Milk Tea</h3>
+                        <p class="drink-description">Spiced tea with condensed milk</p>
+                        <div class="price">$4.75</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Honeydew Milk Tea">
+                        <div class="drink-image honeydew"></div>
+                        <h3 class="drink-name">Honeydew Milk Tea</h3>
+                        <p class="drink-description">Fresh honeydew melon with milk</p>
+                        <div class="price">$5.50</div>
+                    </div>
+
+                    <!-- Fruit Teas -->
+                    <div class="drink-card" data-drink="Mango Green Tea Boba">
+                        <div class="drink-image mango"></div>
+                        <h3 class="drink-name">Mango Green Tea Boba</h3>
+                        <p class="drink-description">Tropical mango with green tea</p>
+                        <div class="price">$5.25</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Strawberry Milk Boba">
+                        <div class="drink-image strawberry"></div>
+                        <h3 class="drink-name">Strawberry Milk Boba</h3>
+                        <p class="drink-description">Sweet strawberry with fresh milk</p>
+                        <div class="price">$5.00</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Coffee Boba">
+                        <div class="drink-image coffee"></div>
+                        <h3 class="drink-name">Coffee Boba</h3>
+                        <p class="drink-description">Rich coffee with boba pearls</p>
+                        <div class="price">$4.75</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Wintermelon Milk Tea">
+                        <div class="drink-image wintermelon"></div>
+                        <h3 class="drink-name">Wintermelon Milk Tea</h3>
+                        <p class="drink-description">Refreshing wintermelon with milk</p>
+                        <div class="price">$4.50</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Coconut Milk Tea">
+                        <div class="drink-image coconut"></div>
+                        <h3 class="drink-name">Coconut Milk Tea</h3>
+                        <p class="drink-description">Tropical coconut with black tea</p>
+                        <div class="price">$5.00</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Lychee Green Tea Boba">
+                        <div class="drink-image lychee"></div>
+                        <h3 class="drink-name">Lychee Green Tea Boba</h3>
+                        <p class="drink-description">Exotic lychee with green tea</p>
+                        <div class="price">$5.50</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Rose Milk Tea">
+                        <div class="drink-image rose"></div>
+                        <h3 class="drink-name">Rose Milk Tea</h3>
+                        <p class="drink-description">Floral rose petals with milk</p>
+                        <div class="price">$5.25</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Oreo Milk Tea">
+                        <div class="drink-image oreo"></div>
+                        <h3 class="drink-name">Oreo Milk Tea</h3>
+                        <p class="drink-description">Crushed Oreo cookies with milk</p>
+                        <div class="price">$5.50</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Avocado Boba">
+                        <div class="drink-image avocado"></div>
+                        <h3 class="drink-name">Avocado Boba</h3>
+                        <p class="drink-description">Creamy avocado with boba pearls</p>
+                        <div class="price">$5.75</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Passionfruit Green Tea Boba">
+                        <div class="drink-image passionfruit"></div>
+                        <h3 class="drink-name">Passionfruit Green Tea Boba</h3>
+                        <p class="drink-description">Tart passionfruit with green tea</p>
+                        <div class="price">$5.25</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Red Bean Milk Tea">
+                        <div class="drink-image red-bean"></div>
+                        <h3 class="drink-name">Red Bean Milk Tea</h3>
+                        <p class="drink-description">Sweet red beans with milk tea</p>
+                        <div class="price">$5.00</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Ube Milk Tea">
+                        <div class="drink-image ube"></div>
+                        <h3 class="drink-name">Ube Milk Tea</h3>
+                        <p class="drink-description">Purple yam with creamy milk</p>
+                        <div class="price">$5.50</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Almond Milk Tea">
+                        <div class="drink-image almond"></div>
+                        <h3 class="drink-name">Almond Milk Tea</h3>
+                        <p class="drink-description">Nutty almond with black tea</p>
+                        <div class="price">$4.75</div>
+                    </div>
+
+                    <div class="drink-card" data-drink="Cheese Foam Fruit Tea">
+                        <div class="drink-image cheese-foam"></div>
+                        <h3 class="drink-name">Cheese Foam Fruit Tea</h3>
+                        <p class="drink-description">Creamy cheese foam on fruit tea</p>
+                        <div class="price">$6.00</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 VAMSA. Made with ❤️ and boba pearls</p>
+        </footer>
+    </div>
+
+    <!-- Customization Popup Modal -->
+    <div id="customizationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalDrinkName">Customize Your Drink</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="customizations-column">
+                    <!-- Ice Level Selection -->
+                    <div class="customization-section">
+                        <h3>Ice Level</h3>
+                        <div class="option-group">
+                            <label class="option-btn">
+                                <input type="radio" name="iceLevel" value="no ice">
+                                <span>No Ice</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="iceLevel" value="light ice" checked>
+                                <span>Light Ice</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="iceLevel" value="regular">
+                                <span>Regular</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Sugar Level Selection -->
+                    <div class="customization-section">
+                        <h3>Sugar Level</h3>
+                        <div class="option-group">
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="25%">
+                                <span>25%</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="50%" checked>
+                                <span>50%</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="75%">
+                                <span>75%</span>
+                            </label>
+                            <label class="option-btn">
+                                <input type="radio" name="sugarLevel" value="100%">
+                                <span>100%</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Toppings Selection -->
+                    <div class="customization-section">
+                        <h3>Toppings</h3>
+                        <div class="toppings-grid">
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Boba Pearls">
+                                <span>Boba Pearls</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Pudding">
+                                <span>Pudding</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Grass Jelly">
+                                <span>Grass Jelly</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Aloe Vera">
+                                <span>Aloe Vera</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Lychee Jelly">
+                                <span>Lychee Jelly</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Mango Popping">
+                                <span>Mango Popping</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Strawberry Popping">
+                                <span>Strawberry Popping</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Coffee Jelly">
+                                <span>Coffee Jelly</span>
+                            </label>
+                            <label class="topping-checkbox">
+                                <input type="checkbox" name="toppings" value="Crystal Boba">
+                                <span>Crystal Boba</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span class="summary-label">Drink:</span>
+                            <span id="summaryDrinkName" class="summary-value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Ice Level:</span>
+                            <span id="summaryIceLevel" class="summary-value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Sugar Level:</span>
+                            <span id="summarySugarLevel" class="summary-value">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Toppings:</span>
+                            <span id="summaryToppings" class="summary-value">None</span>
+                        </div>
+                        <div class="summary-item toppings-list" id="toppingsList" style="display: none;">
+                            <ul id="toppingsListItems"></ul>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-item price-breakdown">
+                            <div class="price-line">
+                                <span class="summary-label">Base Price:</span>
+                                <span id="summaryBasePrice" class="summary-value">$0.00</span>
+                            </div>
+                            <div class="price-line" id="toppingsPriceLine" style="display: none;">
+                                <span class="summary-label">Toppings (<span id="toppingCount">0</span> × $1.00):</span>
+                                <span id="summaryToppingsPrice" class="summary-value">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="summary-item total-price">
+                            <span class="summary-label">Total:</span>
+                            <span id="summaryTotalPrice" class="summary-value total">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="summary-buttons">
+                        <button class="btn-cancel">Cancel</button>
+                        <button class="btn-add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get modal elements
+        const modal = document.getElementById('customizationModal');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.querySelector('.btn-cancel');
+        const addToCartBtn = document.querySelector('.btn-add-to-cart');
+        const modalDrinkName = document.getElementById('modalDrinkName');
+        
+        // Summary elements
+        const summaryDrinkName = document.getElementById('summaryDrinkName');
+        const summaryIceLevel = document.getElementById('summaryIceLevel');
+        const summarySugarLevel = document.getElementById('summarySugarLevel');
+        const summaryToppings = document.getElementById('summaryToppings');
+        const toppingsList = document.getElementById('toppingsList');
+        const toppingsListItems = document.getElementById('toppingsListItems');
+        const summaryBasePrice = document.getElementById('summaryBasePrice');
+        const toppingsPriceLine = document.getElementById('toppingsPriceLine');
+        const toppingCount = document.getElementById('toppingCount');
+        const summaryToppingsPrice = document.getElementById('summaryToppingsPrice');
+        const summaryTotalPrice = document.getElementById('summaryTotalPrice');
+        
+        // Store base price
+        let basePrice = 0;
+
+        // Add click event listeners to all drink cards
+        document.querySelectorAll('.drink-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const drinkName = this.getAttribute('data-drink');
+                const priceText = this.querySelector('.price').textContent;
+                // Extract price from text like "$4.50"
+                basePrice = parseFloat(priceText.replace('$', ''));
+                
+                modalDrinkName.textContent = drinkName;
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                
+                // Update summary with initial values
+                updateSummary();
+            });
+        });
+
+        // Setup event listeners for customization options
+        // Ice level listeners
+        document.querySelectorAll('input[name="iceLevel"]').forEach(radio => {
+            radio.addEventListener('change', updateSummary);
+        });
+        
+        // Sugar level listeners
+        document.querySelectorAll('input[name="sugarLevel"]').forEach(radio => {
+            radio.addEventListener('change', updateSummary);
+        });
+        
+        // Toppings listeners
+        document.querySelectorAll('input[name="toppings"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSummary);
+        });
+
+        // Update summary function
+        function updateSummary() {
+            const drinkName = modalDrinkName.textContent;
+            const iceLevel = document.querySelector('input[name="iceLevel"]:checked')?.value || 'Light Ice';
+            const sugarLevel = document.querySelector('input[name="sugarLevel"]:checked')?.value || '50%';
+            const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
+                .map(checkbox => checkbox.value);
+            
+            // Update summary text
+            summaryDrinkName.textContent = drinkName;
+            summaryIceLevel.textContent = iceLevel.charAt(0).toUpperCase() + iceLevel.slice(1);
+            summarySugarLevel.textContent = sugarLevel;
+            
+            // Update toppings
+            if (selectedToppings.length > 0) {
+                summaryToppings.textContent = `${selectedToppings.length} selected`;
+                toppingsList.style.display = 'block';
+                toppingsListItems.innerHTML = '';
+                selectedToppings.forEach(topping => {
+                    const li = document.createElement('li');
+                    li.textContent = topping;
+                    toppingsListItems.appendChild(li);
+                });
+            } else {
+                summaryToppings.textContent = 'None';
+                toppingsList.style.display = 'none';
+            }
+            
+            // Calculate prices
+            const toppingsPrice = selectedToppings.length * 1.00;
+            const totalPrice = basePrice + toppingsPrice;
+            
+            // Update price display
+            summaryBasePrice.textContent = `$${basePrice.toFixed(2)}`;
+            
+            if (selectedToppings.length > 0) {
+                toppingsPriceLine.style.display = 'block';
+                toppingCount.textContent = selectedToppings.length;
+                summaryToppingsPrice.textContent = `$${toppingsPrice.toFixed(2)}`;
+            } else {
+                toppingsPriceLine.style.display = 'none';
+            }
+            
+            summaryTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
+        }
+
+        // Close modal when clicking X
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModal();
+        });
+
+        // Close modal when clicking Cancel
+        cancelBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModal();
+        });
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                resetModal();
+            }
+        });
+
+        // Add to Cart button functionality
+        addToCartBtn.addEventListener('click', function() {
+            const drinkName = modalDrinkName.textContent;
+            const iceLevel = document.querySelector('input[name="iceLevel"]:checked').value;
+            const sugarLevel = document.querySelector('input[name="sugarLevel"]:checked').value;
+            const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
+                .map(checkbox => checkbox.value);
+
+            // Log order details (you can modify this to send to server or update cart)
+            console.log('Order Details:', {
+                drink: drinkName,
+                iceLevel: iceLevel,
+                sugarLevel: sugarLevel,
+                toppings: selectedToppings
+            });
+
+            // You can add cart functionality here later
+            alert(`Added to cart!\n\nDrink: ${drinkName}\nIce: ${iceLevel}\nSugar: ${sugarLevel}\nToppings: ${selectedToppings.length > 0 ? selectedToppings.join(', ') : 'None'}`);
+
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModal();
+        });
+
+        // Reset modal to default values
+        function resetModal() {
+            document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
+            document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
+            document.querySelectorAll('input[name="toppings"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+    </script>
+</body>
+</html>
