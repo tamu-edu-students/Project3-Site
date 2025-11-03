@@ -62,4 +62,25 @@ router.put('/:section/update/:id', async (req, res) => {
     }
 });
 
+router.get('/inventory-usage', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                i.ingredientname,
+                COALESCE(SUM(r.quantity * oi."Quantity"), 0) AS total_used,
+                i.unit
+            FROM inventory i
+            LEFT JOIN recipes r ON i.inventoryid = r.inventoryid
+            LEFT JOIN orderitems oi ON r.itemid = oi."Item ID"
+            GROUP BY i.ingredientname, i.unit
+            ORDER BY total_used DESC
+        `;
+        
+        const result = await db.pool.query(query); // use the pool directly
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching inventory usage:', err);
+        res.status(500).json({ error: 'Failed to fetch inventory usage' });
+    }
+});
 module.exports = router;

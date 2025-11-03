@@ -30,48 +30,6 @@ async function updateItem(table, id, fields) {
     );
 }
 
-//Old addItem 
-// async function addItem(table, data) {
-//   // Map friendly keys to actual column names for each table
-//   const columnMap = {
-//     menuitems: {
-//       name: 'itemname',
-//       description: 'itemdescription',
-//       price: 'itemprice'
-//     },
-//     inventory: {
-//       name: 'ingredientname',
-//       ingredientquantity: 'ingredientquantity',
-//       unit: 'unit'
-//     },
-//     employees: {
-//       name: 'employeename'
-//       // add more if needed
-//     }
-//   };
-
-//   const tableMap = columnMap[table];
-
-//   // Keep only keys that exist for this table
-//   const filteredData = {};
-//   Object.keys(data).forEach(key => {
-//     if (tableMap[key]) filteredData[tableMap[key]] = key === 'price' || key === 'ingredientquantity' ? Number(data[key]) || 0 : data[key] || null;
-//   });
-
-//   const columns = Object.keys(filteredData).join(',');
-//   const values = Object.values(filteredData);
-//   const placeholders = values.map((_, idx) => `$${idx + 1}`).join(',');
-
-//   const query = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
-
-//   try {
-//     console.log('Executing query:', query, 'with values:', values);
-//     await pool.query(query, values);
-//   } catch (err) {
-//     console.error('Error inserting item:', err);
-//   }
-// }
-
 //new addItem
 async function addItem(table, data) {
   // Map friendly keys to actual column names for each table
@@ -137,5 +95,5 @@ async function deleteItem(table, id) {
 
 // You can export more functions here
 module.exports = {
-    getAll, updateItem, addItem, deleteItem
+    getAll, updateItem, addItem, deleteItem, pool
 };
