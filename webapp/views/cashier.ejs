@@ -28,8 +28,18 @@
             <a href="/manager" class="btn-manager">Manager</a>
         </div>
         <header class="header">
-            <h1 class="logo">🧋 VAMSA Employee</h1>
-            <p class="tagline">Choose your perfect boba experience</p>
+            <div class="header-content-wrapper">
+                <div class="header-text">
+                    <h1 class="logo">🧋 VAMSA Employee</h1>
+                    <p class="tagline">Choose your perfect boba experience</p>
+                </div>
+                <div class="cart-icon-container">
+                    <button class="cart-icon-btn" id="cartIconBtn">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+                    </button>
+                </div>
+            </div>
         </header>
 
         <main class="main-content">
@@ -53,6 +63,31 @@
 
         <footer class="footer">
         </footer>
+    </div>
+
+    <!-- Cart Popup Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content cart-modal-content">
+            <div class="modal-header">
+                <h2>Your Cart</h2>
+                <span class="close cart-close">&times;</span>
+            </div>
+            <div class="modal-body cart-modal-body">
+                <div id="cartItems" class="cart-items">
+                    <p class="empty-cart-message">Your cart is empty</p>
+                </div>
+                <div class="cart-total">
+                    <div class="total-line">
+                        <span class="total-label">Total:</span>
+                        <span class="total-value" id="cartTotal">$0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer cart-modal-footer">
+                <button class="btn-clear-cart" id="clearCartBtn">Clear Cart</button>
+                <button class="btn-checkout" id="checkoutBtn">Checkout</button>
+            </div>
+        </div>
     </div>
 
     <!-- Customization Popup Modal -->
@@ -223,6 +258,127 @@
         // Store base price
         let basePrice = 0;
 
+        // Cart functionality
+        let cart = [];
+        
+        // Cart elements
+        const cartModal = document.getElementById('cartModal');
+        const cartIconBtn = document.getElementById('cartIconBtn');
+        const cartBadge = document.getElementById('cartBadge');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const cartCloseBtn = document.querySelector('.cart-close');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        // Open cart modal
+        cartIconBtn.addEventListener('click', function() {
+            cartModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            updateCartDisplay();
+        });
+
+        // Close cart modal
+        cartCloseBtn.addEventListener('click', function() {
+            cartModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close cart modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === cartModal) {
+                cartModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Clear cart
+        clearCartBtn.addEventListener('click', function() {
+            if (cart.length > 0 && confirm('Are you sure you want to clear your cart?')) {
+                cart = [];
+                updateCartBadge();
+                updateCartDisplay();
+            }
+        });
+
+        // Checkout button (placeholder for now)
+        checkoutBtn.addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            alert('Checkout functionality will be implemented here!');
+        });
+
+        // Add item to cart
+        function addToCart(item) {
+            cart.push(item);
+            updateCartBadge();
+        }
+
+        // Remove item from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            updateCartDisplay();
+        }
+
+        // Update cart badge
+        function updateCartBadge() {
+            const itemCount = cart.length;
+            cartBadge.textContent = itemCount;
+            if (itemCount > 0) {
+                cartBadge.style.display = 'flex';
+            } else {
+                cartBadge.style.display = 'none';
+            }
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
+                cartTotal.textContent = '$0.00';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.totalPrice;
+                total += itemTotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h3 class="cart-item-name">${item.drink}</h3>
+                            <div class="cart-item-details">
+                                <span class="cart-item-detail">Ice: ${item.iceLevel}</span>
+                                <span class="cart-item-detail">Sugar: ${item.sugarLevel}</span>
+                                ${item.toppings.length > 0 ? `<span class="cart-item-detail">Toppings: ${item.toppings.join(', ')}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="cart-item-price">
+                            <span class="cart-item-price-value">$${itemTotal.toFixed(2)}</span>
+                            <button class="btn-remove-item" data-index="${index}">Remove</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cartItems.innerHTML = html;
+            cartTotal.textContent = `$${total.toFixed(2)}`;
+
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.btn-remove-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeFromCart(index);
+                });
+            });
+        }
+
         // Add click event listeners to all drink cards
         document.querySelectorAll('.drink-card').forEach(card => {
             card.addEventListener('click', function() {
@@ -333,16 +489,22 @@
             const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
                 .map(checkbox => checkbox.value);
 
-            // Log order details (you can modify this to send to server or update cart)
-            console.log('Order Details:', {
+            // Calculate total price
+            const toppingsPrice = selectedToppings.length * 1.00;
+            const totalPrice = basePrice + toppingsPrice;
+
+            // Add to cart
+            const cartItem = {
                 drink: drinkName,
                 iceLevel: iceLevel,
                 sugarLevel: sugarLevel,
-                toppings: selectedToppings
-            });
+                toppings: selectedToppings,
+                basePrice: basePrice,
+                toppingsPrice: toppingsPrice,
+                totalPrice: totalPrice
+            };
 
-            // You can add cart functionality here later
-            alert(`Added to cart!\n\nDrink: ${drinkName}\nIce: ${iceLevel}\nSugar: ${sugarLevel}\nToppings: ${selectedToppings.length > 0 ? selectedToppings.join(', ') : 'None'}`);
+            addToCart(cartItem);
 
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
