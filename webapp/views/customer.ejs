@@ -9,8 +9,18 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="logo">🧋 VAMSA</h1>
-            <p class="tagline">Choose your perfect boba experience</p>
+            <div class="header-content-wrapper">
+                <div class="header-text">
+                    <h1 class="logo">🧋 VAMSA</h1>
+                    <p class="tagline">Choose your perfect boba experience</p>
+                </div>
+                <div class="cart-icon-container">
+                    <button class="cart-icon-btn" id="cartIconBtn">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+                    </button>
+                </div>
+            </div>
         </header>
 
         <main class="main-content">
@@ -18,153 +28,45 @@
                 <h2 class="section-title">Our Signature Drinks</h2>
                 <div class="drinks-grid">
                     <!-- Classic Drinks -->
-                    <div class="drink-card" data-drink="Classic Milk Tea">
-                        <div class="drink-image classic"></div>
-                        <h3 class="drink-name">Classic Milk Tea</h3>
-                        <p class="drink-description">Traditional black tea with creamy milk</p>
-                        <div class="price">$4.50</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Brown Sugar Milk Tea">
-                        <div class="drink-image brown-sugar"></div>
-                        <h3 class="drink-name">Brown Sugar Milk Tea</h3>
-                        <p class="drink-description">Rich brown sugar with fresh milk</p>
-                        <div class="price">$5.00</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Taro Milk Tea">
-                        <div class="drink-image taro"></div>
-                        <h3 class="drink-name">Taro Milk Tea</h3>
-                        <p class="drink-description">Purple taro root with creamy milk</p>
-                        <div class="price">$5.25</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Matcha Green Tea Latte Boba">
-                        <div class="drink-image matcha"></div>
-                        <h3 class="drink-name">Matcha Green Tea Latte Boba</h3>
-                        <p class="drink-description">Premium matcha with steamed milk</p>
-                        <div class="price">$5.75</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Thai Milk Tea">
-                        <div class="drink-image thai"></div>
-                        <h3 class="drink-name">Thai Milk Tea</h3>
-                        <p class="drink-description">Spiced tea with condensed milk</p>
-                        <div class="price">$4.75</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Honeydew Milk Tea">
-                        <div class="drink-image honeydew"></div>
-                        <h3 class="drink-name">Honeydew Milk Tea</h3>
-                        <p class="drink-description">Fresh honeydew melon with milk</p>
-                        <div class="price">$5.50</div>
-                    </div>
-
-                    <!-- Fruit Teas -->
-                    <div class="drink-card" data-drink="Mango Green Tea Boba">
-                        <div class="drink-image mango"></div>
-                        <h3 class="drink-name">Mango Green Tea Boba</h3>
-                        <p class="drink-description">Tropical mango with green tea</p>
-                        <div class="price">$5.25</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Strawberry Milk Boba">
-                        <div class="drink-image strawberry"></div>
-                        <h3 class="drink-name">Strawberry Milk Boba</h3>
-                        <p class="drink-description">Sweet strawberry with fresh milk</p>
-                        <div class="price">$5.00</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Coffee Boba">
-                        <div class="drink-image coffee"></div>
-                        <h3 class="drink-name">Coffee Boba</h3>
-                        <p class="drink-description">Rich coffee with boba pearls</p>
-                        <div class="price">$4.75</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Wintermelon Milk Tea">
-                        <div class="drink-image wintermelon"></div>
-                        <h3 class="drink-name">Wintermelon Milk Tea</h3>
-                        <p class="drink-description">Refreshing wintermelon with milk</p>
-                        <div class="price">$4.50</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Coconut Milk Tea">
-                        <div class="drink-image coconut"></div>
-                        <h3 class="drink-name">Coconut Milk Tea</h3>
-                        <p class="drink-description">Tropical coconut with black tea</p>
-                        <div class="price">$5.00</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Lychee Green Tea Boba">
-                        <div class="drink-image lychee"></div>
-                        <h3 class="drink-name">Lychee Green Tea Boba</h3>
-                        <p class="drink-description">Exotic lychee with green tea</p>
-                        <div class="price">$5.50</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Rose Milk Tea">
-                        <div class="drink-image rose"></div>
-                        <h3 class="drink-name">Rose Milk Tea</h3>
-                        <p class="drink-description">Floral rose petals with milk</p>
-                        <div class="price">$5.25</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Oreo Milk Tea">
-                        <div class="drink-image oreo"></div>
-                        <h3 class="drink-name">Oreo Milk Tea</h3>
-                        <p class="drink-description">Crushed Oreo cookies with milk</p>
-                        <div class="price">$5.50</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Avocado Boba">
-                        <div class="drink-image avocado"></div>
-                        <h3 class="drink-name">Avocado Boba</h3>
-                        <p class="drink-description">Creamy avocado with boba pearls</p>
-                        <div class="price">$5.75</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Passionfruit Green Tea Boba">
-                        <div class="drink-image passionfruit"></div>
-                        <h3 class="drink-name">Passionfruit Green Tea Boba</h3>
-                        <p class="drink-description">Tart passionfruit with green tea</p>
-                        <div class="price">$5.25</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Red Bean Milk Tea">
-                        <div class="drink-image red-bean"></div>
-                        <h3 class="drink-name">Red Bean Milk Tea</h3>
-                        <p class="drink-description">Sweet red beans with milk tea</p>
-                        <div class="price">$5.00</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Ube Milk Tea">
-                        <div class="drink-image ube"></div>
-                        <h3 class="drink-name">Ube Milk Tea</h3>
-                        <p class="drink-description">Purple yam with creamy milk</p>
-                        <div class="price">$5.50</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Almond Milk Tea">
-                        <div class="drink-image almond"></div>
-                        <h3 class="drink-name">Almond Milk Tea</h3>
-                        <p class="drink-description">Nutty almond with black tea</p>
-                        <div class="price">$4.75</div>
-                    </div>
-
-                    <div class="drink-card" data-drink="Cheese Foam Fruit Tea">
-                        <div class="drink-image cheese-foam"></div>
-                        <h3 class="drink-name">Cheese Foam Fruit Tea</h3>
-                        <p class="drink-description">Creamy cheese foam on fruit tea</p>
-                        <div class="price">$6.00</div>
-                    </div>
+                    <% menuItems.forEach(item => { %>
+                        <div class="drink-card" data-drink="<%= item.itemname %>">
+                            <div class="drink-image classic"></div>
+                            <h3 class="drink-name"><%= item.itemname %></h3>
+                            <p class="drink-description"><%= item.itemdescription %></p>
+                            <div class="price"><%= item.itemprice %></div>
+                        </div>
+                    <% }) %>
                 </div>
             </section>
         </main>
 
         <footer class="footer">
-            <p>&copy; 2024 VAMSA. Made with ❤️ and boba pearls</p>
         </footer>
+    </div>
+
+    <!-- Cart Popup Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content cart-modal-content">
+            <div class="modal-header">
+                <h2>Your Cart</h2>
+                <span class="close cart-close">&times;</span>
+            </div>
+            <div class="modal-body cart-modal-body">
+                <div id="cartItems" class="cart-items">
+                    <p class="empty-cart-message">Your cart is empty</p>
+                </div>
+                <div class="cart-total">
+                    <div class="total-line">
+                        <span class="total-label">Total:</span>
+                        <span class="total-value" id="cartTotal">$0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer cart-modal-footer">
+                <button class="btn-clear-cart" id="clearCartBtn">Clear Cart</button>
+                <button class="btn-checkout" id="checkoutBtn">Checkout</button>
+            </div>
+        </div>
     </div>
 
     <!-- Customization Popup Modal -->
@@ -314,7 +216,7 @@
     <script>
         // Get modal elements
         const modal = document.getElementById('customizationModal');
-        const closeBtn = document.querySelector('.close');
+        const closeBtn = document.querySelector('#customizationModal .close');
         const cancelBtn = document.querySelector('.btn-cancel');
         const addToCartBtn = document.querySelector('.btn-add-to-cart');
         const modalDrinkName = document.getElementById('modalDrinkName');
@@ -334,6 +236,127 @@
         
         // Store base price
         let basePrice = 0;
+
+        // Cart functionality
+        let cart = [];
+        
+        // Cart elements
+        const cartModal = document.getElementById('cartModal');
+        const cartIconBtn = document.getElementById('cartIconBtn');
+        const cartBadge = document.getElementById('cartBadge');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const cartCloseBtn = document.querySelector('.cart-close');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+
+        // Open cart modal
+        cartIconBtn.addEventListener('click', function() {
+            cartModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            updateCartDisplay();
+        });
+
+        // Close cart modal
+        cartCloseBtn.addEventListener('click', function() {
+            cartModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close cart modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === cartModal) {
+                cartModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Clear cart
+        clearCartBtn.addEventListener('click', function() {
+            if (cart.length > 0 && confirm('Are you sure you want to clear your cart?')) {
+                cart = [];
+                updateCartBadge();
+                updateCartDisplay();
+            }
+        });
+
+        // Checkout button (placeholder for now)
+        checkoutBtn.addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            alert('Checkout functionality will be implemented here!');
+        });
+
+        // Add item to cart
+        function addToCart(item) {
+            cart.push(item);
+            updateCartBadge();
+        }
+
+        // Remove item from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            updateCartDisplay();
+        }
+
+        // Update cart badge
+        function updateCartBadge() {
+            const itemCount = cart.length;
+            cartBadge.textContent = itemCount;
+            if (itemCount > 0) {
+                cartBadge.style.display = 'flex';
+            } else {
+                cartBadge.style.display = 'none';
+            }
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
+                cartTotal.textContent = '$0.00';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.totalPrice;
+                total += itemTotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h3 class="cart-item-name">${item.drink}</h3>
+                            <div class="cart-item-details">
+                                <span class="cart-item-detail">Ice: ${item.iceLevel}</span>
+                                <span class="cart-item-detail">Sugar: ${item.sugarLevel}</span>
+                                ${item.toppings.length > 0 ? `<span class="cart-item-detail">Toppings: ${item.toppings.join(', ')}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="cart-item-price">
+                            <span class="cart-item-price-value">$${itemTotal.toFixed(2)}</span>
+                            <button class="btn-remove-item" data-index="${index}">Remove</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cartItems.innerHTML = html;
+            cartTotal.textContent = `$${total.toFixed(2)}`;
+
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.btn-remove-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeFromCart(index);
+                });
+            });
+        }
 
         // Add click event listeners to all drink cards
         document.querySelectorAll('.drink-card').forEach(card => {
@@ -445,16 +468,22 @@
             const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
                 .map(checkbox => checkbox.value);
 
-            // Log order details (you can modify this to send to server or update cart)
-            console.log('Order Details:', {
+            // Calculate total price
+            const toppingsPrice = selectedToppings.length * 1.00;
+            const totalPrice = basePrice + toppingsPrice;
+
+            // Add to cart
+            const cartItem = {
                 drink: drinkName,
                 iceLevel: iceLevel,
                 sugarLevel: sugarLevel,
-                toppings: selectedToppings
-            });
+                toppings: selectedToppings,
+                basePrice: basePrice,
+                toppingsPrice: toppingsPrice,
+                totalPrice: totalPrice
+            };
 
-            // You can add cart functionality here later
-            alert(`Added to cart!\n\nDrink: ${drinkName}\nIce: ${iceLevel}\nSugar: ${sugarLevel}\nToppings: ${selectedToppings.length > 0 ? selectedToppings.join(', ') : 'None'}`);
+            addToCart(cartItem);
 
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';

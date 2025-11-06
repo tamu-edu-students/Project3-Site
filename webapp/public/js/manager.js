@@ -442,3 +442,135 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Below is for recipes
+
+function addNewRecipeRow(dataGrid, menuItems, inventoryItems) {
+    const newRow = document.createElement('div');
+    newRow.classList.add('recipe-row');
+    newRow.dataset.id = '';
+
+    // Menu item select
+    const itemSelect = document.createElement('select');
+    itemSelect.dataset.column = 'itemid';
+    menuItems.forEach(m => {
+        const option = document.createElement('option');
+        option.value = m.itemid;
+        option.textContent = m.itemname;
+        itemSelect.appendChild(option);
+    });
+    newRow.appendChild(itemSelect);
+
+    // Inventory item select
+    const inventorySelect = document.createElement('select');
+    inventorySelect.dataset.column = 'inventoryid';
+    inventoryItems.forEach(i => {
+        const option = document.createElement('option');
+        option.value = i.inventoryid;
+        option.textContent = i.ingredientname;
+        inventorySelect.appendChild(option);
+    });
+    newRow.appendChild(inventorySelect);
+
+    // Quantity input
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.step = '0.01';
+    qtyInput.dataset.column = 'quantity';
+    qtyInput.value = 1;
+    newRow.appendChild(qtyInput);
+
+    // Unit input
+    const unitInput = document.createElement('input');
+    unitInput.type = 'text';
+    unitInput.dataset.column = 'unit';
+    unitInput.value = '';
+    newRow.appendChild(unitInput);
+
+    // Save / Cancel buttons
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+
+    cancelBtn.addEventListener('click', () => newRow.remove());
+
+    saveBtn.addEventListener('click', async () => {
+        const newData = {
+            itemid: itemSelect.value,
+            inventoryid: inventorySelect.value,
+            quantity: parseFloat(qtyInput.value),
+            unit: unitInput.value
+        };
+
+        try {
+            const res = await fetch('/manager/recipes/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newData)
+            });
+            if (res.ok) {
+                const result = await res.json();
+                newRow.dataset.id = result.recipeid;
+                alert('Recipe added!');
+                newRow.querySelectorAll('input, select').forEach(el => el.disabled = true);
+                saveBtn.remove();
+                cancelBtn.remove();
+            } else {
+                const text = await res.text();
+                alert('Failed to add recipe: ' + text);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error adding recipe');
+        }
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'DELETE';
+    deleteBtn.addEventListener('click', async () => {
+        if (!newRow.dataset.id) return newRow.remove();
+        await deleteItem('recipes', newRow.dataset.id);
+    });
+    newRow.appendChild(deleteBtn);
+
+    newRow.appendChild(saveBtn);
+    newRow.appendChild(cancelBtn);
+    dataGrid.appendChild(newRow);
+}
+
+function enterEditModeRecipe(recipeRow) {
+    const inputs = recipeRow.querySelectorAll('input, select');
+    inputs.forEach(i => i.disabled = false);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    recipeRow.appendChild(saveBtn);
+
+    saveBtn.addEventListener('click', async () => {
+        const updatedData = {
+            itemid: recipeRow.querySelector('[data-column="itemid"]').value,
+            inventoryid: recipeRow.querySelector('[data-column="inventoryid"]').value,
+            quantity: parseFloat(recipeRow.querySelector('[data-column="quantity"]').value),
+            unit: recipeRow.querySelector('[data-column="unit"]').value
+        };
+
+        try {
+            const res = await fetch(`/manager/recipes/update/${recipeRow.dataset.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+            if (res.ok) {
+                alert('Recipe updated!');
+                inputs.forEach(i => i.disabled = true);
+                saveBtn.remove();
+            } else {
+                const text = await res.text();
+                alert('Failed to update recipe: ' + text);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error updating recipe');
+        }
+    });
+}

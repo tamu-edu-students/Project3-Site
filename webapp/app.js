@@ -17,14 +17,12 @@ const managerRouter = require('./routes/manager');
 app.use('/manager', managerRouter);
 
 // Customer route
-app.get('/customer', (req, res) => {
-    res.render('customer');
-});
+const customerRoute = require('./routes/customer');
+app.use('/customer', customerRoute);
 
 // Cashier route
-app.get('/cashier', (req, res) => {
-    res.render('cashier');
-});
+const cashierRoute = require('./routes/cashier');
+app.use('/cashier', cashierRoute);
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
