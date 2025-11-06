@@ -66,6 +66,7 @@
             </div>
         </div>
 
+        <!-- Recipes Section -->
         <div class="data-section">
             <input type="checkbox" id="toggle-recipes" class="toggle-section">
             <label for="toggle-recipes" class="section-header">
@@ -77,15 +78,20 @@
                 <button class="update-btn">Edit</button>
             </div>
             <div class="data-grid">
-                <% recipes.forEach(recipe => { %>
-                    <div id="hoverTag" class="data-row" data-id="<%= recipe.recipeid %>">
-                        <div class="cell" data-column="itemid"><%= recipe.itemid %></div>
-                        <div class="cell" data-column="inventoryid"><%= recipe.inventoryid %></div>
-                        <div class="cell" data-column="quantity"><%= recipe.quantity %></div>
-                        <div class="cell" data-column="unit"><%= recipe.unit %></div>
-                        <button onClick="deleteItem('recipes', <%= recipe.recipeid %>)" class="hidden">DELETE</button>
+                <% Object.values(recipes).forEach(recipeGroup => { %>
+                    <div class="recipe-card">
+                        <h3><%= recipeGroup.itemname %></h3>
+                        <ul>
+                            <% recipeGroup.ingredients.forEach(ing => { %>
+                                <li>
+                                    <%= ing.ingredientname %> - <%= ing.quantity %> <%= ing.unit %>
+                                    <button onClick="deleteItem('recipes', <%= ing.recipeid %>)" class="hidden">DELETE</button>
+                                </li>
+                            <% }) %>
+                        </ul>
                     </div>
                 <% }) %>
+
             </div>
         </div>
 

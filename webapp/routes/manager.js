@@ -3,20 +3,64 @@ const router = express.Router();
 const db = require('../db/database');
 
 // Render manager page
+// Render manager page
 router.get('/', async (req, res) => {
     try {
+        // Fetch basic tables
         const menuItems = await db.getAll('menuitems');
         const inventoryItems = await db.getAll('inventory');
-        const recipes = await db.getAll('recipes');
         const employees = await db.getAll('employees');
 
-        res.render('manager', { menuItems, inventoryItems, recipes, employees });
+        // Fetch recipes joined with menuitems and inventory for friendly names
+        const recipesQuery = `
+            SELECT
+                r.recipeid,
+                r.itemid,
+                m.itemname,
+                r.inventoryid,
+                i.ingredientname,
+                r.quantity,
+                r.unit
+            FROM recipes r
+            JOIN menuitems m ON r.itemid = m.itemid
+            JOIN inventory i ON r.inventoryid = i.inventoryid
+            ORDER BY r.itemid;
+        `;
+
+        const recipesResult = await db.pool.query(recipesQuery);
+        const recipesRows = recipesResult.rows;
+
+        // Group recipes by menu item
+        const groupedRecipes = {};
+        recipesRows.forEach(r => {
+            if (!groupedRecipes[r.itemid]) {
+                groupedRecipes[r.itemid] = {
+                    itemname: r.itemname,
+                    ingredients: []
+                };
+            }
+            groupedRecipes[r.itemid].ingredients.push({
+                recipeid: r.recipeid,
+                ingredientname: r.ingredientname,
+                quantity: r.quantity,
+                unit: r.unit
+            });
+        });
+
+        res.render('manager', {
+            menuItems,
+            inventoryItems,
+            recipes: groupedRecipes,
+            employees
+        });
+
         console.log("manager.js loaded!");
     } catch (err) {
         console.error(err);
         res.status(500).send('Database error');
     }
 });
+
 
 // Add new record to a section
 router.post('/:section/add', async (req, res) => {
