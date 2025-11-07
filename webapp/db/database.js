@@ -73,8 +73,6 @@ async function addItem(table, data) {
   }
 }
 
-
-
 async function deleteItem(table, id) {
   const idColumn =
     table === "employees"
@@ -84,12 +82,55 @@ async function deleteItem(table, id) {
       : "inventoryid";
 
   try {
+
+    if (table === "menuitems") {
+      await deleteRecipesByMenuItem(id);
+    }
+    
     await pool.query(`DELETE FROM ${table} WHERE ${idColumn} = $1`, [id]);
     console.log(`Deleted item with ID ${id} from ${table}`);
   } catch (err) {
     console.error(`Error deleting item from ${table}:`, err);
     throw err; // rethrow so the route can handle the error
   }
+}
+
+async function addRecipe(data) {
+    const query = `
+        INSERT INTO recipes (itemid, inventoryid, quantity, unit) 
+        VALUES ($1, $2, $3, $4) 
+        RETURNING *
+    `;
+    const values = [
+        Number(data.itemid),
+        Number(data.inventoryid),
+        Number(data.quantity),
+        data.unit || ''
+    ];
+    
+    const result = await pool.query(query, values);
+    return result.rows[0];
+}
+
+async function updateRecipe(id, fields) {
+    const setString = Object.keys(fields)
+        .map((key, idx) => `${key} = $${idx + 1}`)
+        .join(', ');
+    const values = Object.values(fields);
+
+    await pool.query(
+        `UPDATE recipes SET ${setString} WHERE recipeid = $${values.length + 1}`,
+        [...values, id]
+    );
+}
+
+async function deleteRecipe(id) {
+    await pool.query('DELETE FROM recipes WHERE recipeid = $1', [id]);
+}
+
+async function deleteRecipesByMenuItem(itemId) {
+    // Delete all recipe entries for a specific menu item
+    await pool.query('DELETE FROM recipes WHERE itemid = $1', [itemId]);
 }
 
 async function generalReport() {
@@ -148,10 +189,88 @@ async function generalReport() {
   };
 }
 
+async function inventoryReport(start = null, end = null) {
+  try {
+    // --- 1️⃣ Get current inventory ---
+    const { rows: inventory } = await pool.query(`
+      SELECT ingredientname, ingredientquantity, unit
+      FROM inventory
+      ORDER BY inventoryid ASC;
+    `);
+
+    // --- 2️⃣ If no time window, return basic stock report ---
+    if (!start || !end) {
+      return {
+        reportGeneratedAt: new Date().toISOString(),
+        timeWindow: null,
+        items: inventory.map(i => ({
+          ingredient: i.ingredientname,
+          quantity_in_stock: parseFloat(i.ingredientquantity),
+          total_used: 0,
+          remaining: parseFloat(i.ingredientquantity),
+          unit: i.unit
+        }))
+      };
+    }
+
+    // --- 3️⃣ Query total ingredient usage within given time window ---
+    const usageSQL = `
+      SELECT 
+        i.ingredientname,
+        COALESCE(SUM(r.quantity * oi."Quantity"), 0) AS total_used,
+        i.unit
+      FROM inventory i
+      LEFT JOIN recipes r ON i.inventoryid = r.inventoryid
+      LEFT JOIN orderitems oi ON r.itemid = oi."Item ID"
+      LEFT JOIN orders o ON oi."Order ID" = o."Order ID"
+      WHERE o."Order Date" BETWEEN $1 AND $2
+      GROUP BY i.ingredientname, i.unit
+      ORDER BY total_used DESC;
+    `;
+
+    const { rows: usage } = await pool.query(usageSQL, [start, end]);
+
+    // --- 4️⃣ Combine inventory + usage data ---
+    const reportItems = inventory.map(inv => {
+      const use = usage.find(u => u.ingredientname === inv.ingredientname);
+      const totalUsed = use ? parseFloat(use.total_used) : 0;
+      const stock = parseFloat(inv.ingredientquantity);
+      const remaining = Math.max(stock - totalUsed, 0);
+
+      return {
+        ingredient: inv.ingredientname,
+        quantity_in_stock: stock,
+        total_used: totalUsed,
+        remaining,
+        unit: inv.unit
+      };
+    });
+
+    // --- 5️⃣ Return full report ---
+    return {
+      reportGeneratedAt: new Date().toISOString(),
+      timeWindow: { start, end },
+      items: reportItems
+    };
+
+  } catch (err) {
+    console.error('❌ Error generating inventory report:', err);
+    throw new Error('Failed to generate inventory report.');
+  }
+}
 
 
 
-// You can export more functions here
 module.exports = {
-    getAll, updateItem, addItem, deleteItem, pool, generalReport
+    getAll, 
+    updateItem, 
+    addItem, 
+    deleteItem, 
+    addRecipe,
+    updateRecipe,
+    deleteRecipe,
+    deleteRecipesByMenuItem,  
+    generalReport,
+    inventoryReport,
+    pool
 };

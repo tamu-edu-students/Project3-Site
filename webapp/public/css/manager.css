@@ -242,50 +242,61 @@ body {
   background-color: #45a049;
 }
 
-#reports, #x-reports {
-    padding: 10px 20px;
+/* ====== General Button Styling ====== */
+.reports-grid button {
+    padding: 12px 24px;
     border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: bold;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s ease;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    color: #fff;
 }
 
-#reports {
-    background-color: #007bff;
-    color: white;
+/* ====== Other Report Buttons ====== */
+#reports,
+#x-reports,
+#inventoryReport,
+#menuReport,
+#employeeReport,
+#salesReport,
+#itemizedSalesReport {
+    background-color: #6c757d;
 }
-
-#reports:hover {
-    background-color: #0056b3;
+#reports:hover,
+#x-reports:hover,
+#inventoryReport:hover,
+#menuReport:hover,
+#employeeReport:hover,
+#salesReport:hover,
+#itemizedSalesReport:hover {
+    background-color: #5a6268;
     transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
 }
 
-#x-reports {
-    background-color: #dc3545;
-    color: white;
-}
-
-#x-reports:hover {
-    background-color: #b02a37;
-    transform: translateY(-3px);
-}
-
+/* ====== Grid Layout ====== */
 .reports-grid {
     display: none;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
-    padding: 10px 20px;
+    padding: 20px;
+    justify-items: center;
 }
 
+/* ====== Toggle Visibility (when using checkbox trigger) ====== */
 .toggle-section:checked ~ .reports-grid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+    display: grid;
+}
+
+/* ====== Active / Focus States ====== */
+.reports-grid button:active {
+    transform: scale(0.97);
+}
+.reports-grid button:focus {
+    outline: 2px solid #80bdff;
+    outline-offset: 2px;
 }
 
 /* The modal container */
@@ -316,4 +327,54 @@ body {
   float: right;
   font-size: 28px;
   cursor: pointer;
+}
+/* Recipe styling under this */
+
+.recipe-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.recipe-card h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 5px;
+}
+
+.recipe-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recipe-card button.hidden {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.recipe-item {
+    padding: 8px;
+    margin: 5px 0;
+    background: #f9f9f9;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.recipe-text {
+    flex-grow: 1;
+}
+
+.recipe-add-form {
+    width: 100%;
 }

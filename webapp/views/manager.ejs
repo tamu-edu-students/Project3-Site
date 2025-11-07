@@ -16,6 +16,11 @@
 
             <div class="reports-grid">
                 <button id="reports">Reports</button>
+                <button id="inventoryReport">Inventory Report</button>
+                <button id="menuReport">Menu Report</button>
+                <button id="employeeReport">Employee Report</button>
+                <button id="salesReport">Sales Report</button>
+                <button id="itemizedSalesReport">Itemized Sales Report</button>
                 <button id="x-reports">X-Reports</button>
             </div>
         </div>
@@ -85,26 +90,48 @@
             <label for="toggle-recipes" class="section-header">
                 <h2>Recipes</h2>
             </label>
+            
             <div class="section-controls">
-                <button class="add-btn">+</button>
-                <button class="delete-btn">-</button>
-                <button class="update-btn">Edit</button>
+                 <button class="delete-btn">-</button>
             </div>
-            <div class="data-grid">
+
+            <div class="data-grid recipes-grid">
                 <% Object.values(recipes).forEach(recipeGroup => { %>
-                    <div class="recipe-card">
-                        <h3><%= recipeGroup.itemname %></h3>
+                    <div class="recipe-card" data-itemid="<%= recipeGroup.itemid %>">
+                        <div class="recipe-card-header">
+                            <h3><%= recipeGroup.itemname %></h3>
+
+                        </div>
                         <ul>
                             <% recipeGroup.ingredients.forEach(ing => { %>
-                                <li>
-                                    <%= ing.ingredientname %> - <%= ing.quantity %> <%= ing.unit %>
-                                    <button onClick="deleteItem('recipes', <%= ing.recipeid %>)" class="hidden">DELETE</button>
+                                <li class="recipe-item" data-id="<%= ing.recipeid %>" 
+                                    data-inventoryid="<%= ing.inventoryid %>" 
+                                    data-quantity="<%= ing.quantity %>" 
+                                    data-unit="<%= ing.unit %>">
+
+                                    <span class="recipe-text">
+                                        <%= ing.ingredientname %> - <%= ing.quantity %> <%= ing.unit %>
+                                    </span>
+                                    <button onclick="deleteItem('recipes', <%= ing.recipeid %>)" class="hidden">
+                                        ✕
+                                    </button>
+
+                                    <button class="edit-ingredient-btn">Edit</button>
                                 </li>
                             <% }) %>
                         </ul>
+                        <button class="add-ingredient-btn" data-itemid="<%= recipeGroup.itemid %>" data-itemname="<%= recipeGroup.itemname %>">
+                            + Add Ingredient
+                        </button>
                     </div>
                 <% }) %>
-
+                
+                <!-- Empty state for when no recipes exist -->
+                <% if (Object.keys(recipes).length === 0) { %>
+                    <div class="empty-recipes-message">
+                        <p>No recipes yet. Add menu items first, then create recipes for them!</p>
+                    </div>
+                <% } %>
             </div>
         </div>
 
@@ -133,7 +160,7 @@
         <div id="addModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3>Add New Item</h3>
+        
             <form id="addForm">
             
             <!-- Name field (all sections) -->
@@ -182,7 +209,47 @@
             </div>
         </div>
 
-    <script src="/js/manager.js"></script>
+        <div id="inventoryScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeInvBtn" class="close">&times;</span>
+                <h2>Inventory Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDate">Start Date:</label>
+                <input type="datetime-local" id="startDate">
+
+                <label for="endDate">End Date:</label>
+                <input type="datetime-local" id="endDate">
+
+                <button id="generateReportBtn">Generate Report</button>
+                </div>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                <table id="inventoryTable">
+                    <thead>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>Quantity In Stock</th>
+                        <th>Total Used</th>
+                        <th>Remaining</th>
+                        <th>Unit</th>
+                    </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                    <!-- rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+
+    <script src="/js/manager-reports.js"></script>
+    <script src="/js/manager-handler.js"></script>
+    <script src="/js/manager-modal.js"></script>
+    <script src="/js/manager-recipe-handler.js"></script>
 
 </body>
 </html>
