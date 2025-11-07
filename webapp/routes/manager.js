@@ -41,6 +41,7 @@ router.get('/', async (req, res) => {
             }
             groupedRecipes[r.itemid].ingredients.push({
                 recipeid: r.recipeid,
+                inventoryid: r.inventoryid,
                 ingredientname: r.ingredientname,
                 quantity: r.quantity,
                 unit: r.unit

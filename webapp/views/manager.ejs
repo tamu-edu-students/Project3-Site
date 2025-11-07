@@ -72,27 +72,33 @@
             <label for="toggle-recipes" class="section-header">
                 <h2>Recipes</h2>
             </label>
+            
             <div class="section-controls">
                  <button class="delete-btn">-</button>
             </div>
+
             <div class="data-grid recipes-grid">
                 <% Object.values(recipes).forEach(recipeGroup => { %>
                     <div class="recipe-card" data-itemid="<%= recipeGroup.itemid %>">
                         <div class="recipe-card-header">
                             <h3><%= recipeGroup.itemname %></h3>
-                            <button class="hidden" onclick="deleteEntireRecipe(<%= recipeGroup.itemid %>, '<%= recipeGroup.itemname %>')">
-                                Delete Recipe
-                            </button>
+
                         </div>
                         <ul>
                             <% recipeGroup.ingredients.forEach(ing => { %>
-                                <li class="recipe-item" data-id="<%= ing.recipeid %>">
+                                <li class="recipe-item" data-id="<%= ing.recipeid %>" 
+                                    data-inventoryid="<%= ing.inventoryid %>" 
+                                    data-quantity="<%= ing.quantity %>" 
+                                    data-unit="<%= ing.unit %>">
+
                                     <span class="recipe-text">
                                         <%= ing.ingredientname %> - <%= ing.quantity %> <%= ing.unit %>
                                     </span>
                                     <button onclick="deleteItem('recipes', <%= ing.recipeid %>)" class="hidden">
                                         ✕
                                     </button>
+
+                                    <button class="edit-ingredient-btn">Edit</button>
                                 </li>
                             <% }) %>
                         </ul>
@@ -136,7 +142,7 @@
         <div id="addModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3>Add New Item</h3>
+        
             <form id="addForm">
             
             <!-- Name field (all sections) -->
@@ -174,7 +180,9 @@
         </div>
         </div>
 
-    <script src="/js/manager.js"></script>
+    <script src="/js/manager-handler.js"></script>
+    <script src="/js/manager-modal.js"></script>
+    <script src="/js/manager-recipe-handler.js"></script>
 
 </body>
 </html>

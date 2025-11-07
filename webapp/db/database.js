@@ -82,6 +82,11 @@ async function deleteItem(table, id) {
       : "inventoryid";
 
   try {
+
+    if (table === "menuitems") {
+      await deleteRecipesByMenuItem(id);
+    }
+    
     await pool.query(`DELETE FROM ${table} WHERE ${idColumn} = $1`, [id]);
     console.log(`Deleted item with ID ${id} from ${table}`);
   } catch (err) {
