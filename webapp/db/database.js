@@ -73,8 +73,6 @@ async function addItem(table, data) {
   }
 }
 
-
-
 async function deleteItem(table, id) {
   const idColumn =
     table === "employees"
@@ -92,8 +90,52 @@ async function deleteItem(table, id) {
   }
 }
 
+async function addRecipe(data) {
+    const query = `
+        INSERT INTO recipes (itemid, inventoryid, quantity, unit) 
+        VALUES ($1, $2, $3, $4) 
+        RETURNING *
+    `;
+    const values = [
+        Number(data.itemid),
+        Number(data.inventoryid),
+        Number(data.quantity),
+        data.unit || ''
+    ];
+    
+    const result = await pool.query(query, values);
+    return result.rows[0];
+}
 
-// You can export more functions here
+async function updateRecipe(id, fields) {
+    const setString = Object.keys(fields)
+        .map((key, idx) => `${key} = $${idx + 1}`)
+        .join(', ');
+    const values = Object.values(fields);
+
+    await pool.query(
+        `UPDATE recipes SET ${setString} WHERE recipeid = $${values.length + 1}`,
+        [...values, id]
+    );
+}
+
+async function deleteRecipe(id) {
+    await pool.query('DELETE FROM recipes WHERE recipeid = $1', [id]);
+}
+
+async function deleteRecipesByMenuItem(itemId) {
+    // Delete all recipe entries for a specific menu item
+    await pool.query('DELETE FROM recipes WHERE itemid = $1', [itemId]);
+}
+
 module.exports = {
-    getAll, updateItem, addItem, deleteItem, pool
+    getAll, 
+    updateItem, 
+    addItem, 
+    deleteItem, 
+    addRecipe,
+    updateRecipe,
+    deleteRecipe,
+    deleteRecipesByMenuItem,  
+    pool
 };

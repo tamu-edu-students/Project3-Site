@@ -148,13 +148,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const addBtn = section.querySelector('.add-btn');
         const dataGrid = section.querySelector('.data-grid');
 
-        if (addBtn) {
+        if (!addBtn || !dataGrid) return;
+
+        // Special handling for recipes
+        if (sectionName === 'recipes') {
+            addBtn.addEventListener('click', async (event) => {
+                event.stopPropagation();
+                try {
+                    // Fetch menu and inventory lists dynamically
+                    const [menuRes, invRes] = await Promise.all([
+                        fetch('/manager/menuitems'),
+                        fetch('/manager/inventory')
+                    ]);
+
+                    if (!menuRes.ok || !invRes.ok) {
+                        alert('Failed to load data for recipes');
+                        return;
+                    }
+
+                    const menuItems = await menuRes.json();
+                    const inventoryItems = await invRes.json();
+
+                    addNewRecipeRow(dataGrid, menuItems, inventoryItems);
+                } catch (err) {
+                    console.error('Error fetching menu/inventory:', err);
+                }
+            });
+        } else {
+            // Default add handler for menuitems, inventory, employees
             addBtn.addEventListener('click', (event) => {
                 event.stopPropagation();
                 addNewRow(section, sectionName, dataGrid);
             });
         }
     });
+
+
 
     // Add new row directly in the grid
     const placeholderMap = {
@@ -347,27 +376,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete toggle
     document.querySelectorAll('.data-section').forEach(section => {
-    const deleteToggleBtn = section.querySelector('.delete-btn'); // the "-" button
-    const dataGrid = section.querySelector('.data-grid');
+        const deleteToggleBtn = section.querySelector('.delete-btn'); // the "-" button
+        const dataGrid = section.querySelector('.data-grid');
 
-    if (!deleteToggleBtn || !dataGrid) return;
+        if (!deleteToggleBtn || !dataGrid) return;
 
-    deleteToggleBtn.addEventListener('click', () => {
-        // Block while editing
-        if (dataGrid.classList.contains('editing')) return;
+        deleteToggleBtn.addEventListener('click', () => {
+            // Block while editing
+            if (dataGrid.classList.contains('editing')) return;
 
-        const isDeleting = dataGrid.classList.toggle('show-deletes');
+            const isDeleting = dataGrid.classList.toggle('show-deletes');
 
-        if (isDeleting) {
-        // Switch "-" to "Cancel"
-        deleteToggleBtn.textContent = "Cancel";
-        deleteToggleBtn.classList.add('active');
-        } else {
-        // Switch back to "-"
-        deleteToggleBtn.textContent = "-";
-        deleteToggleBtn.classList.remove('active');
-        }
-    });
+            if (isDeleting) {
+                // Switch "-" to "Cancel"
+                deleteToggleBtn.textContent = "Cancel";
+                deleteToggleBtn.classList.add('active');
+                
+                // Show all delete buttons (both regular rows and recipe items)
+                dataGrid.querySelectorAll('button.hidden').forEach(btn => {
+                    btn.style.display = 'inline-block';
+                });
+            } else {
+                // Switch back to "-"
+                deleteToggleBtn.textContent = "-";
+                deleteToggleBtn.classList.remove('active');
+                
+                // Hide all delete buttons
+                dataGrid.querySelectorAll('button.hidden').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+        });
     });
 
     const inventoryChartCanvas = document.getElementById('inventoryChart');
@@ -444,133 +483,193 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Below is for recipes
 
-function addNewRecipeRow(dataGrid, menuItems, inventoryItems) {
-    const newRow = document.createElement('div');
-    newRow.classList.add('recipe-row');
-    newRow.dataset.id = '';
-
-    // Menu item select
-    const itemSelect = document.createElement('select');
-    itemSelect.dataset.column = 'itemid';
-    menuItems.forEach(m => {
-        const option = document.createElement('option');
-        option.value = m.itemid;
-        option.textContent = m.itemname;
-        itemSelect.appendChild(option);
+// Add click handlers for all "Add Ingredient" buttons under recipe cards
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (keep all your existing DOMContentLoaded code above)
+    
+    // Add this new handler for recipe card buttons
+    document.querySelectorAll('.add-ingredient-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const itemId = btn.dataset.itemid;
+            const itemName = btn.dataset.itemname;
+            const recipeCard = btn.closest('.recipe-card');
+            
+            try {
+                // Fetch inventory items
+                const invRes = await fetch('/manager/inventory');
+                if (!invRes.ok) {
+                    alert('Failed to load inventory data');
+                    return;
+                }
+                const inventoryItems = await invRes.json();
+                
+                // Show the add form for this specific recipe card
+                showAddIngredientForm(recipeCard, itemId, itemName, inventoryItems);
+            } catch (err) {
+                console.error('Error fetching inventory:', err);
+            }
+        });
     });
-    newRow.appendChild(itemSelect);
+});
 
-    // Inventory item select
+function showAddIngredientForm(recipeCard, itemId, itemName, inventoryItems) {
+    // Remove any existing form in this card
+    const existingForm = recipeCard.querySelector('.ingredient-add-form');
+    if (existingForm) {
+        existingForm.remove();
+        return; // Toggle behavior - if form exists, remove it
+    }
+    
+    // Create form container
+    const formContainer = document.createElement('div');
+    formContainer.classList.add('ingredient-add-form');
+    formContainer.style.cssText = `
+        margin-top: 15px;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    `;
+    
+    // Form title
+    const title = document.createElement('div');
+    title.style.cssText = 'color: white; font-weight: 600; margin-bottom: 10px; font-size: 14px;';
+    title.textContent = `Add ingredient to ${itemName}`;
+    formContainer.appendChild(title);
+    
+    // Helper function to create form groups
+    function createFormGroup(labelText, element) {
+        const group = document.createElement('div');
+        group.style.cssText = 'margin-bottom: 10px;';
+        
+        const label = document.createElement('label');
+        label.textContent = labelText;
+        label.style.cssText = 'color: white; font-weight: 600; font-size: 13px; display: block; margin-bottom: 5px;';
+        
+        element.style.cssText = 'width: 100%; padding: 8px; border: none; border-radius: 4px; font-size: 14px; box-sizing: border-box;';
+        
+        group.appendChild(label);
+        group.appendChild(element);
+        return group;
+    }
+    
+    // Ingredient select
     const inventorySelect = document.createElement('select');
     inventorySelect.dataset.column = 'inventoryid';
+    const defaultInvOption = document.createElement('option');
+    defaultInvOption.value = '';
+    defaultInvOption.textContent = '-- Select Ingredient --';
+    inventorySelect.appendChild(defaultInvOption);
     inventoryItems.forEach(i => {
         const option = document.createElement('option');
         option.value = i.inventoryid;
         option.textContent = i.ingredientname;
         inventorySelect.appendChild(option);
     });
-    newRow.appendChild(inventorySelect);
-
+    formContainer.appendChild(createFormGroup('Ingredient', inventorySelect));
+    
+    // Quantity and Unit row
+    const qtyUnitRow = document.createElement('div');
+    qtyUnitRow.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 10px;';
+    
     // Quantity input
+    const qtyGroup = document.createElement('div');
+    const qtyLabel = document.createElement('label');
+    qtyLabel.textContent = 'Quantity';
+    qtyLabel.style.cssText = 'color: white; font-weight: 600; font-size: 13px; display: block; margin-bottom: 5px;';
     const qtyInput = document.createElement('input');
     qtyInput.type = 'number';
     qtyInput.step = '0.01';
-    qtyInput.dataset.column = 'quantity';
+    qtyInput.min = '0';
     qtyInput.value = 1;
-    newRow.appendChild(qtyInput);
-
+    qtyInput.style.cssText = 'width: 100%; padding: 8px; border: none; border-radius: 4px; font-size: 14px; box-sizing: border-box;';
+    qtyGroup.appendChild(qtyLabel);
+    qtyGroup.appendChild(qtyInput);
+    
     // Unit input
+    const unitGroup = document.createElement('div');
+    const unitLabel = document.createElement('label');
+    unitLabel.textContent = 'Unit';
+    unitLabel.style.cssText = 'color: white; font-weight: 600; font-size: 13px; display: block; margin-bottom: 5px;';
     const unitInput = document.createElement('input');
     unitInput.type = 'text';
-    unitInput.dataset.column = 'unit';
-    unitInput.value = '';
-    newRow.appendChild(unitInput);
-
-    // Save / Cancel buttons
+    unitInput.placeholder = 'e.g., lbs, oz';
+    unitInput.style.cssText = 'width: 100%; padding: 8px; border: none; border-radius: 4px; font-size: 14px; box-sizing: border-box;';
+    unitGroup.appendChild(unitLabel);
+    unitGroup.appendChild(unitInput);
+    
+    qtyUnitRow.appendChild(qtyGroup);
+    qtyUnitRow.appendChild(unitGroup);
+    formContainer.appendChild(qtyUnitRow);
+    
+    // Button container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = 'display: flex; gap: 8px; margin-top: 12px;';
+    
+    // Save button
     const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Save';
+    saveBtn.textContent = 'Add';
+    saveBtn.style.cssText = 'flex: 1; padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px;';
+    saveBtn.addEventListener('mouseover', () => saveBtn.style.background = '#45a049');
+    saveBtn.addEventListener('mouseout', () => saveBtn.style.background = '#4CAF50');
+    
+    // Cancel button
     const cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'Cancel';
-
-    cancelBtn.addEventListener('click', () => newRow.remove());
-
+    cancelBtn.style.cssText = 'flex: 1; padding: 8px 16px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px;';
+    cancelBtn.addEventListener('mouseover', () => cancelBtn.style.background = '#da190b');
+    cancelBtn.addEventListener('mouseout', () => cancelBtn.style.background = '#f44336');
+    
+    cancelBtn.addEventListener('click', () => formContainer.remove());
+    
     saveBtn.addEventListener('click', async () => {
+        // Validation
+        if (!inventorySelect.value) {
+            alert('Please select an ingredient');
+            return;
+        }
+        if (!qtyInput.value || parseFloat(qtyInput.value) <= 0) {
+            alert('Please enter a valid quantity');
+            return;
+        }
+        if (!unitInput.value.trim()) {
+            alert('Please enter a unit (e.g., lbs, oz, cups)');
+            return;
+        }
+        
         const newData = {
-            itemid: itemSelect.value,
-            inventoryid: inventorySelect.value,
+            itemid: parseInt(itemId),
+            inventoryid: parseInt(inventorySelect.value),
             quantity: parseFloat(qtyInput.value),
-            unit: unitInput.value
+            unit: unitInput.value.trim()
         };
-
+        
         try {
             const res = await fetch('/manager/recipes/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newData)
             });
+            
             if (res.ok) {
-                const result = await res.json();
-                newRow.dataset.id = result.recipeid;
-                alert('Recipe added!');
-                newRow.querySelectorAll('input, select').forEach(el => el.disabled = true);
-                saveBtn.remove();
-                cancelBtn.remove();
+                alert('Ingredient added successfully!');
+                location.reload();
             } else {
                 const text = await res.text();
-                alert('Failed to add recipe: ' + text);
+                alert('Failed to add ingredient: ' + text);
             }
         } catch (err) {
             console.error(err);
-            alert('Error adding recipe');
+            alert('Error adding ingredient');
         }
     });
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'DELETE';
-    deleteBtn.addEventListener('click', async () => {
-        if (!newRow.dataset.id) return newRow.remove();
-        await deleteItem('recipes', newRow.dataset.id);
-    });
-    newRow.appendChild(deleteBtn);
-
-    newRow.appendChild(saveBtn);
-    newRow.appendChild(cancelBtn);
-    dataGrid.appendChild(newRow);
-}
-
-function enterEditModeRecipe(recipeRow) {
-    const inputs = recipeRow.querySelectorAll('input, select');
-    inputs.forEach(i => i.disabled = false);
-
-    const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Save';
-    recipeRow.appendChild(saveBtn);
-
-    saveBtn.addEventListener('click', async () => {
-        const updatedData = {
-            itemid: recipeRow.querySelector('[data-column="itemid"]').value,
-            inventoryid: recipeRow.querySelector('[data-column="inventoryid"]').value,
-            quantity: parseFloat(recipeRow.querySelector('[data-column="quantity"]').value),
-            unit: recipeRow.querySelector('[data-column="unit"]').value
-        };
-
-        try {
-            const res = await fetch(`/manager/recipes/update/${recipeRow.dataset.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
-            });
-            if (res.ok) {
-                alert('Recipe updated!');
-                inputs.forEach(i => i.disabled = true);
-                saveBtn.remove();
-            } else {
-                const text = await res.text();
-                alert('Failed to update recipe: ' + text);
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Error updating recipe');
-        }
-    });
+    
+    buttonContainer.appendChild(saveBtn);
+    buttonContainer.appendChild(cancelBtn);
+    formContainer.appendChild(buttonContainer);
+    
+    // Insert form before the "Add Ingredient" button
+    const addBtn = recipeCard.querySelector('.add-ingredient-btn');
+    addBtn.parentNode.insertBefore(formContainer, addBtn);
 }
