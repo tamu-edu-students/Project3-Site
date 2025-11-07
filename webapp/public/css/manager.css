@@ -225,3 +225,95 @@ body {
 .data-row button.hidden:hover {
   background-color: #b02a37;
 }
+
+/* Basic button styles */
+#inventoryChartRefresh.refresh-btn {
+  padding: 10px 15px;               
+  background-color: #4CAF50;       
+  color: white;                    
+  border: none;                     
+  border-radius: 5px;               
+  font-size: 16px;                  
+  cursor: pointer;                  
+  transition: background-color 0.3s; 
+}
+
+#inventoryChartRefresh.refresh-btn:hover {
+  background-color: #45a049;
+}
+
+#reports, #x-reports {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#reports {
+    background-color: #007bff;
+    color: white;
+}
+
+#reports:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+#x-reports {
+    background-color: #dc3545;
+    color: white;
+}
+
+#x-reports:hover {
+    background-color: #b02a37;
+    transform: translateY(-3px);
+}
+
+.reports-grid {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 10px 20px;
+}
+
+.toggle-section:checked ~ .reports-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* The modal container */
+.modal {
+  display: none;               /* Hidden by default */
+  position: fixed;
+  z-index: 1000;               /* On top of everything */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);  /* Dark background overlay */
+}
+
+/* Modal box */
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Close button (the “×”) */
+.close {
+  float: right;
+  font-size: 28px;
+  cursor: pointer;
+}

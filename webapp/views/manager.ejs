@@ -7,6 +7,19 @@
 <body>
     <div class="main-container">
 
+
+        <div class="data-section">
+            <input type="checkbox" id="toggle-reports" class="toggle-section">
+            <label for="toggle-reports" class="section-header">
+                <h2>Reports</h2>
+            </label>
+
+            <div class="reports-grid">
+                <button id="reports">Reports</button>
+                <button id="x-reports">X-Reports</button>
+            </div>
+        </div>
+
         <div class="data-section">
             <input type="checkbox" id="toggle-chart" class="toggle-section">
             <label for="toggle-chart" class="section-header">
@@ -156,6 +169,17 @@
             <button type="submit">Add</button>
             </form>
         </div>
+        </div>
+
+        <div id="reportsScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeModalBtn" class="close">&times;</span>
+                <h2>General Overview</h2>
+                <p id="totalSales">Total Sales: </p>
+                <p id="totalOrders">Total Orders: </p>
+                <p id="peakHour">Peak Sales Hour: </p>
+                <p id="popularDrink">Most Popular Drink: </p>
+            </div>
         </div>
 
     <script src="/js/manager.js"></script>

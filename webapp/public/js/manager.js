@@ -574,3 +574,27 @@ function enterEditModeRecipe(recipeRow) {
         }
     });
 }
+// Get elements
+document.getElementById('reports').addEventListener('click', async () => {
+    console.log('Reports button clicked!');
+    const modal = document.getElementById('reportsScreen');
+    modal.style.display = 'block';
+
+    try {
+        const res = await fetch('/manager/api/reports');
+        const data = await res.json();
+        console.log('Fetched report data:', data);
+
+        document.getElementById('totalSales').textContent = `Total Sales: ${data.totalSales}`;
+        document.getElementById('totalOrders').textContent = `Total Orders: ${data.totalOrders}`;
+        document.getElementById('peakHour').textContent = `Peak Sales Hour: ${data.peakHour}`;
+        document.getElementById('popularDrink').textContent = `Most Popular Drink: ${data.popularDrink}`;
+    } catch (err) {
+        console.error('Error fetching report data:', err);
+    }
+});
+
+document.getElementById('closeModalBtn').addEventListener('click', () => {
+    document.getElementById('reportsScreen').style.display = 'none';
+});
+

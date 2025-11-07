@@ -127,4 +127,17 @@ router.get('/inventory-usage', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch inventory usage' });
     }
 });
+
+router.get('/api/reports', async (req, res) => {
+  try {
+    const reportData = await db.generalReport();
+    // console.log('Fetched report data:', reportData); // Should now show real data
+    res.json(reportData);
+  } catch (err) {
+    console.error('Error fetching report data:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 module.exports = router;

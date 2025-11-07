@@ -92,8 +92,66 @@ async function deleteItem(table, id) {
   }
 }
 
+async function generalReport() {
+  // 1️⃣ Total Sales
+  const totalSalesResult = await pool.query('SELECT SUM("Total Amount") AS total_sales FROM orders');
+  const total = totalSalesResult.rows.length > 0 && totalSalesResult.rows[0].total_sales
+      ? parseFloat(totalSalesResult.rows[0].total_sales)
+      : 0.0;
+  const totalSales = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total);
+
+  // 2️⃣ Total Orders
+  const totalOrdersResult = await pool.query('SELECT COUNT(*) AS total_orders FROM orders');
+  const totalOrders = totalOrdersResult.rows.length > 0
+      ? parseInt(totalOrdersResult.rows[0].total_orders, 10)
+      : 0;
+
+  // 3️⃣ Peak Sales Hour
+  const peakHourResult = await pool.query(`
+      SELECT EXTRACT(HOUR FROM "Order Date") AS order_hour,
+              COUNT(*) AS order_count
+      FROM orders
+      GROUP BY order_hour
+      ORDER BY order_count DESC
+      LIMIT 1
+  `);
+
+  let peakHour = "N/A";
+  if (peakHourResult.rows.length > 0) {
+      let hour24 = parseInt(peakHourResult.rows[0].order_hour, 10);
+      let hour12 = hour24 % 12 || 12; // convert 0 → 12
+      const amPm = hour24 < 12 ? "AM" : "PM";
+      peakHour = `${hour12}:00 ${amPm}`;
+  }
+
+  // 4️⃣ Most Popular Menu Item
+  const popularDrinkResult = await pool.query(`
+      SELECT m."itemname" AS menu_item,
+              COUNT(*) AS times_ordered
+      FROM orderitems oi
+      JOIN menuitems m ON oi."Item ID" = m."itemid"
+      GROUP BY m."itemname"
+      ORDER BY times_ordered DESC
+      LIMIT 1
+  `);
+
+  const popularDrink = popularDrinkResult.rows.length > 0
+      ? popularDrinkResult.rows[0].menu_item
+      : "N/A";
+
+  // Return all data
+  return {
+      totalSales,
+      totalOrders,
+      peakHour,
+      popularDrink
+  };
+}
+
+
+
 
 // You can export more functions here
 module.exports = {
-    getAll, updateItem, addItem, deleteItem, pool
+    getAll, updateItem, addItem, deleteItem, pool, generalReport
 };
