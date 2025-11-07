@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require('../db/database');
 
 // Render manager page
-// Render manager page
 router.get('/', async (req, res) => {
     try {
         // Fetch basic tables
@@ -35,6 +34,7 @@ router.get('/', async (req, res) => {
         recipesRows.forEach(r => {
             if (!groupedRecipes[r.itemid]) {
                 groupedRecipes[r.itemid] = {
+                    itemid: r.itemid,
                     itemname: r.itemname,
                     ingredients: []
                 };
@@ -61,6 +61,50 @@ router.get('/', async (req, res) => {
     }
 });
 
+
+// Special add route for recipes
+router.post('/recipes/add', async (req, res) => {
+    try {
+        const savedRecipe = await db.addRecipe(req.body);
+        res.json(savedRecipe);
+    } catch (err) {
+        console.error('Error adding recipe:', err);
+        res.status(500).send('Failed to add recipe');
+    }
+});
+
+// Special update route for recipes
+router.put('/recipes/update/:id', async (req, res) => {
+    try {
+        await db.updateRecipe(req.params.id, req.body);
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Error updating recipe:', err);
+        res.status(500).send('Failed to update recipe');
+    }
+});
+
+// Special delete route for recipes
+router.delete('/recipes/delete/:id', async (req, res) => {
+    try {
+        await db.deleteRecipe(req.params.id);
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Error deleting recipe:', err);
+        res.status(500).send('Failed to delete recipe');
+    }
+});
+
+// Special route to delete all ingredients for a menu item (entire recipe)
+router.delete('/recipes/deleteall/:itemid', async (req, res) => {
+    try {
+        await db.deleteRecipesByMenuItem(req.params.itemid);
+        res.sendStatus(200);
+    } catch (err) {
+        console.error('Error deleting entire recipe:', err);
+        res.status(500).send('Failed to delete recipe');
+    }
+});
 
 // Add new record to a section
 router.post('/:section/add', async (req, res) => {
@@ -127,4 +171,26 @@ router.get('/inventory-usage', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch inventory usage' });
     }
 });
+
+
+// Add endpoint to fetch menu and inventory items for the add form
+router.get('/menuitems', async (req, res) => {
+    try {
+        const items = await db.getAll('menuitems');
+        res.json(items);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch menu items' });
+    }
+});
+
+router.get('/inventory', async (req, res) => {
+    try {
+        const items = await db.getAll('inventory');
+        res.json(items);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch inventory' });
+    }
+});
+
+
 module.exports = router;

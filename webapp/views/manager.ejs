@@ -73,25 +73,41 @@
                 <h2>Recipes</h2>
             </label>
             <div class="section-controls">
-                <button class="add-btn">+</button>
-                <button class="delete-btn">-</button>
-                <button class="update-btn">Edit</button>
+                 <button class="delete-btn">-</button>
             </div>
-            <div class="data-grid">
+            <div class="data-grid recipes-grid">
                 <% Object.values(recipes).forEach(recipeGroup => { %>
-                    <div class="recipe-card">
-                        <h3><%= recipeGroup.itemname %></h3>
+                    <div class="recipe-card" data-itemid="<%= recipeGroup.itemid %>">
+                        <div class="recipe-card-header">
+                            <h3><%= recipeGroup.itemname %></h3>
+                            <button class="hidden" onclick="deleteEntireRecipe(<%= recipeGroup.itemid %>, '<%= recipeGroup.itemname %>')">
+                                Delete Recipe
+                            </button>
+                        </div>
                         <ul>
                             <% recipeGroup.ingredients.forEach(ing => { %>
-                                <li>
-                                    <%= ing.ingredientname %> - <%= ing.quantity %> <%= ing.unit %>
-                                    <button onClick="deleteItem('recipes', <%= ing.recipeid %>)" class="hidden">DELETE</button>
+                                <li class="recipe-item" data-id="<%= ing.recipeid %>">
+                                    <span class="recipe-text">
+                                        <%= ing.ingredientname %> - <%= ing.quantity %> <%= ing.unit %>
+                                    </span>
+                                    <button onclick="deleteItem('recipes', <%= ing.recipeid %>)" class="hidden">
+                                        ✕
+                                    </button>
                                 </li>
                             <% }) %>
                         </ul>
+                        <button class="add-ingredient-btn" data-itemid="<%= recipeGroup.itemid %>" data-itemname="<%= recipeGroup.itemname %>">
+                            + Add Ingredient
+                        </button>
                     </div>
                 <% }) %>
-
+                
+                <!-- Empty state for when no recipes exist -->
+                <% if (Object.keys(recipes).length === 0) { %>
+                    <div class="empty-recipes-message">
+                        <p>No recipes yet. Add menu items first, then create recipes for them!</p>
+                    </div>
+                <% } %>
             </div>
         </div>
 
