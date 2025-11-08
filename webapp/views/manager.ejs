@@ -227,20 +227,104 @@
 
                 <!-- 🔹 Report Table -->
                 <div class="table-container">
-                <table id="inventoryTable">
+                    <table id="inventoryTable">
+                        <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Qty</th>
+                            <th>Used</th>
+                            <th>Remaining</th>
+                            <th>Unit</th>
+                        </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="menuScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeMenuBtn" class="close">&times;</span>
+                <h2>Menu Report</h2>
+                <p>*Best selling item highlighed in green</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                <table id="menuTable">
                     <thead>
                     <tr>
-                        <th>Ingredient</th>
-                        <th>Quantity In Stock</th>
-                        <th>Total Used</th>
-                        <th>Remaining</th>
-                        <th>Unit</th>
+                        <th>Menu Item</th>
+                        <th>Cost</th>
+                        <th>Times Ordered</th>
                     </tr>
                     </thead>
-                    <tbody id="inventoryTableBody">
+                    <tbody id="menuTableBody">
                     <!-- rows will be dynamically inserted here -->
                     </tbody>
                 </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="employeeScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeEmployeeBtn" class="close">&times;</span>
+                <h2>Employee Report</h2>
+                <p>*Best performing employee highlighed in green</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                <table id="employeeTable">
+                    <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Drinks Made</th>
+                    </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                    <!-- rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="salesScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeSalesBtn" class="close">&times;</span>
+                <h2>Sales Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDate">Start Date:</label>
+                <input type="datetime-local" id="salesStartDate">
+
+                <label for="endDate">End Date:</label>
+                <input type="datetime-local" id="salesEndDate">
+
+                <button id="generateSalesReportBtn">Generate Report</button>
+                </div>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                    <p>Most popular drink: </p>
+                    <p>Most popular hour: </p>
+                    <table id="salesTable">
+                        <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>Customer</th>
+                            <th>Total ($)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="salesReportTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

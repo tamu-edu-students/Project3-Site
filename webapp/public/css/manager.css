@@ -378,3 +378,18 @@ body {
 .recipe-add-form {
     width: 100%;
 }
+
+
+#menuTable th, #menuTable td, #employeeTable th, #employeeTable td {
+    padding: 12px 20px; /* 12px top/bottom, 20px left/right */
+}
+
+.highlight-row {
+  background-color: #d4edda; /* light green */
+  font-weight: bold;
+}
+
+#salesTable th, #salesTable td {
+    padding: 12px 15px; /* 12px top/bottom, 20px left/right */
+    text-align: center;
+}

@@ -259,7 +259,83 @@ async function inventoryReport(start = null, end = null) {
   }
 }
 
+async function menuReport() {
+  const menuSalesResult = await pool.query(`
+    SELECT m.itemname, m.itemprice, COUNT(oi."Item ID") AS times_ordered
+    FROM menuitems m
+    LEFT JOIN orderitems oi ON m.itemid = oi."Item ID"
+    GROUP BY m.itemname, m.itemprice
+  `);
 
+  return menuSalesResult.rows;
+
+}
+
+async function employeeReport() {
+  const emplployeeSalesResult = await pool.query(`
+    SELECT e.employeename, COUNT(o. "Order ID") AS orders_handled
+    FROM employees e
+    LEFT JOIN orders o ON e.employeeid = o."Employee ID"
+    GROUP BY e.employeename
+    `);
+
+    return emplployeeSalesResult.rows;
+}
+
+async function getSalesBetween(start, end) {
+  const sql = `
+    SELECT 
+      o."Order ID" AS order_id,
+      o."Order Date" AS order_date,
+      c.customer_name AS customer,
+      o."Total Amount" AS total
+    FROM orders o
+    LEFT JOIN customers c ON o."Customer ID" = c.customer_id
+    WHERE o."Order Date" BETWEEN $1 AND $2
+    ORDER BY o."Order Date" ASC
+  `;
+
+  const result = await pool.query(sql, [start, end]);
+  return result.rows; // returns an array of sale objects
+}
+
+async function getMostPopularMenuItem(start, end) {
+  const sql = `
+    SELECT m.itemname, COUNT(oi."Item ID") AS times_ordered
+    FROM orders o
+    JOIN orderitems oi ON o."Order ID" = oi."Order ID"
+    JOIN menuitems m ON oi."Item ID" = m.itemid
+    WHERE o."Order Date" BETWEEN $1 AND $2
+    GROUP BY m.itemname
+    ORDER BY times_ordered DESC
+    LIMIT 1
+  `;
+
+  const result = await pool.query(sql, [start, end]);
+  return result.rows.length > 0 ? result.rows[0].itemname : 'N/A';
+}
+
+async function getPeakSalesHour(start, end) {
+  const sql = `
+    SELECT TO_CHAR(o."Order Date", 'HH24') AS hour, COUNT(*) AS orders_in_hour
+    FROM orders o
+    WHERE o."Order Date" BETWEEN $1 AND $2
+    GROUP BY hour
+    ORDER BY orders_in_hour DESC
+    LIMIT 1
+  `;
+
+  const result = await pool.query(sql, [start, end]);
+
+  if (result.rows.length === 0) return 'N/A';
+
+  const hour24 = parseInt(result.rows[0].hour, 10);
+  let hour12 = hour24 % 12;
+  if (hour12 === 0) hour12 = 12;
+  const amPm = hour24 < 12 ? 'AM' : 'PM';
+
+  return `${hour12}:00 ${amPm}`;
+}
 
 module.exports = {
     getAll, 
@@ -272,5 +348,10 @@ module.exports = {
     deleteRecipesByMenuItem,  
     generalReport,
     inventoryReport,
+    menuReport,
+    employeeReport,
+    getSalesBetween,
+    getMostPopularMenuItem,
+    getPeakSalesHour,
     pool
 };

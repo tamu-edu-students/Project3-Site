@@ -219,5 +219,52 @@ router.get('/api/invReports', async (req, res) => {
   }
 });
 
+router.get('/api/menuReport', async (req, res) => {
+    try {
+        const menuReportData = await db.menuReport();
+        console.log('Fetched menu report data:', menuReportData);
+        res.json(menuReportData);
+    } catch (err) {
+        console.error('Error fetching menu report data:', err);
+        res.status(500).json({ error: 'Server error' });
+    }   
+});
+
+router.get('/api/employeeReport', async (req, res) => {
+    try {
+        const employeeReportData = await db.employeeReport();  
+        console.log('Fetched employee report data:', employeeReportData);
+        res.json(employeeReportData);
+    } catch (err) {
+        console.error('Error fetching employee report data:', err);
+        res.status(500).json({ error: 'Server error' });
+    }   
+});
+
+router.get('/api/salesReport', async (req, res) => {
+    try {
+        const { start, end } = req.query;
+
+        const [salesData, popularItem, peakHour] = await Promise.all([
+            db.getSalesBetween(start, end),
+            db.getMostPopularMenuItem(start, end),
+            db.getPeakSalesHour(start, end)
+        ]); 
+
+        console.log('Fetched sales report data:', popularItem);
+        res.json({
+            sales: salesData,
+            mostPopularItem: popularItem,
+            peakHour: peakHour
+        });
+        console.log(res.json)
+
+
+    } catch (err) {
+        console.error('Error fetching sales report data:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 
 module.exports = router;
