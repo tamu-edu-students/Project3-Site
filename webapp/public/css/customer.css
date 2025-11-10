@@ -1184,6 +1184,9 @@ body {
 .cart-summary .summary-divider{height:1px;background:#eee;margin:8px 0;}
 .cart-summary .total-row{font-weight:900;font-size:1.15rem;}
 .cart-summary small{color:#888}
+.cart-total small {
+    display: none;
+  }
 
 /* Sticky footer buttons */
 .cart-footer{
@@ -1226,3 +1229,8 @@ body {
     width: auto;              /* avoid stretching */
   }
   
+  /* Hide the "(8.25%)" text next to Tax */
+.cart-summary small,
+.cart-total small {
+  display: none;
+}
