@@ -9,12 +9,13 @@ const pool = new Pool({
   port: process.env.PSQL_PORT,
 });
 
-// ---------- helpers ----------
+// helpers
+
 const idColumnFor = (table) =>
   table === 'employees' ? 'employeeid' :
   table === 'menuitems' ? 'itemid'    : 'inventoryid';
 
-// ---------- generic API ----------
+// API
 async function getAll(table) {
   const result = await pool.query(`SELECT * FROM ${table}`);
   return result.rows;
@@ -105,7 +106,7 @@ async function createOrderAndDeductInventory(cartItems, { employeeId = 0, custom
   try {
     await client.query('BEGIN');
 
-    // 1) Resolve menu items (id + price) in one go
+    //Resolve menu items (id + price) in one go
     const names = cartItems.map(i => i.drink);
     const { rows: menuRows } = await client.query(
       `SELECT itemid, itemname, itemprice
@@ -115,7 +116,7 @@ async function createOrderAndDeductInventory(cartItems, { employeeId = 0, custom
     );
     const byName = new Map(menuRows.map(r => [r.itemname, r]));
 
-    // 2) Build need map for inventory and compute order total
+    //Build need map for inventory and compute order total
     const needMap = new Map(); // inventoryid -> need total
     const shortages = [];
 
@@ -183,7 +184,7 @@ async function createOrderAndDeductInventory(cartItems, { employeeId = 0, custom
       }
     }
 
-    // 4) Insert INTO "orders"
+    // Insert INTO "orders"
     // Columns: "Customer ID","Employee ID","Order Date","Total Amount"
     const { rows: orderIns } = await client.query(
       `INSERT INTO public.orders
@@ -216,7 +217,7 @@ async function createOrderAndDeductInventory(cartItems, { employeeId = 0, custom
           orderId,
           rec.itemid,
           qty,
-          null,                       // no size in current UI
+          null,                       
           toppingsStr,
           line.sugarLevel || null,
           line.iceLevel || null
@@ -259,13 +260,13 @@ async function generalReport() {
       : 0.0;
   const totalSales = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(total);
 
-  // 2️⃣ Total Orders
+  // 2 Total Orders
   const totalOrdersResult = await pool.query('SELECT COUNT(*) AS total_orders FROM orders');
   const totalOrders = totalOrdersResult.rows.length > 0
       ? parseInt(totalOrdersResult.rows[0].total_orders, 10)
       : 0;
 
-  // 3️⃣ Peak Sales Hour
+  // 3️ Peak Sales Hour
   const peakHourResult = await pool.query(`
       SELECT EXTRACT(HOUR FROM "Order Date") AS order_hour,
               COUNT(*) AS order_count
@@ -283,7 +284,7 @@ async function generalReport() {
       peakHour = `${hour12}:00 ${amPm}`;
   }
 
-  // 4️⃣ Most Popular Menu Item
+  // 4️ Most Popular Menu Item
   const popularDrinkResult = await pool.query(`
       SELECT m."itemname" AS menu_item,
               COUNT(*) AS times_ordered
