@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 
-// GET /customer -> page
+// Get cutstomer page
 router.get('/', async (req, res, next) => {
   try {
     const menuItems = await db.getAll('menuitems');
@@ -12,7 +12,8 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// POST /customer/checkout -> create order + items + deduct inventory
+
+// create order, items, and deduct inventory 
 router.post('/checkout', async (req, res) => {
   try {
     const cart = Array.isArray(req.body?.cart) ? req.body.cart : [];
@@ -40,5 +41,4 @@ router.post('/checkout', async (req, res) => {
     return res.status(500).json({ message: 'Server error during checkout.' });
   }
 });
-
 module.exports = router;
