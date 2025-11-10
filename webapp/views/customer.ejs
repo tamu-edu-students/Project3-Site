@@ -1,548 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VAMSA - Order Your Drink</title>
-    <link rel="stylesheet" href="/css/customer.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VAMSA - Order Your Drink</title>
+  <link rel="stylesheet" href="/css/customer.css" />
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-content-wrapper">
-                <div class="header-text">
-                    <h1 class="logo">🧋 VAMSA</h1>
-                    <p class="tagline">Choose your perfect boba experience</p>
-                </div>
-                <div class="cart-icon-container">
-                    <button class="cart-icon-btn" id="cartIconBtn">
-                        <span class="cart-icon">🛒</span>
-                        <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="main-content">
-            <section class="drinks-section">
-                <h2 class="section-title">Our Signature Drinks</h2>
-                <div class="drinks-grid">
-                    <% menuItems.forEach(item => { %>
-                        <div class="drink-card" data-drink="<%= item.itemname %>">
-                            <div class="drink-image classic"></div>
-                            <h3 class="drink-name"><%= item.itemname %></h3>
-                            <p class="drink-description"><%= item.itemdescription %></p>
-                            <div class="price"><%= item.itemprice %></div>
-                        </div>
-                    <% }) %>
-                </div>
-            </section>
-        </main>
-
-        <footer class="footer">
-        </footer>
-    </div>
-
-    <!-- Cart Popup Modal (UPDATED) -->
-    <div id="cartModal" class="modal">
-        <div class="modal-content cart-modal-content">
-            <div class="modal-header cart-header">
-                <div class="cart-title-wrap">
-                    <h2>Your Cart</h2>
-                    <span class="cart-count-badge" id="cartCountBadge">0</span>
-                </div>
-                <span class="close cart-close">&times;</span>
-            </div>
-
-            <div class="modal-body cart-modal-body">
-                <div id="cartItems" class="cart-items">
-                    <p class="empty-cart-message">Your cart is empty</p>
-                </div>
-
-                <!-- Order summary inside cart -->
-                <div class="cart-summary">
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span id="cartSubtotal">$0.00</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Tax <small id="taxRateLabel"></small></span>
-                        <span id="cartTax">$0.00</span>
-                    </div>
-                    <div class="summary-divider"></div>
-                    <div class="summary-row total-row">
-                        <span>Total</span>
-                        <span id="cartTotal">$0.00</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer cart-footer">
-                <button class="btn-clear-cart" id="clearCartBtn">Clear Cart</button>
-                <button class="btn-checkout" id="checkoutBtn" disabled>Checkout</button>
-            </div>
+  <div class="container">
+    <header class="header">
+      <div class="header-content-wrapper">
+        <div class="header-text">
+          <h1 class="logo">🧋 VAMSA</h1>
+          <p class="tagline">Choose your perfect boba experience</p>
         </div>
-    </div>
-
-    <!-- Customization Popup Modal (unchanged) -->
-    <div id="customizationModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalDrinkName">Customize Your Drink</h2>
-                <span class="close">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="customizations-column">
-                    <!-- Ice Level Selection -->
-                    <div class="customization-section">
-                        <h3>Ice Level</h3>
-                        <div class="option-group">
-                            <label class="option-btn">
-                                <input type="radio" name="iceLevel" value="no ice">
-                                <span>No Ice</span>
-                            </label>
-                            <label class="option-btn">
-                                <input type="radio" name="iceLevel" value="light ice" checked>
-                                <span>Light Ice</span>
-                            </label>
-                            <label class="option-btn">
-                                <input type="radio" name="iceLevel" value="regular">
-                                <span>Regular</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Sugar Level Selection -->
-                    <div class="customization-section">
-                        <h3>Sugar Level</h3>
-                        <div class="option-group">
-                            <label class="option-btn">
-                                <input type="radio" name="sugarLevel" value="25%">
-                                <span>25%</span>
-                            </label>
-                            <label class="option-btn">
-                                <input type="radio" name="sugarLevel" value="50%" checked>
-                                <span>50%</span>
-                            </label>
-                            <label class="option-btn">
-                                <input type="radio" name="sugarLevel" value="75%">
-                                <span>75%</span>
-                            </label>
-                            <label class="option-btn">
-                                <input type="radio" name="sugarLevel" value="100%">
-                                <span>100%</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Toppings Selection -->
-                    <div class="customization-section">
-                        <h3>Toppings</h3>
-                        <div class="toppings-grid">
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Boba Pearls">
-                                <span>Boba Pearls</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Pudding">
-                                <span>Pudding</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Grass Jelly">
-                                <span>Grass Jelly</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Aloe Vera">
-                                <span>Aloe Vera</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Lychee Jelly">
-                                <span>Lychee Jelly</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Mango Popping">
-                                <span>Mango Popping</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Strawberry Popping">
-                                <span>Strawberry Popping</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Coffee Jelly">
-                                <span>Coffee Jelly</span>
-                            </label>
-                            <label class="topping-checkbox">
-                                <input type="checkbox" name="toppings" value="Crystal Boba">
-                                <span>Crystal Boba</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="order-summary">
-                    <h3>Order Summary</h3>
-                    <div class="summary-content">
-                        <div class="summary-item">
-                            <span class="summary-label">Drink:</span>
-                            <span id="summaryDrinkName" class="summary-value">-</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Ice Level:</span>
-                            <span id="summaryIceLevel" class="summary-value">-</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Sugar Level:</span>
-                            <span id="summarySugarLevel" class="summary-value">-</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Toppings:</span>
-                            <span id="summaryToppings" class="summary-value">None</span>
-                        </div>
-                        <div class="summary-item toppings-list" id="toppingsList" style="display: none;">
-                            <ul id="toppingsListItems"></ul>
-                        </div>
-                        <div class="summary-divider"></div>
-                        <div class="summary-item price-breakdown">
-                            <div class="price-line">
-                                <span class="summary-label">Base Price:</span>
-                                <span id="summaryBasePrice" class="summary-value">$0.00</span>
-                            </div>
-                            <div class="price-line" id="toppingsPriceLine" style="display: none;">
-                                <span class="summary-label">Toppings (<span id="toppingCount">0</span> × $1.00):</span>
-                                <span id="summaryToppingsPrice" class="summary-value">$0.00</span>
-                            </div>
-                        </div>
-                        <div class="summary-item total-price">
-                            <span class="summary-label">Total:</span>
-                            <span id="summaryTotalPrice" class="summary-value total">$0.00</span>
-                        </div>
-                    </div>
-                    <div class="summary-buttons">
-                        <button class="btn-cancel">Cancel</button>
-                        <button class="btn-add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer"></div>
+        <div class="cart-icon-container">
+          <button class="cart-icon-btn" id="cartIconBtn">
+            <span class="cart-icon">🛒</span>
+            <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+          </button>
         </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="drinks-section">
+        <h2 class="section-title">Our Signature Drinks</h2>
+        <div class="drinks-grid">
+          <% menuItems.forEach(item => { %>
+            <div class="drink-card" data-drink="<%= item.itemname %>">
+              <div class="drink-image classic"></div>
+              <h3 class="drink-name"><%= item.itemname %></h3>
+              <p class="drink-description"><%= item.itemdescription %></p>
+              <div class="price"><%= item.itemprice %></div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"></footer>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="modal">
+    <div class="modal-content cart-modal-content">
+      <div class="modal-header cart-header">
+        <div class="cart-title-wrap">
+          <h2>Your Cart</h2>
+          <span class="cart-count-badge" id="cartCountBadge">0</span>
+        </div>
+        <span class="close cart-close">&times;</span>
+      </div>
+
+      <div class="modal-body cart-modal-body">
+        <div id="cartItems" class="cart-items">
+          <p class="empty-cart-message">Your cart is empty</p>
+        </div>
+
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span><span id="cartSubtotal">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Tax <small id="taxRateLabel"></small></span><span id="cartTax">$0.00</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total-row">
+            <span>Total</span><span id="cartTotal">$0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer cart-footer">
+        <button class="btn-clear-cart" id="clearCartBtn">Clear Cart</button>
+        <button class="btn-checkout" id="checkoutBtn" disabled>Checkout</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // --- Config / helpers for cart totals ---
-        const TAX_RATE = 0.0825; // Adjust for your location
-        const money = n => `$${n.toFixed(2)}`;
+  <!-- Customization Modal -->
+  <div id="customizationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalDrinkName">Customize Your Drink</h2>
+        <span class="close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="customizations-column">
+          <div class="customization-section">
+            <h3>Ice Level</h3>
+            <div class="option-group">
+              <label class="option-btn"><input type="radio" name="iceLevel" value="no ice"><span>No Ice</span></label>
+              <label class="option-btn"><input type="radio" name="iceLevel" value="light ice" checked><span>Light Ice</span></label>
+              <label class="option-btn"><input type="radio" name="iceLevel" value="regular"><span>Regular</span></label>
+            </div>
+          </div>
 
-        // Get modal elements
-        const modal = document.getElementById('customizationModal');
-        const closeBtn = document.querySelector('#customizationModal .close');
-        const cancelBtn = document.querySelector('.btn-cancel');
-        const addToCartBtn = document.querySelector('.btn-add-to-cart');
-        const modalDrinkName = document.getElementById('modalDrinkName');
-        
-        // Summary elements
-        const summaryDrinkName = document.getElementById('summaryDrinkName');
-        const summaryIceLevel = document.getElementById('summaryIceLevel');
-        const summarySugarLevel = document.getElementById('summarySugarLevel');
-        const summaryToppings = document.getElementById('summaryToppings');
-        const toppingsList = document.getElementById('toppingsList');
-        const toppingsListItems = document.getElementById('toppingsListItems');
-        const summaryBasePrice = document.getElementById('summaryBasePrice');
-        const toppingsPriceLine = document.getElementById('toppingsPriceLine');
-        const toppingCount = document.getElementById('toppingCount');
-        const summaryToppingsPrice = document.getElementById('summaryToppingsPrice');
-        const summaryTotalPrice = document.getElementById('summaryTotalPrice');
-        
-        // Store base price
-        let basePrice = 0;
+          <div class="customization-section">
+            <h3>Sugar Level</h3>
+            <div class="option-group">
+              <label class="option-btn"><input type="radio" name="sugarLevel" value="25%"><span>25%</span></label>
+              <label class="option-btn"><input type="radio" name="sugarLevel" value="50%" checked><span>50%</span></label>
+              <label class="option-btn"><input type="radio" name="sugarLevel" value="75%"><span>75%</span></label>
+              <label class="option-btn"><input type="radio" name="sugarLevel" value="100%"><span>100%</span></label>
+            </div>
+          </div>
 
-        // Cart functionality
-        let cart = [];
-        
-        // Cart elements
-        const cartModal = document.getElementById('cartModal');
-        const cartIconBtn = document.getElementById('cartIconBtn');
-        const cartBadge = document.getElementById('cartBadge');
-        const cartItems = document.getElementById('cartItems');
-        const cartCloseBtn = document.querySelector('.cart-close');
-        const clearCartBtn = document.getElementById('clearCartBtn');
-        const checkoutBtn = document.getElementById('checkoutBtn');
+          <div class="customization-section">
+            <h3>Toppings</h3>
+            <div class="toppings-grid">
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Boba Pearls"><span>Boba Pearls</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Pudding"><span>Pudding</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Grass Jelly"><span>Grass Jelly</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Aloe Vera"><span>Aloe Vera</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Lychee Jelly"><span>Lychee Jelly</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Mango Popping"><span>Mango Popping</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Strawberry Popping"><span>Strawberry Popping</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Coffee Jelly"><span>Coffee Jelly</span></label>
+              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Crystal Boba"><span>Crystal Boba</span></label>
+            </div>
+          </div>
+        </div>
 
-        // Summary (in-cart) elements
-        const cartSubtotalEl = document.getElementById('cartSubtotal');
-        const cartTaxEl = document.getElementById('cartTax');
-        const cartTotalEl = document.getElementById('cartTotal');
-        const cartCountBadge = document.getElementById('cartCountBadge');
-        const taxRateLabel = document.getElementById('taxRateLabel');
-        taxRateLabel.textContent = `(${(TAX_RATE*100).toFixed(2)}%)`;
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+          <div class="summary-content">
+            <div class="summary-item"><span class="summary-label">Drink:</span><span id="summaryDrinkName" class="summary-value">-</span></div>
+            <div class="summary-item"><span class="summary-label">Ice Level:</span><span id="summaryIceLevel" class="summary-value">-</span></div>
+            <div class="summary-item"><span class="summary-label">Sugar Level:</span><span id="summarySugarLevel" class="summary-value">-</span></div>
+            <div class="summary-item"><span class="summary-label">Toppings:</span><span id="summaryToppings" class="summary-value">None</span></div>
+            <div class="summary-item toppings-list" id="toppingsList" style="display:none;">
+              <ul id="toppingsListItems"></ul>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item price-breakdown">
+              <div class="price-line"><span class="summary-label">Base Price:</span><span id="summaryBasePrice" class="summary-value">$0.00</span></div>
+              <div class="price-line" id="toppingsPriceLine" style="display:none;">
+                <span class="summary-label">Toppings (<span id="toppingCount">0</span> × $1.00):</span>
+                <span id="summaryToppingsPrice" class="summary-value">$0.00</span>
+              </div>
+            </div>
+            <div class="summary-item total-price"><span class="summary-label">Total:</span><span id="summaryTotalPrice" class="summary-value total">$0.00</span></div>
+          </div>
+          <div class="summary-buttons">
+            <button class="btn-cancel">Cancel</button>
+            <button class="btn-add-to-cart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
 
-        // Open cart modal
-        cartIconBtn.addEventListener('click', function() {
-            cartModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            updateCartDisplay();
+  <script>
+    // --- config / money ---
+    const TAX_RATE = 0.0825;
+    const money = n => `$${n.toFixed(2)}`;
+
+    // --- DOM refs (cart) ---
+    const cartModal = document.getElementById('cartModal');
+    const cartIconBtn = document.getElementById('cartIconBtn');
+    const cartBadge = document.getElementById('cartBadge');
+    const cartItems = document.getElementById('cartItems');
+    const cartCloseBtn = document.querySelector('.cart-close');
+    const clearCartBtn = document.getElementById('clearCartBtn');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const cartSubtotalEl = document.getElementById('cartSubtotal');
+    const cartTaxEl = document.getElementById('cartTax');
+    const cartTotalEl = document.getElementById('cartTotal');
+    const cartCountBadge = document.getElementById('cartCountBadge');
+    const taxRateLabel = document.getElementById('taxRateLabel');
+    taxRateLabel.textContent = `(${(TAX_RATE*100).toFixed(2)}%)`;
+
+    let basePrice = 0;
+    let cart = [];
+
+    // open/close cart
+    cartIconBtn.addEventListener('click', () => {
+      cartModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      updateCartDisplay();
+    });
+    cartCloseBtn.addEventListener('click', () => {
+      cartModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target === cartModal) {
+        cartModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    clearCartBtn.addEventListener('click', () => {
+      if (cart.length && confirm('Clear cart?')) {
+        cart = [];
+        updateCartBadge();
+        updateCartDisplay();
+      }
+    });
+
+    // checkout -> POST /customer/checkout
+    checkoutBtn.addEventListener('click', async () => {
+      if (!cart.length) return alert('Your cart is empty!');
+      try {
+        const payload = {
+          cart: cart.map(({ drink, toppings, qty, iceLevel, sugarLevel }) => ({
+            drink,
+            toppings,
+            quantity: qty || 1,
+            iceLevel,
+            sugarLevel
+          }))
+        };
+        const res = await fetch('/customer/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
 
-        // Close cart modal
-        cartCloseBtn.addEventListener('click', function() {
-            cartModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
-
-        // Close cart modal when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target === cartModal) {
-                cartModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        // Clear cart
-        clearCartBtn.addEventListener('click', function() {
-            if (cart.length > 0 && confirm('Are you sure you want to clear your cart?')) {
-                cart = [];
-                updateCartBadge();
-                updateCartDisplay();
-            }
-        });
-
-        // Checkout button (placeholder for now)
-        checkoutBtn.addEventListener('click', function() {
-            if (cart.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-            alert('Checkout functionality will be implemented here!');
-        });
-
-        // Add item to cart
-        function addToCart(item) {
-            cart.push(item);
-            updateCartBadge();
+        if (!res.ok) {
+          const text = await res.text();
+          return alert(`Checkout failed: ${res.status} ${text}`);
         }
 
-        // Remove item from cart (by index)
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartBadge();
-            updateCartDisplay();
-        }
+        const data = await res.json();
+        alert(`Order placed! Your order ID is ${data.orderId}.`);
+        cart = [];
+        updateCartBadge();
+        updateCartDisplay();
+      } catch (err) {
+        console.error(err);
+        alert('Checkout failed');
+      }
+    });
 
-        // Update cart badge (top-right button). Counts total units.
-        function updateCartBadge() {
-            const itemCount = cart.reduce((n, it) => n + (it.qty || 1), 0);
-            cartBadge.textContent = itemCount;
-            cartBadge.style.display = itemCount > 0 ? 'flex' : 'none';
-        }
+    // cart helpers
+    function updateCartBadge() {
+      const count = cart.reduce((n, it) => n + (it.qty || 1), 0);
+      cartBadge.textContent = count;
+      cartBadge.style.display = count > 0 ? 'flex' : 'none';
+    }
+    function removeFromCart(i){ cart.splice(i,1); updateCartBadge(); updateCartDisplay(); }
 
-        // Update cart display (render lines, qty, totals)
-        function updateCartDisplay() {
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
-                cartSubtotalEl.textContent = money(0);
-                cartTaxEl.textContent = money(0);
-                cartTotalEl.textContent = money(0);
-                cartCountBadge.textContent = '0';
-                checkoutBtn.disabled = true;
-                return;
-            }
+    function updateCartDisplay() {
+      if (!cart.length) {
+        cartItems.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
+        cartSubtotalEl.textContent = money(0);
+        cartTaxEl.textContent = money(0);
+        cartTotalEl.textContent = money(0);
+        cartCountBadge.textContent = '0';
+        checkoutBtn.disabled = true;
+        return;
+      }
 
-            let html = '';
-            let subtotal = 0;
+      let html = '', subtotal = 0;
+      cart.forEach((item, i) => {
+        const qty = item.qty || 1;
+        const line = item.totalPrice * qty;
+        subtotal += line;
+        html += `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <h3 class="cart-item-name">${item.drink}</h3>
+              <div class="cart-item-details">
+                <span>Ice: ${item.iceLevel}</span>
+                <span>• Sugar: ${item.sugarLevel}</span>
+                ${item.toppings.length ? `<span>• Toppings: ${item.toppings.join(', ')}</span>` : ''}
+              </div>
+            </div>
+            <div class="cart-item-price cart-item-right">
+              <span class="cart-item-price-value">${money(line)}</span>
+              <div class="qty-wrap">
+                <button class="qty-btn" data-action="dec" data-index="${i}">−</button>
+                <span class="qty-value" id="qty-${i}">${qty}</span>
+                <button class="qty-btn" data-action="inc" data-index="${i}">+</button>
+              </div>
+              <button class="btn-remove-item" data-index="${i}">Remove</button>
+            </div>
+          </div>`;
+      });
+      cartItems.innerHTML = html;
 
-            cart.forEach((item, index) => {
-                const qty = item.qty || 1;
-                const unitPrice = item.totalPrice; // one configured drink
-                const line = unitPrice * qty;
-                subtotal += line;
+      const tax = subtotal * TAX_RATE;
+      const total = subtotal + tax;
+      cartSubtotalEl.textContent = money(subtotal);
+      cartTaxEl.textContent = money(tax);
+      cartTotalEl.textContent = money(total);
+      cartCountBadge.textContent = String(cart.length);
+      checkoutBtn.disabled = false;
 
-                html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <h3 class="cart-item-name">${item.drink}</h3>
-                            <div class="cart-item-details">
-                                <span>Ice: ${item.iceLevel}</span>
-                                <span>• Sugar: ${item.sugarLevel}</span>
-                                ${item.toppings.length ? `<span>• Toppings: ${item.toppings.join(', ')}</span>` : ''}
-                            </div>
-                        </div>
-                        <div class="cart-item-price cart-item-right">
-                            <span class="cart-item-price-value">${money(line)}</span>
-                            <div class="qty-wrap" aria-label="quantity">
-                                <button class="qty-btn" data-action="dec" data-index="${index}">−</button>
-                                <span class="qty-value" id="qty-${index}">${qty}</span>
-                                <button class="qty-btn" data-action="inc" data-index="${index}">+</button>
-                            </div>
-                            <button class="btn-remove-item" data-index="${index}">Remove</button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            cartItems.innerHTML = html;
-
-            const tax = subtotal * TAX_RATE;
-            const total = subtotal + tax;
-
-            cartSubtotalEl.textContent = money(subtotal);
-            cartTaxEl.textContent = money(tax);
-            cartTotalEl.textContent = money(total);
-            cartCountBadge.textContent = String(cart.length);
-            checkoutBtn.disabled = false;
-
-            // remove handlers
-            document.querySelectorAll('.btn-remove-item').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = parseInt(this.getAttribute('data-index'));
-                    removeFromCart(index);
-                });
-            });
-
-            // qty handlers
-            document.querySelectorAll('.qty-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = parseInt(this.getAttribute('data-index'));
-                    const action = this.getAttribute('data-action');
-                    const current = cart[index].qty || 1;
-                    const next = action === 'inc' ? current + 1 : Math.max(1, current - 1);
-                    cart[index].qty = next;
-                    updateCartBadge();
-                    updateCartDisplay();
-                });
-            });
-        }
-
-        // Add click event listeners to all drink cards
-        document.querySelectorAll('.drink-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const drinkName = this.getAttribute('data-drink');
-                const priceText = this.querySelector('.price').textContent;
-                basePrice = parseFloat(priceText.replace('$', ''));
-                
-                modalDrinkName.textContent = drinkName;
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-                
-                updateSummary();
-            });
+      document.querySelectorAll('.btn-remove-item').forEach(b => {
+        b.addEventListener('click', () => removeFromCart(Number(b.dataset.index)));
+      });
+      document.querySelectorAll('.qty-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          const i = Number(b.dataset.index);
+          const action = b.dataset.action;
+          const curr = cart[i].qty || 1;
+          cart[i].qty = action === 'inc' ? curr + 1 : Math.max(1, curr - 1);
+          updateCartBadge(); updateCartDisplay();
         });
+      });
+    }
 
-        // Setup event listeners for customization options
-        document.querySelectorAll('input[name="iceLevel"]').forEach(radio => {
-            radio.addEventListener('change', updateSummary);
-        });
-        document.querySelectorAll('input[name="sugarLevel"]').forEach(radio => {
-            radio.addEventListener('change', updateSummary);
-        });
-        document.querySelectorAll('input[name="toppings"]').forEach(checkbox => {
-            checkbox.addEventListener('change', updateSummary);
-        });
+    // drink card -> open customizer
+    document.querySelectorAll('.drink-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const drink = card.getAttribute('data-drink');
+        const priceText = card.querySelector('.price').textContent;
+        basePrice = parseFloat(priceText.replace('$',''));
+        document.getElementById('modalDrinkName').textContent = drink;
+        customizationModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        updateSummary();
+      });
+    });
 
-        // Update summary function
-        function updateSummary() {
-            const drinkName = modalDrinkName.textContent;
-            const iceLevel = document.querySelector('input[name="iceLevel"]:checked')?.value || 'Light Ice';
-            const sugarLevel = document.querySelector('input[name="sugarLevel"]:checked')?.value || '50%';
-            const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
-                .map(checkbox => checkbox.value);
-            
-            summaryDrinkName.textContent = drinkName;
-            summaryIceLevel.textContent = iceLevel.charAt(0).toUpperCase() + iceLevel.slice(1);
-            summarySugarLevel.textContent = sugarLevel;
-            
-            if (selectedToppings.length > 0) {
-                summaryToppings.textContent = `${selectedToppings.length} selected`;
-                toppingsList.style.display = 'block';
-                toppingsListItems.innerHTML = '';
-                selectedToppings.forEach(topping => {
-                    const li = document.createElement('li');
-                    li.textContent = topping;
-                    toppingsListItems.appendChild(li);
-                });
-            } else {
-                summaryToppings.textContent = 'None';
-                toppingsList.style.display = 'none';
-            }
-            
-            const toppingsPrice = selectedToppings.length * 1.00;
-            const totalPrice = basePrice + toppingsPrice;
-            
-            summaryBasePrice.textContent = money(basePrice);
-            
-            if (selectedToppings.length > 0) {
-                toppingsPriceLine.style.display = 'block';
-                toppingCount.textContent = selectedToppings.length;
-                summaryToppingsPrice.textContent = money(toppingsPrice);
-            } else {
-                toppingsPriceLine.style.display = 'none';
-            }
-            
-            summaryTotalPrice.textContent = money(totalPrice);
-        }
+    // ----- customization modal -----
+    const customizationModal = document.getElementById('customizationModal');
+    const closeBtn = customizationModal.querySelector('.close');
+    const cancelBtn = document.querySelector('.btn-cancel');
+    const addToCartBtn = document.querySelector('.btn-add-to-cart');
 
-        // Close modal when clicking X
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetModal();
-        });
+    const summaryDrinkName = document.getElementById('summaryDrinkName');
+    const summaryIceLevel  = document.getElementById('summaryIceLevel');
+    const summarySugarLevel= document.getElementById('summarySugarLevel');
+    const summaryToppings  = document.getElementById('summaryToppings');
+    const toppingsList     = document.getElementById('toppingsList');
+    const toppingsListItems= document.getElementById('toppingsListItems');
+    const summaryBasePrice = document.getElementById('summaryBasePrice');
+    const toppingsPriceLine= document.getElementById('toppingsPriceLine');
+    const toppingCount     = document.getElementById('toppingCount');
+    const summaryToppingsPrice = document.getElementById('summaryToppingsPrice');
+    const summaryTotalPrice    = document.getElementById('summaryTotalPrice');
 
-        // Close modal when clicking Cancel
-        cancelBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetModal();
-        });
+    function updateSummary(){
+      const drinkName = document.getElementById('modalDrinkName').textContent;
+      const iceLevel  = document.querySelector('input[name="iceLevel"]:checked')?.value || 'Light Ice';
+      const sugarLevel= document.querySelector('input[name="sugarLevel"]:checked')?.value || '50%';
+      const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked')).map(cb => cb.value);
 
-        // Close modal when clicking outside of it
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-                resetModal();
-            }
-        });
+      summaryDrinkName.textContent = drinkName;
+      summaryIceLevel.textContent  = iceLevel.charAt(0).toUpperCase() + iceLevel.slice(1);
+      summarySugarLevel.textContent = sugarLevel;
 
-        // Add to Cart button functionality
-        addToCartBtn.addEventListener('click', function() {
-            const drinkName = modalDrinkName.textContent;
-            const iceLevel = document.querySelector('input[name="iceLevel"]:checked').value;
-            const sugarLevel = document.querySelector('input[name="sugarLevel"]:checked').value;
-            const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
-                .map(checkbox => checkbox.value);
+      if (selectedToppings.length){
+        summaryToppings.textContent = `${selectedToppings.length} selected`;
+        toppingsList.style.display = 'block';
+        toppingsListItems.innerHTML = selectedToppings.map(t => `<li>${t}</li>`).join('');
+      } else {
+        summaryToppings.textContent = 'None';
+        toppingsList.style.display = 'none';
+      }
 
-            const toppingsPrice = selectedToppings.length * 1.00;
-            const totalPrice = basePrice + toppingsPrice;
+      const toppingsPrice = selectedToppings.length * 1.00;
+      const totalPrice    = basePrice + toppingsPrice;
+      summaryBasePrice.textContent = money(basePrice);
 
-            const cartItem = {
-                drink: drinkName,
-                iceLevel: iceLevel,
-                sugarLevel: sugarLevel,
-                toppings: selectedToppings,
-                basePrice: basePrice,
-                toppingsPrice: toppingsPrice,
-                totalPrice: totalPrice,
-                qty: 1 // NEW: quantity per line
-            };
+      if (selectedToppings.length){
+        toppingsPriceLine.style.display = 'block';
+        toppingCount.textContent = selectedToppings.length;
+        summaryToppingsPrice.textContent = money(toppingsPrice);
+      } else {
+        toppingsPriceLine.style.display = 'none';
+      }
+      summaryTotalPrice.textContent = money(totalPrice);
+    }
 
-            addToCart(cartItem);
+    document.querySelectorAll('input[name="iceLevel"]').forEach(r => r.addEventListener('change', updateSummary));
+    document.querySelectorAll('input[name="sugarLevel"]').forEach(r => r.addEventListener('change', updateSummary));
+    document.querySelectorAll('input[name="toppings"]').forEach(c => c.addEventListener('change', updateSummary));
 
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            resetModal();
+    closeBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
+    cancelBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
 
-            // Optional: open cart after adding
-            cartModal.style.display = 'block';
-            updateCartDisplay();
-        });
+    window.addEventListener('click', (e) => {
+      if (e.target === customizationModal) {
+        customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal();
+      }
+    });
 
-        // Reset modal to default values
-        function resetModal() {
-            document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
-            document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
-            document.querySelectorAll('input[name="toppings"]').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-        }
-    </script>
+    addToCartBtn.addEventListener('click', () => {
+      const drinkName = document.getElementById('modalDrinkName').textContent;
+      const iceLevel  = document.querySelector('input[name="iceLevel"]:checked').value;
+      const sugarLevel= document.querySelector('input[name="sugarLevel"]:checked').value;
+      const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked')).map(cb => cb.value);
+      const toppingsPrice = selectedToppings.length * 1.00;
+      const totalPrice = basePrice + toppingsPrice;
+
+      cart.push({
+        drink: drinkName,
+        iceLevel, sugarLevel,
+        toppings: selectedToppings,
+        basePrice, toppingsPrice, totalPrice,
+        qty: 1
+      });
+      updateCartBadge();
+      customizationModal.style.display='none';
+      document.body.style.overflow='auto';
+      resetModal();
+      cartModal.style.display = 'block';
+      updateCartDisplay();
+    });
+
+    function resetModal(){
+      document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
+      document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
+      document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
+    }
+  </script>
 </body>
 </html>

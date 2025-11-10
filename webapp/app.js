@@ -1,29 +1,27 @@
 const express = require('express');
 
-// Create express app
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Serve static files from public
+// Basic logger (helps debug 404s)
+app.use((req, _res, next) => { console.log(`${req.method} ${req.url}`); next(); });
+
+// Static + JSON
 app.use(express.static('public'));
+app.use(express.json());
 
-app.use(express.json())
-
-// Set the view engine to EJS
+// EJS
 app.set('view engine', 'ejs');
 
-// Mount manager route
+// Routers
 const managerRouter = require('./routes/manager');
+const customerRouter = require('./routes/customer');
+const cashierRouter  = require('./routes/cashier');
+
 app.use('/manager', managerRouter);
-
-// Customer route
-const customerRoute = require('./routes/customer');
-app.use('/customer', customerRoute);
-
-// Cashier route
-const cashierRoute = require('./routes/cashier');
-app.use('/cashier', cashierRoute);
+app.use('/customer', customerRouter);
+app.use('/cashier',  cashierRouter);
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example app listening at http://localhost:${port}`);
 });
