@@ -226,6 +226,108 @@ body {
   background-color: #b02a37;
 }
 
+/* Basic button styles */
+#inventoryChartRefresh.refresh-btn {
+  padding: 10px 15px;               
+  background-color: #4CAF50;       
+  color: white;                    
+  border: none;                     
+  border-radius: 5px;               
+  font-size: 16px;                  
+  cursor: pointer;                  
+  transition: background-color 0.3s; 
+}
+
+#inventoryChartRefresh.refresh-btn:hover {
+  background-color: #45a049;
+}
+
+/* ====== General Button Styling ====== */
+.reports-grid button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    color: #fff;
+}
+
+/* ====== Other Report Buttons ====== */
+#reports,
+#x-reports,
+#inventoryReport,
+#menuReport,
+#employeeReport,
+#salesReport,
+#itemizedSalesReport {
+    background-color: #6c757d;
+}
+#reports:hover,
+#x-reports:hover,
+#inventoryReport:hover,
+#menuReport:hover,
+#employeeReport:hover,
+#salesReport:hover,
+#itemizedSalesReport:hover {
+    background-color: #5a6268;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* ====== Grid Layout ====== */
+.reports-grid {
+    display: none;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    justify-items: center;
+}
+
+/* ====== Toggle Visibility (when using checkbox trigger) ====== */
+.toggle-section:checked ~ .reports-grid {
+    display: grid;
+}
+
+/* ====== Active / Focus States ====== */
+.reports-grid button:active {
+    transform: scale(0.97);
+}
+.reports-grid button:focus {
+    outline: 2px solid #80bdff;
+    outline-offset: 2px;
+}
+
+/* The modal container */
+.modal {
+  display: none;               /* Hidden by default */
+  position: fixed;
+  z-index: 1000;               /* On top of everything */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);  /* Dark background overlay */
+}
+
+/* Modal box */
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Close button (the “×”) */
+.close {
+  float: right;
+  font-size: 28px;
+  cursor: pointer;
+}
 /* Recipe styling under this */
 
 .recipe-card {
@@ -275,4 +377,19 @@ body {
 
 .recipe-add-form {
     width: 100%;
+}
+
+
+#menuTable th, #menuTable td, #employeeTable th, #employeeTable td {
+    padding: 12px 20px; /* 12px top/bottom, 20px left/right */
+}
+
+.highlight-row {
+  background-color: #d4edda; /* light green */
+  font-weight: bold;
+}
+
+#salesTable th, #salesTable td {
+    padding: 12px 15px; /* 12px top/bottom, 20px left/right */
+    text-align: center;
 }

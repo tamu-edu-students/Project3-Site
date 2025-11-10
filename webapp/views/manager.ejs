@@ -7,6 +7,24 @@
 <body>
     <div class="main-container">
 
+
+        <div class="data-section">
+            <input type="checkbox" id="toggle-reports" class="toggle-section">
+            <label for="toggle-reports" class="section-header">
+                <h2>Reports</h2>
+            </label>
+
+            <div class="reports-grid">
+                <button id="reports">Reports</button>
+                <button id="inventoryReport">Inventory Report</button>
+                <button id="menuReport">Menu Report</button>
+                <button id="employeeReport">Employee Report</button>
+                <button id="salesReport">Sales Report</button>
+                <button id="itemizedSalesReport">Itemized Sales Report</button>
+                <button id="x-reports">X-Reports</button>
+            </div>
+        </div>
+
         <div class="data-section">
             <input type="checkbox" id="toggle-chart" class="toggle-section">
             <label for="toggle-chart" class="section-header">
@@ -180,6 +198,139 @@
         </div>
         </div>
 
+        <div id="reportsScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeModalBtn" class="close">&times;</span>
+                <h2>General Overview</h2>
+                <p id="totalSales">Total Sales: </p>
+                <p id="totalOrders">Total Orders: </p>
+                <p id="peakHour">Peak Sales Hour: </p>
+                <p id="popularDrink">Most Popular Drink: </p>
+            </div>
+        </div>
+
+        <div id="inventoryScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeInvBtn" class="close">&times;</span>
+                <h2>Inventory Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDate">Start Date:</label>
+                <input type="datetime-local" id="startDate">
+
+                <label for="endDate">End Date:</label>
+                <input type="datetime-local" id="endDate">
+
+                <button id="generateReportBtn">Generate Report</button>
+                </div>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                    <table id="inventoryTable">
+                        <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Qty</th>
+                            <th>Used</th>
+                            <th>Remaining</th>
+                            <th>Unit</th>
+                        </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="menuScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeMenuBtn" class="close">&times;</span>
+                <h2>Menu Report</h2>
+                <p>*Best selling item highlighed in green</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                <table id="menuTable">
+                    <thead>
+                    <tr>
+                        <th>Menu Item</th>
+                        <th>Cost</th>
+                        <th>Times Ordered</th>
+                    </tr>
+                    </thead>
+                    <tbody id="menuTableBody">
+                    <!-- rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="employeeScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeEmployeeBtn" class="close">&times;</span>
+                <h2>Employee Report</h2>
+                <p>*Best performing employee highlighed in green</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                <table id="employeeTable">
+                    <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Drinks Made</th>
+                    </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                    <!-- rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="salesScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeSalesBtn" class="close">&times;</span>
+                <h2>Sales Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDate">Start Date:</label>
+                <input type="datetime-local" id="salesStartDate">
+
+                <label for="endDate">End Date:</label>
+                <input type="datetime-local" id="salesEndDate">
+
+                <button id="generateSalesReportBtn">Generate Report</button>
+                </div>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                    <p>Most popular drink: </p>
+                    <p>Most popular hour: </p>
+                    <table id="salesTable">
+                        <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>Customer</th>
+                            <th>Total ($)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="salesReportTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    <script src="/js/manager-reports.js"></script>
     <script src="/js/manager-handler.js"></script>
     <script src="/js/manager-modal.js"></script>
     <script src="/js/manager-recipe-handler.js"></script>
