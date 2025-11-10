@@ -995,14 +995,15 @@ body {
   }
   
   .cart-total .total-line {
-    display: inline-flex;       /* keep label + value on one line */
+    display: flex;                 /* full-width row */
     align-items: baseline;
-    gap: 10px;                  /* space between label and amount */
-    width: auto;                /* don't stretch full width */
+    justify-content: space-between;/* separates label and value */
+    gap: 20px;                     /* tune spacing */
+    width: 100%;
   }
   
   .cart-total .total-value {
-    min-width: 80px;            /* neat right edge */
+    min-width: 96px;               /* tidy right edge */
     text-align: right;
   }
   
@@ -1210,10 +1211,32 @@ body {
 .cart-modal-body .cart-total,
 .cart-modal-footer{display:none;}
 
-@media (max-width:640px){
-  .cart-item{grid-template-columns:1fr;}
-  .cart-item-right{justify-items:start;}
-}
+/* Enlarge the totals card */
+.cart-total {
+    box-sizing: border-box;
+    display: inline-block;   /* shrink-wrap to content, not full width */
+    padding: 18px 22px;      /* more breathing room */
+    min-width: 260px;        /* make the box a little wider */
+    border-radius: 14px;     /* keep the pill look */
+  }
+  
+  /* If you're using the newer summary card instead */
+  .cart-summary {
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 18px 22px;
+    min-width: 260px;
+    border-radius: 14px;
+  }
+  
+  /* Optional: slightly wider on larger screens */
+  @media (min-width: 768px) {
+    .cart-total,
+    .cart-summary {
+      min-width: 300px;
+      padding: 20px 24px;
+    }
+  }  
 
 /* Put the totals card at the bottom-right of the cart body */
 .cart-modal-body {
