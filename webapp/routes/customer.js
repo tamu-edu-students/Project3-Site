@@ -12,39 +12,31 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// POST /customer/checkout -> create order, orderitems, and deduct inventory
+// POST /customer/checkout -> create order + items + deduct inventory
 router.post('/checkout', async (req, res) => {
   try {
     const cart = Array.isArray(req.body?.cart) ? req.body.cart : [];
     if (!cart.length) return res.status(400).json({ message: 'Cart is empty' });
 
-    // Normalize items expected by DB helper
     const normalized = cart.map(({ drink, toppings, qty, quantity, iceLevel, sugarLevel }) => ({
       drink,
       toppings: Array.isArray(toppings) ? toppings : [],
       quantity: Number(quantity ?? qty ?? 1),
-      iceLevel: iceLevel || null,
-      sugarLevel: sugarLevel || null,
+      iceLevel,
+      sugarLevel
     }));
 
-    // If you have real customer/employee IDs, pass them here
-    const options = {
-      customerId: 0,
-      employeeId: 0,
-    };
+    const result = await db.createOrderAndDeductInventory(normalized, {
+      customerId: 0, // adjust if you track real customers
+      employeeId: 0, // kiosk/customer page -> no employee
+    });
 
-    const result = await db.createOrderWithItems(normalized, options);
-
-    if (result.shortages?.length) {
-      return res.status(400).json({
-        message: 'Not enough inventory to fulfill order.',
-        shortages: result.shortages
-      });
+    if (!result.ok) {
+      return res.status(400).json({ message: 'Insufficient inventory', shortages: result.shortages });
     }
-
-    return res.json({ ok: true, orderId: result.orderId, total: result.totalAmount });
+    return res.json({ ok: true, orderId: result.orderId });
   } catch (err) {
-    console.error('Checkout error:', err);
+    console.error('Customer checkout error:', err);
     return res.status(500).json({ message: 'Server error during checkout.' });
   }
 });

@@ -12,7 +12,7 @@ const pool = new Pool({
 // ---------- helpers ----------
 const idColumnFor = (table) =>
   table === 'employees' ? 'employeeid' :
-  table === 'menuitems' ? 'itemid' : 'inventoryid';
+  table === 'menuitems' ? 'itemid'    : 'inventoryid';
 
 // ---------- generic API ----------
 async function getAll(table) {
@@ -94,96 +94,149 @@ async function deleteRecipesByMenuItem(itemId) {
   await pool.query('DELETE FROM recipes WHERE itemid = $1', [itemId]);
 }
 
-// ---------- existing domain logic for checkout (inventory only) ----------
-/**
- * cartItems: [{ drink: 'Classic Milk Tea', quantity: 2 }]
- * Deducts inventory based on recipes for each drink.
- */
-async function applyOrderAndDeductInventory(cartItems) {
+// ====================================================================
+// NEW: Create order (+ orderitems) AND deduct inventory in one txn
+// cartItems: [{ drink, quantity, iceLevel, sugarLevel, toppings[] }]
+// toppings are charged $1 each for total calculation here (same as UI).
+// Writes into tables with quoted column names: "orders", "orderitems".
+// ====================================================================
+async function createOrderAndDeductInventory(cartItems, { employeeId = 0, customerId = 0 } = {}) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    // Get menu item ids for all drinks in one shot
+    // 1) Resolve menu items (id + price) in one go
     const names = cartItems.map(i => i.drink);
-    const { rows: items } = await client.query(
-      `SELECT itemid, itemname FROM menuitems WHERE itemname = ANY($1::text[])`,
+    const { rows: menuRows } = await client.query(
+      `SELECT itemid, itemname, itemprice
+         FROM menuitems
+        WHERE itemname = ANY($1::text[])`,
       [names]
     );
-    const nameToId = new Map(items.map(r => [r.itemname, r.itemid]));
+    const byName = new Map(menuRows.map(r => [r.itemname, r]));
 
-    // Shortage accumulation
+    // 2) Build need map for inventory and compute order total
+    const needMap = new Map(); // inventoryid -> need total
     const shortages = [];
-    const updates = [];
 
-    // Build required ingredient totals
-    // map inventoryid -> {need}
-    const needMap = new Map();
+    // Helper: add needed quantity to needMap
+    const addNeed = (invId, qty) => {
+      const prev = needMap.get(invId) || 0;
+      needMap.set(invId, prev + qty);
+    };
+
+    // compute monetary total (no tax in DB total — matches prior rows)
+    let orderTotal = 0;
 
     for (const line of cartItems) {
-      const itemId = nameToId.get(line.drink);
-      if (!itemId) {
+      const qty = Number(line.quantity || 1);
+      const rec = byName.get(line.drink);
+      if (!rec) {
         shortages.push({ drink: line.drink, reason: 'menu item not found' });
         continue;
       }
-      const { rows: recipeRows } = await client.query(
-        `SELECT inventoryid, quantity, unit
-         FROM recipes WHERE itemid = $1`,
-        [itemId]
-      );
 
-      for (const r of recipeRows) {
-        const needed = Number(r.quantity) * Number(line.quantity || 1);
-        const prev = needMap.get(r.inventoryid) || { need: 0 };
-        needMap.set(r.inventoryid, { need: prev.need + needed });
+      const base = Number(rec.itemprice || 0);
+      const toppingCount = Array.isArray(line.toppings) ? line.toppings.length : 0;
+      const lineTotal = (base + toppingCount * 1.0) * qty;
+      orderTotal += lineTotal;
+
+      // pull recipe rows and accumulate ingredient needs
+      const { rows: recipeRows } = await client.query(
+        `SELECT inventoryid, quantity
+           FROM recipes
+          WHERE itemid = $1`,
+        [rec.itemid]
+      );
+      for (const rr of recipeRows) {
+        addNeed(rr.inventoryid, Number(rr.quantity) * qty);
       }
     }
 
-    // Fetch current inventory for all required ids
+    // If any missing menu item => fail early
+    if (shortages.length) {
+      await client.query('ROLLBACK');
+      return { ok: false, shortages };
+    }
+
+    // 3) Check inventory sufficiency
     const invIds = Array.from(needMap.keys());
     if (invIds.length) {
       const { rows: invRows } = await client.query(
         `SELECT inventoryid, ingredientname, ingredientquantity
-         FROM inventory WHERE inventoryid = ANY($1::int[])`,
+           FROM inventory
+          WHERE inventoryid = ANY($1::int[])`,
         [invIds]
       );
       const invMap = new Map(invRows.map(r => [r.inventoryid, r]));
-
-      // Check shortages
       for (const invId of invIds) {
-        const need = needMap.get(invId).need;
-        const invRow = invMap.get(invId);
-        const have = Number(invRow?.ingredientquantity ?? 0);
+        const need = needMap.get(invId);
+        const have = Number(invMap.get(invId)?.ingredientquantity ?? 0);
         if (have < need) {
-          shortages.push({
-            ingredientid: invId,
-            ingredient: invRow?.ingredientname || `#${invId}`,
-            need, have
-          });
+          const ing = invMap.get(invId)?.ingredientname || `#${invId}`;
+          shortages.push({ ingredientid: invId, ingredient: ing, need, have });
         }
       }
-
-      // If any shortage, rollback and report
       if (shortages.length) {
         await client.query('ROLLBACK');
-        return { shortages };
-      }
-
-      // Deduct
-      for (const invId of invIds) {
-        const need = needMap.get(invId).need;
-        updates.push({ invId, need });
-        await client.query(
-          `UPDATE inventory
-             SET ingredientquantity = ingredientquantity - $1
-           WHERE inventoryid = $2`,
-          [need, invId]
-        );
+        return { ok: false, shortages };
       }
     }
 
+    // 4) Insert INTO "orders"
+    // Columns: "Customer ID","Employee ID","Order Date","Total Amount"
+    const { rows: orderIns } = await client.query(
+      `INSERT INTO public.orders
+        ("Customer ID","Employee ID","Order Date","Total Amount")
+       VALUES ($1,$2,NOW(),$3)
+       RETURNING "Order ID"`,
+      [customerId, employeeId, orderTotal]
+    );
+    const orderId = orderIns[0]['Order ID'];
+
+    // 5) Insert order items + (after) deduct inventory
+    for (const line of cartItems) {
+      const qty = Number(line.quantity || 1);
+      const rec = byName.get(line.drink);
+      if (!rec) continue;
+
+      // orderitems columns:
+      // "Order ID","Item ID","Quantity","Order Size",
+      // "Order Topping","Order Sugar Level","Order Ice Level"
+      const toppingsStr = Array.isArray(line.toppings) && line.toppings.length
+        ? line.toppings.join(', ')
+        : null;
+
+      await client.query(
+        `INSERT INTO public.orderitems
+          ("Order ID","Item ID","Quantity","Order Size",
+           "Order Topping","Order Sugar Level","Order Ice Level")
+         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+        [
+          orderId,
+          rec.itemid,
+          qty,
+          null,                       // no size in current UI
+          toppingsStr,
+          line.sugarLevel || null,
+          line.iceLevel || null
+        ]
+      );
+    }
+
+    // 6) Deduct inventory
+    for (const invId of invIds) {
+      const need = needMap.get(invId);
+      await client.query(
+        `UPDATE inventory
+            SET ingredientquantity = ingredientquantity - $1
+          WHERE inventoryid = $2`,
+        [need, invId]
+      );
+    }
+
     await client.query('COMMIT');
-    return { updated: updates, shortages: [] };
+    return { ok: true, orderId };
   } catch (e) {
     await client.query('ROLLBACK');
     throw e;
@@ -192,146 +245,10 @@ async function applyOrderAndDeductInventory(cartItems) {
   }
 }
 
-// ---------- NEW: create order + orderitems + deduct inventory (all in one txn) ----------
-/**
- * cartItems: [{
- *   drink: string,
- *   quantity: number,
- *   toppings: string[],
- *   iceLevel?: string,
- *   sugarLevel?: string
- * }]
- * options: { customerId?: number, employeeId?: number }
- * Returns: { orderId, totalAmount }
- */
-async function createOrderWithItems(cartItems, options = {}) {
-  const customerId = Number(options.customerId ?? 0);
-  const employeeId = Number(options.employeeId ?? 0);
-
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-
-    // 1) Resolve menu items and prices
-    const names = cartItems.map(i => i.drink);
-    const { rows: items } = await client.query(
-      `SELECT itemid, itemname, itemprice
-       FROM menuitems
-       WHERE itemname = ANY($1::text[])`,
-      [names]
-    );
-    const nameToMenu = new Map(items.map(r => [r.itemname, r])); // {itemid,itemname,itemprice}
-
-    // 2) Build required ingredient totals (same as applyOrderAndDeductInventory)
-    const shortages = [];
-    const needMap = new Map(); // invId -> { need }
-    for (const line of cartItems) {
-      const menu = nameToMenu.get(line.drink);
-      if (!menu) {
-        shortages.push({ drink: line.drink, reason: 'menu item not found' });
-        continue;
-      }
-      const { rows: recipeRows } = await client.query(
-        `SELECT inventoryid, quantity, unit
-         FROM recipes
-         WHERE itemid = $1`,
-        [menu.itemid]
-      );
-      for (const r of recipeRows) {
-        const needed = Number(r.quantity) * Number(line.quantity || 1);
-        const prev = needMap.get(r.inventoryid) || { need: 0 };
-        needMap.set(r.inventoryid, { need: prev.need + needed });
-      }
-    }
-
-    // Shortage check
-    const invIds = Array.from(needMap.keys());
-    if (invIds.length) {
-      const { rows: invRows } = await client.query(
-        `SELECT inventoryid, ingredientname, ingredientquantity
-         FROM inventory WHERE inventoryid = ANY($1::int[])`,
-        [invIds]
-      );
-      const invMap = new Map(invRows.map(r => [r.inventoryid, r]));
-      for (const invId of invIds) {
-        const need = needMap.get(invId).need;
-        const have = Number(invMap.get(invId)?.ingredientquantity ?? 0);
-        if (have < need) {
-          shortages.push({
-            ingredientid: invId,
-            ingredient: invMap.get(invId)?.ingredientname || `#${invId}`,
-            need, have
-          });
-        }
-      }
-    }
-
-    if (shortages.length) {
-      await client.query('ROLLBACK');
-      return { shortages };
-    }
-
-    // 3) Compute order total on the server:
-    //    total = sum( (menu price + $1 * toppingsCount) * quantity )
-    let totalAmount = 0;
-    for (const line of cartItems) {
-      const menu = nameToMenu.get(line.drink);
-      if (!menu) continue; // already handled as shortage above
-      const qty = Number(line.quantity || 1);
-      const toppingCount = Array.isArray(line.toppings) ? line.toppings.length : 0;
-      const unitPrice = Number(menu.itemprice) + toppingCount * 1.0;
-      totalAmount += unitPrice * qty;
-    }
-
-    // 4) Insert into orders (quoted identifiers due to spaces)
-    const { rows: newOrderRows } = await client.query(
-      `INSERT INTO public.orders ("Customer ID", "Employee ID", "Order Date", "Total Amount")
-       VALUES ($1, $2, NOW(), $3)
-       RETURNING "Order ID"`,
-      [customerId, employeeId, totalAmount]
-    );
-    const orderId = newOrderRows[0]['Order ID'];
-
-    // 5) Insert each line into orderitems
-    for (const line of cartItems) {
-      const menu = nameToMenu.get(line.drink);
-      if (!menu) continue;
-      const qty = Number(line.quantity || 1);
-      const size = null; // no size selection in UI; set null (or 'Regular' if you prefer)
-      const toppingsText = (Array.isArray(line.toppings) && line.toppings.length)
-        ? line.toppings.join(', ')
-        : null;
-      const sugar = line.sugarLevel || null;
-      const ice   = line.iceLevel   || null;
-
-      await client.query(
-        `INSERT INTO public.orderitems (
-           "Order ID", "Item ID", "Quantity", "Order Size",
-           "Order Topping", "Order Sugar Level", "Order Ice Level"
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-        [orderId, menu.itemid, qty, size, toppingsText, sugar, ice]
-      );
-    }
-
-    // 6) Deduct inventory
-    for (const invId of invIds) {
-      const need = needMap.get(invId).need;
-      await client.query(
-        `UPDATE inventory
-           SET ingredientquantity = ingredientquantity - $1
-         WHERE inventoryid = $2`,
-        [need, invId]
-      );
-    }
-
-    await client.query('COMMIT');
-    return { orderId, totalAmount, shortages: [] };
-  } catch (e) {
-    await client.query('ROLLBACK');
-    throw e;
-  } finally {
-    client.release();
-  }
+// (kept for legacy calls that only deduct)
+async function applyOrderAndDeductInventory(cartItems) {
+  // You can keep your existing implementation here if other parts still use it
+  return createOrderAndDeductInventory(cartItems); // optional: route all through new one
 }
 
 module.exports = {
@@ -344,6 +261,7 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   deleteRecipesByMenuItem,
-  applyOrderAndDeductInventory,   // keep old one (if anything else uses it)
-  createOrderWithItems,           // new one (orders + orderitems + inventory)
+  // new
+  createOrderAndDeductInventory,
+  applyOrderAndDeductInventory,
 };
