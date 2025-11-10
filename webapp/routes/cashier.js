@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 
-// GET /cashier -> page
+
+// get cashier page
 router.get('/', async (req, res) => {
   try {
     const menuItems = await db.getAll('menuitems');
@@ -14,7 +15,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /cashier/checkout -> create order + items + deduct inventory
+//create order, items, and deduct inventory
 router.post('/checkout', async (req, res) => {
   try {
     const cart = Array.isArray(req.body?.cart) ? req.body.cart : [];
