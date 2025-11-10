@@ -24,6 +24,10 @@ app.use('/customer', customerRoute);
 const cashierRoute = require('./routes/cashier');
 app.use('/cashier', cashierRoute);
 
+app.get('/', (req, res) => {
+  res.redirect('/cashier');
+});
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
