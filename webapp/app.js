@@ -22,6 +22,10 @@ app.use('/manager', managerRouter);
 app.use('/customer', customerRouter);
 app.use('/cashier',  cashierRouter);
 
+app.get('/', (req, res) => {
+  res.redirect('/cashier');
+});
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
