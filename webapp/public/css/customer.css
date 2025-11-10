@@ -988,6 +988,25 @@ body {
     margin-top: 10px;
 }
 
+/* --- Right-align the Total inside the existing total box --- */
+.cart-total {
+    display: flex;              /* keep the box; just change layout */
+    justify-content: flex-end;  /* push the inner row to the right edge */
+  }
+  
+  .cart-total .total-line {
+    display: inline-flex;       /* keep label + value on one line */
+    align-items: baseline;
+    gap: 10px;                  /* space between label and amount */
+    width: auto;                /* don't stretch full width */
+  }
+  
+  .cart-total .total-value {
+    min-width: 80px;            /* neat right edge */
+    text-align: right;
+  }
+  
+
 .total-line {
     display: flex;
     justify-content: space-between;
@@ -1090,4 +1109,128 @@ body {
     .btn-checkout {
         width: 100%;
     }
+}
+
+/* ---------- APPENDED: New cart/payment overrides ---------- */
+
+/* Upgrade layout to grid with sticky footer */
+.cart-modal-content{
+  padding:0;
+  border-radius:18px;
+  overflow:hidden;
+  max-height:88vh;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+}
+
+/* Pretty header + item count */
+.cart-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;
+  background:linear-gradient(135deg,#f07774,#ee9a90);
+  color:#fff;
+}
+.cart-title-wrap{display:flex;align-items:center;gap:10px;}
+.cart-count-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:28px;height:28px;font-weight:700;border-radius:999px;
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);
+}
+
+/* Body clean-up */
+.cart-modal-body{
+  padding:18px 22px;
+  overflow:auto;
+  background:#fff;
+  max-height:unset;
+}
+.cart-items{display:grid;gap:14px;margin-bottom:12px;}
+
+.cart-item{
+  display:grid;grid-template-columns:1fr auto;gap:12px;
+  padding:14px;border-radius:14px;background:#fafafa;border:1px solid #eee;
+  box-shadow:0 1px 0 rgba(0,0,0,.03);
+}
+.cart-item:hover{background:#fffdfd;box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.cart-item-name{margin:0 0 6px;font-size:1.05rem;color:#3d2a19;}
+.cart-item-details{display:flex;flex-wrap:wrap;gap:10px;color:#6a6a6a;font-size:.92rem;}
+.cart-item-right{display:grid;gap:8px;justify-items:end;}
+.cart-item-price-value{font-weight:800;color:#ff6b6b;}
+
+/* Qty steppers */
+.qty-wrap{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid #e6e6e6;border-radius:12px;padding:4px 8px;background:#fff;
+}
+.qty-btn{
+  appearance:none;border:none;background:#f4f4f4;width:28px;height:28px;
+  border-radius:8px;font-weight:800;cursor:pointer;line-height:1;
+}
+.qty-btn:hover{background:#ececec;}
+.qty-value{min-width:20px;text-align:center;font-weight:700}
+
+/* Remove */
+.btn-remove-item{
+  border:none;background:#ffebe9;color:#c03a2b;font-weight:700;
+  padding:6px 10px;border-radius:10px;cursor:pointer;
+}
+.btn-remove-item:hover{background:#ffd9d5}
+
+/* Summary */
+.cart-summary{
+  margin-top:6px;padding:14px;border-radius:14px;background:#fff;border:1px solid #eee;
+}
+.cart-summary .summary-row{display:flex;justify-content:space-between;padding:6px 0;}
+.cart-summary .summary-divider{height:1px;background:#eee;margin:8px 0;}
+.cart-summary .total-row{font-weight:900;font-size:1.15rem;}
+.cart-summary small{color:#888}
+.cart-total small {
+    display: none;
+  }
+
+/* Sticky footer buttons */
+.cart-footer{
+  display:flex;gap:12px;padding:14px 22px;background:#fff;border-top:1px solid #eee;
+  position:sticky;bottom:0;
+}
+.cart-footer .btn-clear-cart,.cart-footer .btn-checkout{
+  border:none;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;
+}
+.cart-footer .btn-clear-cart{background:#efefef;color:#333}
+.cart-footer .btn-clear-cart:hover{background:#e5e5e5}
+.cart-footer .btn-checkout{
+  margin-left:auto;background:linear-gradient(135deg,#ff7c6f,#ff917e);color:#fff;
+  box-shadow:0 6px 18px rgba(255,126,111,.35);
+}
+.cart-footer .btn-checkout:disabled{
+  filter:grayscale(1);opacity:.6;cursor:not-allowed;box-shadow:none;
+}
+
+/* Hide legacy blocks so styles don't clash */
+.cart-modal-body .cart-total,
+.cart-modal-footer{display:none;}
+
+@media (max-width:640px){
+  .cart-item{grid-template-columns:1fr;}
+  .cart-item-right{justify-items:start;}
+}
+
+/* Put the totals card at the bottom-right of the cart body */
+.cart-modal-body {
+    display: flex;            /* already column in your css, this keeps it explicit */
+    flex-direction: column;
+  }
+  
+  .cart-summary,
+  .cart-total {
+    align-self: flex-end;     /* snap to the right edge in a column flex container */
+    margin-left: auto;        /* extra safety for right alignment */
+    display: inline-block;    /* shrink to content instead of full width */
+    width: auto;              /* avoid stretching */
+  }
+  
+  /* Hide the "(8.25%)" text next to Tax */
+.cart-summary small,
+.cart-total small {
+  display: none;
 }
