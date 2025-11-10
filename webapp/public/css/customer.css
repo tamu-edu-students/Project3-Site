@@ -988,6 +988,25 @@ body {
     margin-top: 10px;
 }
 
+/* --- Right-align the Total inside the existing total box --- */
+.cart-total {
+    display: flex;              /* keep the box; just change layout */
+    justify-content: flex-end;  /* push the inner row to the right edge */
+  }
+  
+  .cart-total .total-line {
+    display: inline-flex;       /* keep label + value on one line */
+    align-items: baseline;
+    gap: 10px;                  /* space between label and amount */
+    width: auto;                /* don't stretch full width */
+  }
+  
+  .cart-total .total-value {
+    min-width: 80px;            /* neat right edge */
+    text-align: right;
+  }
+  
+
 .total-line {
     display: flex;
     justify-content: space-between;
@@ -1192,3 +1211,18 @@ body {
   .cart-item{grid-template-columns:1fr;}
   .cart-item-right{justify-items:start;}
 }
+
+/* Put the totals card at the bottom-right of the cart body */
+.cart-modal-body {
+    display: flex;            /* already column in your css, this keeps it explicit */
+    flex-direction: column;
+  }
+  
+  .cart-summary,
+  .cart-total {
+    align-self: flex-end;     /* snap to the right edge in a column flex container */
+    margin-left: auto;        /* extra safety for right alignment */
+    display: inline-block;    /* shrink to content instead of full width */
+    width: auto;              /* avoid stretching */
+  }
+  
