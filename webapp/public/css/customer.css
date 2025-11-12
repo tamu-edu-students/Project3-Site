@@ -6,6 +6,18 @@
     box-sizing: border-box;
 }
 
+:root {
+    --customer-font-scale: 1;
+    --magnify-scale: 1;
+    --magnify-origin-x: 50%;
+    --magnify-origin-y: 50%;
+}
+
+html {
+    font-size: calc(16px * var(--customer-font-scale));
+    transition: font-size 0.25s ease-in-out;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background: #ff9a9e;
@@ -13,10 +25,33 @@ body {
     color: #333;
 }
 
+html.magnify-active {
+    --customer-font-scale: 1.2;
+}
+
+html.magnify-active body {
+    cursor: zoom-in;
+    line-height: 1.6;
+}
+
+html.magnify-active .magnify-toggle {
+    cursor: pointer;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+}
+
+.magnify-surface {
+    transform-origin: var(--magnify-origin-x) var(--magnify-origin-y);
+    transition: transform 0.12s ease-out;
+}
+
+html.magnify-active .magnify-surface {
+    transform: scale(var(--magnify-scale));
+    will-change: transform;
 }
 
 /* Top Bar Styles */
@@ -91,10 +126,49 @@ body {
     text-align: center;
 }
 
-.cart-icon-container {
+.header-controls {
     position: absolute;
     top: 0;
     right: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cart-icon-container {
+    position: relative;
+}
+
+.magnify-toggle {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff, #ffecec);
+    color: #8B4513;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.magnify-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.magnify-toggle:focus-visible {
+    outline: 3px solid rgba(255, 107, 107, 0.4);
+    outline-offset: 3px;
+}
+
+.magnify-toggle.is-active {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
 }
 
 .cart-icon-btn {
@@ -357,6 +431,18 @@ body {
     .header {
         padding: 20px;
     }
+
+    .header-controls {
+        position: static;
+        align-self: center;
+        margin-top: 10px;
+        gap: 16px;
+    }
+
+    .magnify-toggle {
+        width: 48px;
+        height: 48px;
+    }
     
     .header-content {
         flex-direction: column;
@@ -405,6 +491,12 @@ body {
     
     .section-title {
         font-size: 1.8rem;
+    }
+
+    .magnify-toggle {
+        width: 44px;
+        height: 44px;
+        font-size: 1.4rem;
     }
 }
 
