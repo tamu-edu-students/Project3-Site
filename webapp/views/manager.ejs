@@ -151,10 +151,13 @@
                 <% employees.forEach(emp => { %>
                     <div id="hoverTag" class="data-row" data-id="<%= emp.employeeid %>">
                         <div class="cell" data-column="employeename"><%= emp.employeename %></div>
+                        <div class="cell" data-column="email"><%= emp.email %></div>
+                        <div class="cell" data-column="role"><%= emp.role %></div>
                         <button onClick="deleteItem('employees', <%= emp.employeeid %>)" class="hidden">DELETE</button>
                     </div>
                 <% }) %>
             </div>
+
         </div>
 
         <!-- Generic modal -->
