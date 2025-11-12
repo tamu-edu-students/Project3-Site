@@ -1,31 +1,49 @@
 const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const dotenv = require('dotenv');
+const path = require('path');
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Basic logger (helps debug 404s)
-app.use((req, _res, next) => { console.log(`${req.method} ${req.url}`); next(); });
+// Logger
+app.use((req, _res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
-// Static + JSON
 app.use(express.static('public'));
 app.use(express.json());
 
-// EJS
 app.set('view engine', 'ejs');
 
-// Routers
-const managerRouter = require('./routes/manager');
-const customerRouter = require('./routes/customer');
-const cashierRouter  = require('./routes/cashier');
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev_secret',
+  resave: false,
+  saveUninitialized: false
+}));
 
-app.use('/manager', managerRouter);
-app.use('/customer', customerRouter);
-app.use('/cashier',  cashierRouter);
+// Passport setup
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.get('/', (req, res) => {
-  res.redirect('/cashier');
-});
+// Unauthenticated route
+app.use('/', require('./routes/unauthenticated'));
+
+// Authentication route
+app.use('/auth', require('./routes/authenticate'));
+
+// All protected page routes
+const { ensureRole } = require('./routes/protected');
+app.use('/manager', ensureRole('manager'), require('./routes/manager'));
+app.use('/cashier', ensureRole('cashier'), require('./routes/cashier'));
+app.use('/customer', ensureRole('customer'), require('./routes/customer'));
+ 
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });

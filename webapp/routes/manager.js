@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 
+// Ensure user has proper roles
+const { ensureRole } = require('./protected');
+router.use(ensureRole('manager'));
+
 // Render manager page
 router.get('/', async (req, res) => {
     try {
