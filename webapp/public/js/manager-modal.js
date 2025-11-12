@@ -113,19 +113,20 @@ async function openAddModal(sectionName) {
         form.appendChild(createInputLabel('Email: ', 'email', 'email', true));
         form.appendChild(document.createElement('br'));
         
-        // Role select
+        // Role dropdown
         const roleLabel = document.createElement('label');
         roleLabel.textContent = 'Role: ';
         const roleSelect = document.createElement('select');
         roleSelect.name = 'role';
-        ['manager', 'staff'].forEach(r => {
+        ['manager', 'cashier', 'customer'].forEach(r => {
             const opt = document.createElement('option');
             opt.value = r;
-            opt.textContent = r.charAt(0).toUpperCase() + r.slice(1);
+            opt.textContent = r.charAt(0).toUpperCase() + r.slice(1); // Capitalize
             roleSelect.appendChild(opt);
         });
         roleLabel.appendChild(roleSelect);
         form.appendChild(roleLabel);
+
         form.appendChild(document.createElement('br'));
     }
 
