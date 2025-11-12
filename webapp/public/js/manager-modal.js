@@ -110,6 +110,23 @@ async function openAddModal(sectionName) {
     if (sectionName === 'employees') {
         form.appendChild(createInputLabel('Employee Name: ', 'employeename', 'text', true));
         form.appendChild(document.createElement('br'));
+        form.appendChild(createInputLabel('Email: ', 'email', 'email', true));
+        form.appendChild(document.createElement('br'));
+        
+        // Role select
+        const roleLabel = document.createElement('label');
+        roleLabel.textContent = 'Role: ';
+        const roleSelect = document.createElement('select');
+        roleSelect.name = 'role';
+        ['manager', 'staff'].forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r;
+            opt.textContent = r.charAt(0).toUpperCase() + r.slice(1);
+            roleSelect.appendChild(opt);
+        });
+        roleLabel.appendChild(roleSelect);
+        form.appendChild(roleLabel);
+        form.appendChild(document.createElement('br'));
     }
 
     // Submit + Cancel buttons

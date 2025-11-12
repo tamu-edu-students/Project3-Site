@@ -36,7 +36,7 @@ async function addItem(table, data) {
   const columnMap = {
     menuitems: ['itemname', 'itemdescription', 'itemprice'],
     inventory: ['ingredientname', 'ingredientquantity', 'unit'],
-    employees: ['employeename'],
+    employees: ['employeename', 'email', 'role'],
   };
   const validColumns = columnMap[table];
   if (!validColumns) throw new Error(`Unknown table: ${table}`);

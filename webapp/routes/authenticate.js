@@ -26,7 +26,7 @@ passport.use(new GoogleStrategy({
         if (result.rows.length > 0) {
 
             // Use db role of found employee. If not found, they are a customer
-            role = result.rows[0].role || 'customer';
+            role = (result.rows[0].role || 'customer').toLowerCase();
         } 
 
         const user = {
