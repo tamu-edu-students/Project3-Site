@@ -40,14 +40,30 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelBtn.textContent = 'Cancel';
         cancelBtn.classList.add('update-btn');
 
-        //const controls = editBtn.parentElement;
         controls.replaceChild(saveBtn, editBtn);
         controls.appendChild(cancelBtn);
 
         // Make all cells editable
         dataGrid.querySelectorAll('.cell').forEach(cell => {
-            cell.contentEditable = true;
-            cell.classList.add('editable');
+            // Special case for employees role column
+            if (sectionName === 'employees' && cell.dataset.column === 'role') {
+                const currentRole = cell.textContent.trim().toLowerCase();
+                const select = document.createElement('select');
+
+                ['manager','cashier','customer'].forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r;
+                    opt.textContent = r.charAt(0).toUpperCase() + r.slice(1);
+                    if (r === currentRole) opt.selected = true;
+                    select.appendChild(opt);
+                });
+
+                cell.textContent = '';
+                cell.appendChild(select);
+            } else {
+                cell.contentEditable = true;
+                cell.classList.add('editable');
+            }
         });
 
         // Hide delete buttons
@@ -70,13 +86,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (const row of rows) {
                 const rowData = {};
-                    row.querySelectorAll('.cell').forEach(cell => {
-                        let val = cell.textContent.trim();
+                row.querySelectorAll('.cell').forEach(cell => {
+                    let val;
+
+                    if (sectionName === 'employees' && cell.dataset.column === 'role') {
+                        val = cell.querySelector('select').value; // get dropdown value
+                    } else {
+                        val = cell.textContent.trim();
                         if (['itemprice', 'ingredientquantity', 'quantity'].includes(cell.dataset.column)) {
                             val = Number(val) || 0;
                         }
-                        rowData[cell.dataset.column] = val;
-                    });
+                    }
+
+                    rowData[cell.dataset.column] = val;
+                });
 
                 const id = row.dataset.id;
                 if (!id) continue; // skip new/unsaved rows
@@ -100,14 +123,24 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('All updates saved!');
             exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls);
         });
-
     }
 
 
+
     function exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls) {
-        // Make cells non-editable
+        // Make cells non-editable or revert dropdowns
         dataGrid.querySelectorAll('.cell').forEach(cell => {
-            cell.contentEditable = false;
+            // Special case for employees role dropdown
+            if (sectionMap[section.querySelector('h2').textContent.toLowerCase()] === 'employees' 
+                && cell.dataset.column === 'role') {
+                
+                const select = cell.querySelector('select');
+                if (select) {
+                    cell.textContent = select.value.charAt(0).toUpperCase() + select.value.slice(1);
+                }
+            } else {
+                cell.contentEditable = false;
+            }
             cell.classList.remove('editable');
         });
 
@@ -142,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             enterEditMode(section, sectionName, newEditBtn, dataGrid); 
         });
     }
+
 
     document.querySelectorAll('.data-section').forEach(section => {
         const sectionName = sectionMap[section.querySelector('h2').textContent.toLowerCase()];
