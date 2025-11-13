@@ -54,6 +54,17 @@ html.magnify-active .magnify-surface {
     will-change: transform;
 }
 
+/* Ensure modals also get the magnify transform */
+html.magnify-active .modal {
+    transform-origin: var(--magnify-origin-x) var(--magnify-origin-y);
+}
+
+html.magnify-active .modal-content {
+    transform: scale(var(--magnify-scale));
+    will-change: transform;
+    transition: transform 0.12s ease-out;
+}
+
 /* Top Bar Styles */
 .top-bar {
     display: flex;
