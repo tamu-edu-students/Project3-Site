@@ -32,7 +32,7 @@ router.post('/checkout', async (req, res) => {
     // If you have logged-in cashier, pass real employeeId here
     const result = await db.createOrderAndDeductInventory(normalized, {
       customerId: 0,
-      employeeId: 1, // TODO: replace with real cashier id if available
+      employeeId: req.user.employeeId,
     });
 
     if (!result.ok) {
