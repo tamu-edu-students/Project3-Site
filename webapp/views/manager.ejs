@@ -5,6 +5,28 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
+    <div class="top-bar">
+        <!-- Left side: logged in user -->
+        <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
+            <span class="navbar-user">
+                Logged in as <%= user.displayName %>, <%= user.role %>
+            </span>
+        <% } %>
+
+        <!-- Right side: navigation buttons -->
+        <div class="nav-buttons">
+            <a href="/manager" class="nav-btn common">Manager Page</a>
+            <a href="/cashier" class="nav-btn common">Cashier Page</a>
+            <a href="/customer" class="nav-btn common">Customer Page</a>
+            <a href="/logout" class="nav-btn logout">Logout</a>
+        </div>
+    </div>
+
+
+
+    <br>
+
     <div class="main-container magnify-surface">
         <div class="manager-toolbar">
             <h1 class="manager-title">Manager Dashboard</h1>
@@ -18,6 +40,7 @@
             >
                 🔍
             </button>
+
         </div>
 
 
