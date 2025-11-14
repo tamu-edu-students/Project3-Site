@@ -56,7 +56,8 @@ router.get('/', async (req, res) => {
             menuItems,
             inventoryItems,
             recipes: groupedRecipes,
-            employees
+            employees,
+            user: req.user
         });
 
         console.log("manager.js loaded!");

@@ -4,9 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VAMSA - Cashier</title>
-  <link rel="stylesheet" href="/css/customer.css" />
+  <link rel="stylesheet" href="/css/cashier.css" />
 </head>
 <body class="magnify-surface">
+
+  <div class="top-bar">
+      <!-- Left side: logged in user -->
+      <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
+          <span class="navbar-user">
+              Logged in as <%= user.displayName %>, <%= user.role %>
+          </span>
+      <% } %>
+
+      <!-- Right side: navigation buttons -->
+      <div class="nav-buttons">
+          <a href="/manager" class="nav-btn common">Manager Page</a>
+          <a href="/cashier" class="nav-btn common">Cashier Page</a>
+          <a href="/customer" class="nav-btn common">Customer Page</a>
+          <a href="/logout" class="nav-btn logout">Logout</a>
+      </div>
+  </div>
+
+  <br>
+
   <div class="container">
     <header class="header">
       <div class="header-content-wrapper">
@@ -41,7 +61,6 @@
         <div class="drinks-grid">
           <% menuItems.forEach(item => { %>
             <div class="drink-card" data-drink="<%= item.itemname %>">
-              <div class="drink-image classic"></div>
               <h3 class="drink-name"><%= item.itemname %></h3>
               <p class="drink-description"><%= item.itemdescription %></p>
               <div class="price"><%= item.itemprice %></div>

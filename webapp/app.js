@@ -24,12 +24,19 @@ app.set('view engine', 'ejs');
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev_secret',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { secure: false }
 }));
 
 // Passport setup
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
 
 // Unauthenticated route
 app.use('/', require('./routes/unauthenticated'));
