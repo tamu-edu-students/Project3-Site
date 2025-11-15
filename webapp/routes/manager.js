@@ -197,7 +197,7 @@ router.get('/inventory', async (req, res) => {
     }
 });
 
-router.get('/api/reports', async (req, res) => {
+router.get('/reports', async (req, res) => {
   try {
     const reportData = await db.generalReport();
     console.log('Fetched report data:', reportData); // Should now show real data
@@ -208,7 +208,7 @@ router.get('/api/reports', async (req, res) => {
   }
 });
 
-router.get('/api/invReports', async (req, res) => {
+router.get('/invReports', async (req, res) => {
   try {
     // Extract query parameters (start and end times)
     const { start, end } = req.query;
@@ -224,7 +224,7 @@ router.get('/api/invReports', async (req, res) => {
   }
 });
 
-router.get('/api/menuReport', async (req, res) => {
+router.get('/menuReport', async (req, res) => {
     try {
         const menuReportData = await db.menuReport();
         console.log('Fetched menu report data:', menuReportData);
@@ -235,7 +235,7 @@ router.get('/api/menuReport', async (req, res) => {
     }   
 });
 
-router.get('/api/employeeReport', async (req, res) => {
+router.get('/employeeReport', async (req, res) => {
     try {
         const employeeReportData = await db.employeeReport();  
         console.log('Fetched employee report data:', employeeReportData);
@@ -246,7 +246,7 @@ router.get('/api/employeeReport', async (req, res) => {
     }   
 });
 
-router.get('/api/salesReport', async (req, res) => {
+router.get('/salesReport', async (req, res) => {
     try {
         const { start, end } = req.query;
 
@@ -269,6 +269,97 @@ router.get('/api/salesReport', async (req, res) => {
         console.error('Error fetching sales report data:', err);
         res.status(500).json({ error: 'Server error' });
     }
+});
+
+router.get('/salesByItem', async (req, res) => {
+    const { start, end } = req.query;
+
+    try {
+        const data = await db.getSalesByItem(start, end);
+        res.json(data);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to generate sales-by-item report.'});
+    }
+});
+
+router.get('/sales-per-hour', async (req, res) => {
+    try {
+        const data = await db.loadSalesPerHour();
+        console.log(data)
+        res.json(Array.isArray(data) ? data : []);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({error: "Failed to load sales per hour"});
+    }
+})
+
+router.get('/orders-per-hour', async (req, res) => {
+    try {
+        const data = await db.loadOrdersPerHour();
+        console.log(data);
+        res.json(Array.isArray(data) ? data: []);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({error: "Failed to load orders per hour"});
+    }
+})
+
+router.get('/customers-per-hour', async (req, res) => {
+    try {
+        const data = await db.loadCustomersPerHour();
+        console.log(data);
+        res.json(Array.isArray(data) ? data: []);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({error: "Failed to load customers per hour"});
+    }
+})
+
+router.get('/items-per-hour', async (req, res) => {
+    try {
+        const data = await db.loadItemsPerHour();
+        console.log(data);
+        res.json(Array.isArray(data) ? data: []);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({error: "Failed to load items per hour"});
+    }
+})
+
+router.get('/avg-orders-per-hour', async (req, res) => {
+    try {
+        const data = await db.loadAvgOrderValuePerHour();
+        console.log(data);
+        res.json(Array.isArray(data) ? data: []);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({error: "Failed to load avg orders per hour"});
+    }
+})
+
+
+router.get('/zreport', async (req, res) => {
+  try {
+    const date = req.query.date; // expected format: YYYY-MM-DD
+    const totalSales = await db.getTotalSalesForDate(date);
+    const totalOrders = await db.getTotalOrdersForDate(date);
+    const mostPopularItem = await db.getMostPopularMenuItemForDate(date);
+    const bestEmployee = await db.getTopEmployeeForDate(date);
+    const bestHour = await db.getPeakSalesHourForDate(date);
+
+    // You can add more fields here if needed (total orders, items sold, etc.)
+    res.json({
+      date,
+      totalSales,
+      totalOrders,
+      mostPopularItem,
+      bestEmployee,
+      bestHour
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch Z-report" });
+  }
 });
 
 

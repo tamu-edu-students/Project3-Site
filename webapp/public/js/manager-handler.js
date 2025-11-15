@@ -347,4 +347,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const refreshBtn = document.querySelector('#inventoryChartRefresh');
         if (refreshBtn) refreshBtn.addEventListener('click', renderInventoryChart);
     }
+
+    const todayDateElem = document.getElementById("todayDate");
+    const today = new Date();
+    const options = {
+        weekday: 'long', 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }
+    todayDateElem.textContent = today.toLocaleDateString('en-US', options);
 });

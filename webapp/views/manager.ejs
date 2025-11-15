@@ -30,6 +30,11 @@
     <div class="main-container magnify-surface">
         <div class="manager-toolbar">
             <h1 class="manager-title">Manager Dashboard</h1>
+
+            <p id="todayDate"></p>
+
+            <button id="z-report">End Day</button>
+
             <button
                 type="button"
                 class="magnify-toggle"
@@ -56,9 +61,8 @@
                 <button id="menuReport">Menu Report</button>
                 <button id="employeeReport">Employee Report</button>
                 <button id="salesReport">Sales Report</button>
-                <button class="hidden" id="itemizedSalesReport">Itemized Sales Report</button>
-                <button class="hidden" id="x-reports">X-Reports</button>
-                <button class="hidden" id="z-reports">Z-Reports</button>
+                <button id="itemizedSalesReport">Itemized Sales Report</button>
+                <button id="x-reports">X-Reports</button>
             </div>
         </div>
 
@@ -366,6 +370,128 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <div id="itemizedSalesScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeItemizedSalesBtn" class="close">&times;</span>
+                <h2>Itemized Sales Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDateItemSales">Start Date:</label>
+                <input type="datetime-local" id="startDateItemSales">
+
+                <label for="endDateItemSales">End Date:</label>
+                <input type="datetime-local" id="endDateItemSales">
+
+                <button id="generateItemizedReportBtn">Generate Report</button>
+                </div>
+
+                <p>*Best selling item highlighed in green</p>
+                <p>*Best grossing item highlighed in yellow</p>
+                <p>*Best selling and highest grossing item highlighed in orange</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                    <table id="itemizedSalesTable">
+                        <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Qty Sold</th>
+                            <th>Total Sales ($)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="itemizedSalesTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="xReportScreen" class="modal">
+            <div class="modal-content">
+
+                <span id="closeXReportBtn" class="close">&times;</span>
+                <h1>X Report (Today, per hour)</h1>
+                <p>Live values from database. Grouped by hour for the current date.</p>
+
+                <!-- Sales per hour -->
+                <details open>
+                    <summary>Sales ($) per hour</summary>
+                    <table id="tblSales">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Sales ($)</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Orders per hour -->
+                <details>
+                    <summary>Orders per hour</summary>
+                    <table id="tblOrders">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Orders</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Unique customers per hour -->
+                <details>
+                    <summary>Unique customers per hour</summary>
+                    <table id="tblCustomers">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Customers</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Items sold per hour -->
+                <details>
+                    <summary>Items sold per hour</summary>
+                    <table id="tblItems">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Items</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Average order value per hour -->
+                <details>
+                    <summary>Average order value ($) per hour</summary>
+                    <table id="tblAvg">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Avg ($)</th>
+                        </tr>
+                    </table>
+                </details>
+
+            </div>
+        </div>
+
+        <div id="z-reportScreen"class="modal">
+            <div class="modal-content">
+                <span id="zReportCloseBtn" class="close">&times;</span>
+                <h1>Z-Report: End of Day Summary</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="zReportTable">
+                        <!-- rows get added here -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
