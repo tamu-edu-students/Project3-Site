@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
+const systemDate = require('../utils/systemDate');
 
 // Ensure user has proper roles
 const { ensureRole } = require('./protected');
@@ -362,30 +363,41 @@ router.get('/zreport', async (req, res) => {
   }
 });
 
-let systemDate = new Date(); // local time
-
 router.get('/currentdate', (req, res) => {
-    const yyyy = systemDate.getFullYear();
-    const mm = String(systemDate.getMonth() + 1).padStart(2, '0');
-    const dd = String(systemDate.getDate()).padStart(2, '0');
+    const date = systemDate.getDate();
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
     res.json({ date: `${yyyy}-${mm}-${dd}` });
 });
 
 router.post('/incrementdate', (req, res) => {
-    systemDate.setDate(systemDate.getDate() + 1);
-    const yyyy = systemDate.getFullYear();
-    const mm = String(systemDate.getMonth() + 1).padStart(2, '0');
-    const dd = String(systemDate.getDate()).padStart(2, '0');
+    const date = systemDate.incrementDate(1);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
     res.json({ date: `${yyyy}-${mm}-${dd}` });
 });
 
 router.post('/resetdate', (req, res) => {
-    const now = new Date();
-    systemDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yyyy = systemDate.getFullYear();
-    const mm = String(systemDate.getMonth() + 1).padStart(2, '0');
-    const dd = String(systemDate.getDate()).padStart(2, '0');
+    const date = systemDate.resetDate();
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
     res.json({ date: `${yyyy}-${mm}-${dd}` });
+});
+
+router.post('/setdate', (req, res) => {
+    try {
+        const { date } = req.body;
+        const parsedDate = systemDate.setDate(date);
+        const yyyy = parsedDate.getFullYear();
+        const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(parsedDate.getDate()).padStart(2, '0');
+        res.json({ date: `${yyyy}-${mm}-${dd}` });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 });
 
 module.exports = router;

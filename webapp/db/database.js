@@ -101,7 +101,7 @@ async function deleteRecipesByMenuItem(itemId) {
 // toppings are charged $1 each for total calculation here (same as UI).
 // Writes into tables with quoted column names: "orders", "orderitems".
 // ====================================================================
-async function createOrderAndDeductInventory(cartItems, { employeeId = 0, customerId = 0 } = {}) {
+async function createOrderAndDeductInventory(cartItems, { employeeId = 0, customerId = 0, systemDate = null } = {}) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -186,12 +186,18 @@ async function createOrderAndDeductInventory(cartItems, { employeeId = 0, custom
 
     // Insert INTO "orders"
     // Columns: "Customer ID","Employee ID","Order Date","Total Amount"
+
+    const orderDate = systemDate || new Date();
+    if (isNaN(orderDate)) {
+      throw new Error(`Invalid systemDate: ${systemDate}`);
+    }
+
     const { rows: orderIns } = await client.query(
       `INSERT INTO public.orders
         ("Customer ID","Employee ID","Order Date","Total Amount")
-       VALUES ($1,$2,NOW(),$3)
+       VALUES ($1,$2,$3,$4)
        RETURNING "Order ID"`,
-      [customerId, employeeId, orderTotal]
+      [customerId, employeeId, orderDate, orderTotal]
     );
     const orderId = orderIns[0]['Order ID'];
 
