@@ -27,13 +27,15 @@ passport.use(new GoogleStrategy({
 
             // Use db role of found employee. If not found, they are a customer
             role = (result.rows[0].role || 'customer').toLowerCase();
+            employeeId = result.rows[0].employeeid;
         } 
 
         const user = {
             id: profile.id,
             displayName: profile.displayName,
             email,
-            role
+            role,
+            employeeId
         };
 
         done(null, user);
@@ -49,7 +51,7 @@ passport.deserializeUser((obj, done) => done(null, obj));
 
 // Routes
 router.get('/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
+    passport.authenticate('google', { scope: ['profile', 'email'], prompt: 'select_account' })
 );
 
 router.get('/google/callback',

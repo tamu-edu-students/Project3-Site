@@ -6,7 +6,35 @@
   <title>VAMSA - Order Your Drink</title>
   <link rel="stylesheet" href="/css/customer.css" />
 </head>
+
 <body class="magnify-surface">
+
+  <div class="top-bar">
+      <!-- Left side: logged in user -->
+      <% if (user) { %>
+          <span class="navbar-user">
+              Logged in as <%= user.displayName %>, <%= user.role %>
+          </span>
+      <% } %>
+
+      <!-- Right side: navigation buttons -->
+      <div class="nav-buttons">
+          <% if (user && (user.role === 'manager')) { %>
+              <a href="/manager" class="nav-btn common">Manager Page</a>
+          <% } %>
+
+          <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
+              <a href="/cashier" class="nav-btn common">Cashier Page</a>
+          <% } %>
+
+          <a href="/logout" class="nav-btn logout">Logout</a>
+      </div>
+  </div>
+
+
+  <br>
+
+
   <div class="container">
     <header class="header">
       <div class="header-content-wrapper">

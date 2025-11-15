@@ -1360,3 +1360,57 @@ html.magnify-active .modal-content {
 .cart-total small {
   display: none;
 }
+
+/* For the nav bar */
+
+.top-bar {
+    width: 100%;
+    background: #f2f2f2;
+    padding: 10px 24px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between; /* push left and right apart */
+    align-items: center;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.navbar-user {
+    font-weight: bold;
+}
+
+
+/* General nav button style */
+.nav-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* Customer button */
+.nav-btn.common {
+    background: #007bff;
+    color: white;
+}
+
+.nav-btn.common:hover {
+    background: #0069d9;
+    transform: translateY(-1px);
+}
+
+/* Logout button */
+.nav-btn.logout {
+    background: #d9534f;
+    color: white;
+    margin-left: 24px;
+}
+
+.nav-btn.logout:hover {
+    background: #c9302c;
+    transform: translateY(-1px);
+}
