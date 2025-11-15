@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
+const systemDate = require('../utils/systemDate');
 
 // Get cutstomer page
 router.get('/', async (req, res, next) => {
@@ -27,9 +28,12 @@ router.post('/checkout', async (req, res) => {
       sugarLevel
     }));
 
+    const orderDate = systemDate.getDate();
+
     const result = await db.createOrderAndDeductInventory(normalized, {
       customerId: 0, // adjust if you track real customers
       employeeId: 0, // kiosk/customer page -> no employee
+      systemDate: orderDate
     });
 
     if (!result.ok) {

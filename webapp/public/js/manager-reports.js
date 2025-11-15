@@ -4,7 +4,7 @@ document.getElementById('reports').addEventListener('click', async () => {
     modal.style.display = 'block';
 
     try {
-        const res = await fetch('/manager/api/reports');
+        const res = await fetch('/manager/reports');
         const data = await res.json();
         console.log('Fetched report data:', data);
 
@@ -24,7 +24,7 @@ document.getElementById('inventoryReport').addEventListener('click', async () =>
 
   try {
     // Fetch current inventory report (no date range)
-    const res = await fetch('/manager/api/invReports');
+    const res = await fetch('/manager/invReports');
     const data = await res.json();
     console.log('Fetched inventory report data:', data);
 
@@ -44,7 +44,7 @@ document.getElementById('generateReportBtn').addEventListener('click', async () 
   if (end) params.append('end', end);
 
   try {
-    const response = await fetch(`/manager/api/invReports?${params.toString()}`);
+    const response = await fetch(`/manager/invReports?${params.toString()}`);
     const data = await response.json();
     console.log('Fetched filtered inventory report:', data);
     populateInventoryTable(data.items);
@@ -83,7 +83,7 @@ document.getElementById('menuReport').addEventListener('click', async () => {
   modal.style.display = 'block';
 
   try {
-    const res = await fetch('/manager/api/menuReport');
+    const res = await fetch('/manager/menuReport');
     const data = await res.json();
     console.log('Fetched menu report data:', data);
     const tbody = document.getElementById('menuTableBody');
@@ -121,7 +121,7 @@ document.getElementById('employeeReport').addEventListener('click', async () => 
   modal.style.display = 'block';
 
   try {
-    const res = await fetch('/manager/api/employeeReport');
+    const res = await fetch('/manager/employeeReport');
     const data = await res.json();
     console.log('Fetched employee report data:', data);
     const tbody = document.getElementById('employeeTableBody');
@@ -167,7 +167,7 @@ document.getElementById('generateSalesReportBtn').addEventListener('click', asyn
 
 async function salesReport(start, end ) {
   try {
-    const response = await fetch(`/manager/api/salesReport?start=${start}&end=${end}`);
+    const response = await fetch(`/manager/salesReport?start=${start}&end=${end}`);
     const data = await response.json();
     console.log('Fetched sales report data:', data);
 
@@ -196,7 +196,331 @@ async function salesReport(start, end ) {
   }
 }
 
+document.getElementById('itemizedSalesReport').addEventListener('click', async () => {
+  console.log('Itemized Sales Reports button clicked!');
+  const modal = document.getElementById('itemizedSalesScreen');
+  modal.style.display = 'block';
+});
 
+document.getElementById("generateItemizedReportBtn").addEventListener("click", async () => {
+    const start = document.getElementById("startDateItemSales").value;
+    const end = document.getElementById("endDateItemSales").value;
+
+    if (!start || !end) {
+        alert("Please select both start and end dates.");
+        return;
+    }
+
+    try {
+        // 🔹 Call your API
+        const res = await fetch(`/manager/salesByItem?start=${start}&end=${end}`);
+        const data = await res.json();
+
+        console.log("Itemized Sales Report:", data);
+
+        // 🔹 Get table body
+        const tableBody = document.getElementById("itemizedSalesTableBody");
+
+        // Clear old rows
+        tableBody.innerHTML = "";
+
+        const maxQty = Math.max(...data.map(item => Number(item.quantity)));
+        const maxRev = Math.max(...data.map(item => Number(item.sales)));
+
+        // 🔹 Insert new rows
+        data.forEach(item => {
+            const row = document.createElement("tr");
+            const qty = Number(item.quantity);
+            const rev = Number(item.sales);
+
+            if (qty === maxQty) {
+              row.classList.add("highlight-row")
+            }
+            if (rev === maxRev) {
+              row.style.backgroundColor = "yellow";
+              row.style.fontWeight = "bold";
+            }
+            if (rev === maxRev && qty === maxQty) {
+              row.style.backgroundColor = "orange";
+              row.style.fontWeight = "bold";
+            }
+
+            row.innerHTML = `
+                <td>${item.itemName}</td>
+                <td>${item.quantity}</td>
+                <td>$${Number(item.sales).toFixed(2)}</td>
+            `;
+
+            tableBody.appendChild(row);
+        });
+
+        if (data.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align: center; opacity: 0.6;">
+                        No sales found for this date range.
+                    </td>
+                </tr>
+            `;
+        }
+
+    } catch (err) {
+        console.error("Error loading sales report:", err);
+        alert("Failed to fetch report. Check console for errors.");
+    }
+});
+
+document.getElementById('x-reports').addEventListener('click', () => {
+  console.log('X Reports button clicked!');
+  document.getElementById('xReportScreen').style.display = 'block';
+  getSalesPerHour();
+  getOrdersPerHour();
+  getCustomersPerHour();
+  getItemsPerHour();
+  getAvgOrderValuePerHour();
+})
+
+async function getSalesPerHour() {
+    try {
+        const res = await fetch('/manager/sales-per-hour');
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            console.error('Sales data is not an array:', data);
+            return;
+        }
+        fillSalesTable(data);
+    } catch (err) {
+        console.error('Failed to fetch sales per hour:', err);
+    }
+}
+
+
+function fillSalesTable(rows) {
+  const tbl = document.getElementById("tblSales");
+
+  // clear previous rows (keep header)
+  tbl.querySelectorAll("tr:not(:first-child)").forEach(r => r.remove());
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+
+    const tdHour = document.createElement("td");
+    const tdSales = document.createElement("td");
+
+    // Format hour
+    const date = new Date(r.hour);
+    const hour = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    tdHour.textContent = hour;
+    tdSales.textContent = `$${Number(r.sales).toFixed(2)}`;
+
+    tr.appendChild(tdHour);
+    tr.appendChild(tdSales);
+
+    tbl.appendChild(tr);
+  });
+}
+
+async function getOrdersPerHour() {
+  try {
+    const res = await fetch('/manager/orders-per-hour');
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      console.error('Orders data is not an array: ', data);
+      return;
+    }
+    fillOrdersTable(data);
+  } catch (err) {
+    console.error('Failed to fetch orders per hour: ', err);
+  }
+}
+
+function fillOrdersTable(rows) {
+  const tbl = document.getElementById("tblOrders");
+
+  tbl.querySelectorAll("tr:not(:first-child)").forEach(r => r.remove());
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+
+    const tdHour = document.createElement("td");
+    const tdOrders = document.createElement("td");
+
+    const date = new Date(r.hour);
+    const hour = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+    tdHour.textContent = hour;
+    tdOrders.textContent = r.orders;
+
+    tr.appendChild(tdHour);
+    tr.appendChild(tdOrders);
+    
+    tbl.appendChild(tr);
+  })
+}
+
+async function getCustomersPerHour() {
+  try {
+    const res = await fetch('/manager/customers-per-hour');
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      console.error('Orders data is not an array: ', data);
+      return;
+    }
+    fillCustomersTable(data);
+  } catch (err) {
+    console.error('Failed to fetch orders per hour: ', err);
+  }
+}
+
+function fillCustomersTable(rows) {
+  const tbl = document.getElementById('tblCustomers');
+  tbl.querySelectorAll("tr:not(:first-child)").forEach(r => r.remove());
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+
+    const tdHour = document.createElement("td");
+    const tdCustomers = document.createElement("td");
+
+    const date = new Date(r.hour);
+    const hour = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+    tdHour.textContent = hour;
+    tdCustomers.textContent = r.customers;
+
+    tr.appendChild(tdHour);
+    tr.appendChild(tdCustomers);
+
+    tbl.appendChild(tr);
+
+  })
+}
+
+async function getItemsPerHour() {
+  try {
+    const res = await fetch('/manager/items-per-hour');
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      console.error('Items data is not an array: ', data);
+      return;
+    }
+    fillItemsTable(data);
+  } catch (err) {
+    console.error('Failed to fetch items per hour: ', err);
+  }
+}
+
+function fillItemsTable(rows) {
+  const tbl = document.getElementById('tblItems');
+  tbl.querySelectorAll("tr:not(:first-child)").forEach(r => r.remove());
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+
+    const tdHour = document.createElement("td");
+    const tdItems = document.createElement("td");
+
+    const date = new Date(r.hour);
+    const hour = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+    tdHour.textContent = hour;
+    tdItems.textContent = r.items;
+
+    tr.appendChild(tdHour);
+    tr.appendChild(tdItems);
+
+    tbl.appendChild(tr);
+
+  })
+}
+
+async function getAvgOrderValuePerHour() {
+  try {
+    const res = await fetch('/manager/avg-orders-per-hour');
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      console.error('Avg Orders data is not an array: ', data);
+      return;
+    }
+    fillAvgOrdersTable(data);
+  } catch (err) {
+    console.error('Failed to fetch avg orders per hour: ', err);
+  }
+}
+
+function fillAvgOrdersTable(rows) {
+  const tbl = document.getElementById('tblAvg');
+  tbl.querySelectorAll("tr:not(:first-child)").forEach(r => r.remove());
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+
+    const tdHour = document.createElement("td");
+    const tdAvg = document.createElement("td");
+
+    const date = new Date(r.hour);
+    const hour = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+    tdHour.textContent = hour;
+    tdAvg.textContent = `$${Number(r.avg_amount).toFixed(2)}`;;
+
+    tr.appendChild(tdHour);
+    tr.appendChild(tdAvg);
+
+    tbl.appendChild(tr);
+
+  })
+}
+
+document.getElementById('z-report').addEventListener('click', async () => {
+    document.getElementById('z-reportScreen').style.display = 'block';
+
+    try {
+        // Just load the Z-Report for the current system date
+        const res = await fetch('/manager/currentdate');
+        const data = await res.json();
+        const today = new Date(data.date + "T00:00");
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("todayDate").textContent = today.toLocaleDateString('en-US', options);
+
+        loadZReport(today.toISOString().split("T")[0]);
+
+    } catch (err) {
+        console.error("Error loading Z-Report:", err);
+    }
+});
+
+
+async function loadZReport(date) {
+    const response = await fetch(`/manager/zreport?date=${date}`);
+    const data = await response.json();
+    console.log("Received:", data);
+
+    const table = document.getElementById("zReportTable");
+    table.innerHTML = ""; // Clear old contents
+
+    const rows = [
+        { desc: "Total Sales", value: `$${Number(data.totalSales).toFixed(2)}` },
+        { desc: "Total Orders", value: `${data.totalOrders}`},
+        { desc: "Best-Selling Item", value: `${data.mostPopularItem.itemname}`},
+        { desc: "Top Employee", value: `${data.bestEmployee.employeename}`},
+        { desc: "Peak Sales Hour", value: `${data.bestHour}`}
+    ];
+
+    rows.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${row.desc}</td>
+            <td>${row.value}</td>
+        `;
+        table.appendChild(tr);
+    });
+}
+
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("todayDate").textContent = today;
 
 // Modal close behavior
 
@@ -218,4 +542,25 @@ document.getElementById('closeEmployeeBtn').addEventListener('click', () => {
 
 document.getElementById('closeSalesBtn').addEventListener('click', () => {
     document.getElementById('salesScreen').style.display = 'none';
+});
+
+document.getElementById('closeItemizedSalesBtn').addEventListener('click', () => {
+  document.getElementById('itemizedSalesScreen').style.display = 'none';
+});
+
+document.getElementById('closeXReportBtn').addEventListener('click', () => {
+  document.getElementById('xReportScreen').style.display = 'none';
+});
+
+document.getElementById('zReportCloseBtn').addEventListener('click', async () => {
+    document.getElementById('z-reportScreen').style.display = 'none';
+
+    const res = await fetch('/manager/incrementdate', { method: 'POST' });
+    const data = await res.json();
+
+    const [year, month, day] = data.date.split('-');
+    const newDate = new Date(data.date + "T00:00");
+
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById("todayDate").textContent = newDate.toLocaleDateString('en-US', options);
 });

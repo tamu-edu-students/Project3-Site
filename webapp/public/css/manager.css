@@ -256,6 +256,7 @@ html.magnify-active .magnify-surface {
   width: 300px;
   border-radius: 8px;
   position: relative;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .close-btn {
@@ -459,7 +460,7 @@ html.magnify-active .magnify-surface {
 }
 
 
-#menuTable th, #menuTable td, #employeeTable th, #employeeTable td {
+#menuTable th, #menuTable td, #employeeTable th, #employeeTable td{
     padding: 12px 20px; /* 12px top/bottom, 20px left/right */
 }
 
@@ -468,7 +469,7 @@ html.magnify-active .magnify-surface {
   font-weight: bold;
 }
 
-#salesTable th, #salesTable td {
+#salesTable th, #salesTable td, #itemizedSalesTable td, #itemizedSalesTable th {
     padding: 12px 15px; /* 12px top/bottom, 20px left/right */
     text-align: center;
 }
@@ -527,3 +528,288 @@ html.magnify-active .magnify-surface {
     transform: translateY(-1px);
 }
 
+/* Modal container */
+#zReportScreen.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5); /* semi-transparent background */
+  font-family: Arial, sans-serif;
+}
+
+/* Modal content box */
+#zReportScreen .modal-content {
+  background-color: #fff;
+  margin: 5% auto; /* center vertically */
+  padding: 20px 30px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 900px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Close button */
+#closeXReportBtn {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+}
+
+#closeXReportBtn:hover {
+  color: #000;
+}
+
+/* Headings and paragraphs */
+#zReportScreen h1 {
+  margin-top: 0;
+  font-size: 24px;
+}
+
+#zReportScreen p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Details summary */
+#zReportScreen details {
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 8px 12px;
+  background-color: #f9f9f9;
+}
+
+#zReportScreen details summary {
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Tables */
+#zReportScreen table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+#zReportScreen th, #zReportScreen td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+#zReportScreen th {
+  background-color: #f0f0f0;
+}
+
+#zReportScreen tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Optional: fade-in animation for modal */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+#z-reportScreen table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #333;
+}
+
+#z-reportScreen th, #z-reportScreen td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#z-reportScreen th {
+    background-color: #0077c8;
+    color: #fff;
+    font-weight: 600;
+}
+
+#z-reportScreen tbody tr:nth-child(even) {
+    background-color: #f2f9ff;
+}
+
+#z-reportScreen tbody tr:hover {
+    background-color: #d9edff;
+}
+
+#z-reportScreen td.value {
+    font-weight: bold;
+    text-align: right;
+}
+
+#todayDate { 
+    margin-left: 300px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #004a75; /* matches your headings */
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Style for the "End Day" button */
+#z-report {
+    padding: 12px 24px;
+    background-color: #007bff; /* blue button */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: block;
+    margin: 0 auto; /* center the button */
+}
+
+#z-report:hover {
+    background-color: #0069d9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+#z-report:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#xReportScreen.modal {
+    display: none; /* hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background-color: rgba(0,0,0,0.5); /* dark overlay */
+    font-family: Arial, sans-serif;
+}
+
+/* Modal box */
+#xReportScreen .modal-content {
+    background-color: #fff;
+    margin: 3% auto;
+    padding: 25px 30px;
+    border-radius: 10px;
+    width: 85%;
+    max-width: 900px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Close button */
+#closeXReportBtn {
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.2s ease;
+}
+#closeXReportBtn:hover {
+    color: #000;
+}
+
+/* Headings */
+#xReportScreen h1 {
+    font-size: 1.8rem;
+    color: #004a75;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* Description paragraph */
+#xReportScreen p {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Details (collapsible sections) */
+#xReportScreen details {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 15px;
+    background-color: #f9f9f9;
+}
+
+#xReportScreen details summary {
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    list-style: none;
+    user-select: none;
+}
+
+/* Tables inside details */
+#xReportScreen table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: fixed;
+}
+
+#xReportScreen th, #xReportScreen td {
+    padding: 10px 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#xReportScreen th {
+    background-color: #e6f2ff;
+    color: #004a75;
+}
+
+#xReportScreen tr:hover {
+    background-color: #f1f7ff;
+}
+
+#xReportScreen table th:first-child,
+#xReportScreen table td:first-child {
+    width: 80px; /* or whatever width works */
+    text-align: center;
+}
+
+#xReportScreen summary {
+    list-style: none;       /* Remove default marker */
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;     /* Space for the arrow */
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+/* Add custom arrow using ::before */
+#xReportScreen summary::before {
+    content: "▼";           /* Down arrow */
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when open */
+#xReportScreen details[open] summary::before {
+    transform: translateY(-50%) rotate(-180deg);
+}

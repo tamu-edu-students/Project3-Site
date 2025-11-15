@@ -347,4 +347,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const refreshBtn = document.querySelector('#inventoryChartRefresh');
         if (refreshBtn) refreshBtn.addEventListener('click', renderInventoryChart);
     }
+
+    const todayDateElem = document.getElementById("todayDate");
+
+    async function loadSystemDate() {
+        const res = await fetch('/manager/currentdate');
+        const data = await res.json();
+
+        const date = new Date(data.date + "T00:00");
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        todayDateElem.textContent = date.toLocaleDateString('en-US', options);
+    }
+
+    loadSystemDate();
+
+    document.getElementById('resetDateBtn').addEventListener('click', async () => {
+        try {
+            const res = await fetch('/manager/resetdate', { method: 'POST' });
+            const data = await res.json();
+            const date = new Date(data.date + "T00:00"); // safe parsing
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById("todayDate").textContent = date.toLocaleDateString('en-US', options);
+        } catch (err) {
+            console.error("Error resetting date:", err);
+        }
+    });
+
 });

@@ -101,7 +101,7 @@ async function deleteRecipesByMenuItem(itemId) {
 // toppings are charged $1 each for total calculation here (same as UI).
 // Writes into tables with quoted column names: "orders", "orderitems".
 // ====================================================================
-async function createOrderAndDeductInventory(cartItems, { employeeId = 0, customerId = 0 } = {}) {
+async function createOrderAndDeductInventory(cartItems, { employeeId = 0, customerId = 0, systemDate = null } = {}) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -186,12 +186,18 @@ async function createOrderAndDeductInventory(cartItems, { employeeId = 0, custom
 
     // Insert INTO "orders"
     // Columns: "Customer ID","Employee ID","Order Date","Total Amount"
+
+    const orderDate = systemDate || new Date();
+    if (isNaN(orderDate)) {
+      throw new Error(`Invalid systemDate: ${systemDate}`);
+    }
+
     const { rows: orderIns } = await client.query(
       `INSERT INTO public.orders
         ("Customer ID","Employee ID","Order Date","Total Amount")
-       VALUES ($1,$2,NOW(),$3)
+       VALUES ($1,$2,$3,$4)
        RETURNING "Order ID"`,
-      [customerId, employeeId, orderTotal]
+      [customerId, employeeId, orderDate, orderTotal]
     );
     const orderId = orderIns[0]['Order ID'];
 
@@ -456,6 +462,203 @@ async function getPeakSalesHour(start, end) {
   return `${hour12}:00 ${amPm}`;
 }
 
+async function getSalesByItem(start, end) {
+  const sql = `
+    SELECT 
+      m.itemname AS item_name,
+      COALESCE(SUM(oi."Quantity"), 0) AS total_quantity,
+      COALESCE(SUM(oi."Quantity" * m.itemprice), 0) AS total_sales
+    FROM orders o
+    JOIN orderitems oi ON o."Order ID" = oi."Order ID"
+    JOIN menuitems m ON oi."Item ID" = m.itemid
+    WHERE o."Order Date" BETWEEN $1 AND $2
+    GROUP BY m.itemname;
+  `;
+
+  try {
+    const result = await pool.query(sql, [start, end]);
+
+    return result.rows.map (row => ({
+      itemName: row.item_name,
+      quantity: Number(row.total_quantity),
+      sales: Number(row.total_sales)
+    }));
+  } catch (err) {
+    console.error ("Error in getSalesByItem Function", err);
+    throw err;
+  }
+}
+
+async function loadSalesPerHour() {
+  const sql = `
+    SELECT 
+      date_trunc('hour', "Order Date") AS hour,
+      SUM("Total Amount") AS sales
+    FROM orders
+    WHERE "Order Date"::date = CURRENT_DATE
+    GROUP BY 1
+    ORDER BY 1;
+  `;
+  const result = await pool.query(sql);
+  return result.rows;
+}
+
+async function loadOrdersPerHour() {
+  const sql = `
+  SELECT
+    date_trunc('hour', "Order Date") AS hour,
+    COUNT(*) AS orders
+    FROM orders
+    WHERE "Order Date"::date = CURRENT_DATE
+    GROUP BY 1
+    ORDER BY 1
+    `;
+    const result = await pool.query(sql);
+    return result.rows;
+}
+
+async function loadCustomersPerHour() {
+  const sql = `
+  SELECT 
+    date_trunc('hour', "Order Date") AS hour,
+    COUNT(DISTINCT "Customer ID") AS customers
+    FROM orders
+    WHERE "Order Date"::date = CURRENT_DATE
+    GROUP BY 1
+    ORDER BY 1
+    `;
+    const result = await pool.query(sql);
+    return result.rows;
+}
+
+async function loadItemsPerHour() {
+  const sql = `
+    SELECT 
+      date_trunc('hour', o."Order Date") AS hour,
+      COALESCE(SUM(COALESCE(oi."Quantity", 1)), 0) AS items
+    FROM orders o
+    JOIN orderitems oi ON o."Order ID" = oi."Order ID"
+    WHERE o."Order Date"::date = CURRENT_DATE
+    GROUP BY 1
+    ORDER BY 1;
+  `;
+  const result = await pool.query(sql);
+  return result.rows;
+}
+
+async function loadAvgOrderValuePerHour() {
+    const sql = `
+    SELECT 
+      date_trunc('hour', "Order Date") AS hour,
+      AVG("Total Amount") AS avg_amount
+    FROM orders
+    WHERE "Order Date"::date = CURRENT_DATE
+    GROUP BY 1
+    ORDER BY 1;
+  `;
+
+  const result = await pool.query(sql);
+  return result.rows;
+}
+
+async function getTotalSalesForDate(date) {
+  const query = `
+    SELECT SUM("Total Amount") AS total_sales
+    FROM orders
+    WHERE DATE("Order Date") = $1;
+  `;
+
+  try {
+    const result = await pool.query(query, [date]);
+    return result.rows[0].total_sales || 0;
+  } catch (err) {
+    console.error('Database error:', err);
+    throw err;
+  }
+}
+
+async function getTotalOrdersForDate(date) {
+  const query = `
+    SELECT COUNT(*) AS total_orders
+    FROM orders
+    WHERE DATE("Order Date") = $1;
+  `;
+
+  try {
+    const result = await pool.query(query, [date]);
+    return result.rows[0].total_orders || 0;
+  } catch (err) {
+    console.error('Database error:', err);
+    throw err;
+  }
+}
+
+async function getMostPopularMenuItemForDate(date) {
+  const query = `
+    SELECT m.itemname, SUM(o."Quantity") AS total_quantity
+    FROM orderitems o
+    JOIN orders ord ON ord."Order ID" = o."Order ID"
+    JOIN menuitems m ON o."Item ID" = m.itemid
+    WHERE DATE(ord."Order Date") = $1
+    GROUP BY m.itemname
+    ORDER BY total_quantity DESC
+    LIMIT 1
+  `;
+
+  try {
+    const result = await pool.query(query, [date]);
+    return result.rows[0] || { itemname: "N/A", total_quantity: 0 };
+  } catch (err) {
+    console.error('Database error:', err);
+    throw err;
+  }
+}
+
+async function getTopEmployeeForDate(date) {
+  const query = `
+    SELECT employees.employeename, COUNT(orders."Order ID") AS orders_handled
+    FROM orders
+    JOIN employees ON employees.employeeid = orders."Employee ID"
+    WHERE DATE(orders."Order Date") = $1
+    GROUP BY employees.employeename
+    ORDER BY orders_handled DESC
+    LIMIT 1
+  `;
+
+  try {
+    const result = await pool.query(query, [date]);
+    return result.rows[0] || { employeename: "N/A", orders_handled: 0 };
+  } catch (err) {
+    console.error('Database error:', err);
+    throw err;
+  }
+}
+
+async function getPeakSalesHourForDate(date) {
+ const query = `
+    SELECT EXTRACT(HOUR FROM "Order Date") AS hour, COUNT(*) AS num_orders
+    FROM orders
+    WHERE DATE("Order Date") = $1
+    GROUP BY hour
+    ORDER BY num_orders DESC
+    LIMIT 1
+  `;
+
+  try {
+    const result = await pool.query(query, [date]);
+    if (!result.rows[0]) return "N/A";
+
+    // Convert hour from 24h to 12h format
+    let hour = result.rows[0].hour;
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12 || 12; // 0 -> 12
+    return `${hour} ${ampm}`;
+  } catch (err) {
+    console.error('Database error:', err);
+    throw err;
+  }
+}
+
 module.exports = {
   createOrderAndDeductInventory,
   applyOrderAndDeductInventory,
@@ -474,5 +677,16 @@ module.exports = {
   getSalesBetween,
   getMostPopularMenuItem,
   getPeakSalesHour,
+  getSalesByItem,
+  loadSalesPerHour,
+  loadOrdersPerHour,
+  loadCustomersPerHour,
+  loadItemsPerHour,
+  loadAvgOrderValuePerHour,
+  getTotalSalesForDate,
+  getTotalOrdersForDate,
+  getMostPopularMenuItemForDate,
+  getTopEmployeeForDate,
+  getPeakSalesHourForDate,
   pool
 };

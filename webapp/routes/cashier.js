@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
-
+const systemDate = require('../utils/systemDate');
 
 // get cashier page
 router.get('/', async (req, res) => {
@@ -30,9 +30,12 @@ router.post('/checkout', async (req, res) => {
     }));
 
     // If you have logged-in cashier, pass real employeeId here
+    const orderDate = systemDate.getDate();
+
     const result = await db.createOrderAndDeductInventory(normalized, {
       customerId: 0,
       employeeId: req.user.employeeId,
+      systemDate: orderDate
     });
 
     if (!result.ok) {
