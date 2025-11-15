@@ -362,5 +362,30 @@ router.get('/zreport', async (req, res) => {
   }
 });
 
+let systemDate = new Date(); // local time
+
+router.get('/currentdate', (req, res) => {
+    const yyyy = systemDate.getFullYear();
+    const mm = String(systemDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(systemDate.getDate()).padStart(2, '0');
+    res.json({ date: `${yyyy}-${mm}-${dd}` });
+});
+
+router.post('/incrementdate', (req, res) => {
+    systemDate.setDate(systemDate.getDate() + 1);
+    const yyyy = systemDate.getFullYear();
+    const mm = String(systemDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(systemDate.getDate()).padStart(2, '0');
+    res.json({ date: `${yyyy}-${mm}-${dd}` });
+});
+
+router.post('/resetdate', (req, res) => {
+    const now = new Date();
+    systemDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yyyy = systemDate.getFullYear();
+    const mm = String(systemDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(systemDate.getDate()).padStart(2, '0');
+    res.json({ date: `${yyyy}-${mm}-${dd}` });
+});
 
 module.exports = router;

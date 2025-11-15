@@ -473,12 +473,25 @@ function fillAvgOrdersTable(rows) {
   })
 }
 
-document.getElementById('z-report').addEventListener('click', () => {
-  document.getElementById('z-reportScreen').style.display = 'block';
-  const today = new Date().toISOString().split("T")[0];
-    
-  loadZReport(today);
-})
+document.getElementById('z-report').addEventListener('click', async () => {
+    document.getElementById('z-reportScreen').style.display = 'block';
+
+    try {
+        // Just load the Z-Report for the current system date
+        const res = await fetch('/manager/currentdate');
+        const data = await res.json();
+        const today = new Date(data.date + "T00:00");
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("todayDate").textContent = today.toLocaleDateString('en-US', options);
+
+        loadZReport(today.toISOString().split("T")[0]);
+
+    } catch (err) {
+        console.error("Error loading Z-Report:", err);
+    }
+});
+
 
 async function loadZReport(date) {
     const response = await fetch(`/manager/zreport?date=${date}`);
@@ -539,6 +552,15 @@ document.getElementById('closeXReportBtn').addEventListener('click', () => {
   document.getElementById('xReportScreen').style.display = 'none';
 });
 
-document.getElementById('zReportCloseBtn').addEventListener('click', () => {
-  document.getElementById('z-reportScreen').style.display = 'none';
-})
+document.getElementById('zReportCloseBtn').addEventListener('click', async () => {
+    document.getElementById('z-reportScreen').style.display = 'none';
+
+    const res = await fetch('/manager/incrementdate', { method: 'POST' });
+    const data = await res.json();
+
+    const [year, month, day] = data.date.split('-');
+    const newDate = new Date(data.date + "T00:00");
+
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById("todayDate").textContent = newDate.toLocaleDateString('en-US', options);
+});
