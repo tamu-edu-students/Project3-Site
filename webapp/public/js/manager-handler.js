@@ -84,13 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
             event.stopPropagation();
             const rows = dataGrid.querySelectorAll('.data-row');
 
-            for (const row of rows) {
+            const updatePromises = Array.from(rows).map(async (row) => {
                 const rowData = {};
                 row.querySelectorAll('.cell').forEach(cell => {
                     let val;
 
                     if (sectionName === 'employees' && cell.dataset.column === 'role') {
-                        val = cell.querySelector('select').value; // get dropdown value
+                        val = cell.querySelector('select').value;
                     } else {
                         val = cell.textContent.trim();
                         if (['itemprice', 'ingredientquantity', 'quantity'].includes(cell.dataset.column)) {
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 const id = row.dataset.id;
-                if (!id) continue; // skip new/unsaved rows
+                if (!id) return;
 
                 try {
                     const res = await fetch(`/manager/${sectionName}/update/${id}`, {
@@ -118,8 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (err) {
                     console.error(`Error updating row ${id}:`, err);
                 }
-            }
+            });
 
+            await Promise.all(updatePromises); // wait for all updates in parallel
             alert('All updates saved!');
             exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls);
         });
