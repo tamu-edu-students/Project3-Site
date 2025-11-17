@@ -41,7 +41,7 @@ passport.use(new GoogleStrategy({
 
         // If found in customers table, set customerId
         if(role === 'customer') {
-            
+
             // Get their customerId if they already exist in db
             if(customer_result.rows.length > 0) {
                 customerId = customer_result.rows[0].customer_id;
@@ -53,7 +53,7 @@ passport.use(new GoogleStrategy({
                     'INSERT INTO customers (customer_name, email) VALUES ($1, $2) RETURNING customer_id',
                     [profile.displayName,email]
                 );
-                customerId = add_customer_result.rows[0].customerid;
+                customerId = add_customer_result.rows[0].customer_id;
             }
 
         }
