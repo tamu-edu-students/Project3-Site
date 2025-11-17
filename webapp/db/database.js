@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 require('dotenv').config();
+const systemDate = require('../utils/systemDate');
 
 const pool = new Pool({
   user: process.env.PSQL_USER,
@@ -490,74 +491,84 @@ async function getSalesByItem(start, end) {
 }
 
 async function loadSalesPerHour() {
+  const artificialDate = systemDate.getDate();
+  const dateStr = artificialDate.toISOString().split('T')[0]; // YYYY-MM-DD format
   const sql = `
     SELECT 
       date_trunc('hour', "Order Date") AS hour,
       SUM("Total Amount") AS sales
     FROM orders
-    WHERE "Order Date"::date = CURRENT_DATE
+    WHERE "Order Date"::date = $1
     GROUP BY 1
     ORDER BY 1;
   `;
-  const result = await pool.query(sql);
+  const result = await pool.query(sql, [dateStr]);
   return result.rows;
 }
 
 async function loadOrdersPerHour() {
+  const artificialDate = systemDate.getDate();
+  const dateStr = artificialDate.toISOString().split('T')[0]; // YYYY-MM-DD format
   const sql = `
   SELECT
     date_trunc('hour', "Order Date") AS hour,
     COUNT(*) AS orders
     FROM orders
-    WHERE "Order Date"::date = CURRENT_DATE
+    WHERE "Order Date"::date = $1
     GROUP BY 1
     ORDER BY 1
     `;
-    const result = await pool.query(sql);
+    const result = await pool.query(sql, [dateStr]);
     return result.rows;
 }
 
 async function loadCustomersPerHour() {
+  const artificialDate = systemDate.getDate();
+  const dateStr = artificialDate.toISOString().split('T')[0]; // YYYY-MM-DD format
   const sql = `
   SELECT 
     date_trunc('hour', "Order Date") AS hour,
     COUNT(DISTINCT "Customer ID") AS customers
     FROM orders
-    WHERE "Order Date"::date = CURRENT_DATE
+    WHERE "Order Date"::date = $1
     GROUP BY 1
     ORDER BY 1
     `;
-    const result = await pool.query(sql);
+    const result = await pool.query(sql, [dateStr]);
     return result.rows;
 }
 
 async function loadItemsPerHour() {
+  const artificialDate = systemDate.getDate();
+  const dateStr = artificialDate.toISOString().split('T')[0]; // YYYY-MM-DD format
   const sql = `
     SELECT 
       date_trunc('hour', o."Order Date") AS hour,
       COALESCE(SUM(COALESCE(oi."Quantity", 1)), 0) AS items
     FROM orders o
     JOIN orderitems oi ON o."Order ID" = oi."Order ID"
-    WHERE o."Order Date"::date = CURRENT_DATE
+    WHERE o."Order Date"::date = $1
     GROUP BY 1
     ORDER BY 1;
   `;
-  const result = await pool.query(sql);
+  const result = await pool.query(sql, [dateStr]);
   return result.rows;
 }
 
 async function loadAvgOrderValuePerHour() {
-    const sql = `
+  const artificialDate = systemDate.getDate();
+  const dateStr = artificialDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+  const sql = `
     SELECT 
       date_trunc('hour', "Order Date") AS hour,
       AVG("Total Amount") AS avg_amount
     FROM orders
-    WHERE "Order Date"::date = CURRENT_DATE
+    WHERE "Order Date"::date = $1
     GROUP BY 1
     ORDER BY 1;
   `;
 
-  const result = await pool.query(sql);
+  const result = await pool.query(sql, [dateStr]);
   return result.rows;
 }
 

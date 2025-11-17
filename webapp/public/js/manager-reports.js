@@ -284,6 +284,7 @@ async function getSalesPerHour() {
     try {
         const res = await fetch('/manager/sales-per-hour');
         const data = await res.json();
+        console.log(data)
         if (!Array.isArray(data)) {
             console.error('Sales data is not an array:', data);
             return;
