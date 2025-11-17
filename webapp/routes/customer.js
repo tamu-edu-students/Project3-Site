@@ -31,7 +31,7 @@ router.post('/checkout', async (req, res) => {
     const orderDate = systemDate.getDate();
 
     const result = await db.createOrderAndDeductInventory(normalized, {
-      customerId: 0, // adjust if you track real customers
+      customerId: req.user.customerId, 
       employeeId: 0, // kiosk/customer page -> no employee
       systemDate: orderDate
     });
