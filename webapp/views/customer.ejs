@@ -27,6 +27,10 @@
               <a href="/cashier" class="nav-btn common">Cashier Page</a>
           <% } %>
 
+          <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
+              <a href="/customer" class="nav-btn common">Customer Page</a>
+          <% } %>
+
           <a href="/logout" class="nav-btn logout">Logout</a>
       </div>
   </div>
