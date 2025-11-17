@@ -87,17 +87,20 @@ router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
 
-    if (req.user.role === 'manager') {
-        res.redirect('/manager');
-    } 
+        /*
+        if (req.user.role === 'manager') {
+            res.redirect('/manager');
+        } 
 
-    else if (req.user.role === 'cashier') {
-        res.redirect('/cashier');
-    } 
-    
-    else {
-        res.redirect('/customer');
-    }
+        else if (req.user.role === 'cashier') {
+            res.redirect('/cashier');
+        } 
+        
+        else {
+            res.redirect('/customer');
+        }
+        */
+        res.redirect('/customer/landing');
 
   }
 );
