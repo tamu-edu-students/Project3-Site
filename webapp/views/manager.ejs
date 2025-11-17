@@ -624,3 +624,592 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<head>
+    <title>Manager Page</title>
+    <link rel="stylesheet" href="/css/manager.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="top-bar">
+        <!-- Left side: logged in user -->
+        <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
+            <span class="navbar-user">
+                Logged in as <%= user.displayName %>, <%= user.role %>
+            </span>
+        <% } %>
+
+        <!-- Right side: navigation buttons -->
+        <div class="nav-buttons">
+            <a href="/manager" class="nav-btn common">Manager Page</a>
+            <a href="/cashier" class="nav-btn common">Cashier Page</a>
+            <a href="/customer" class="nav-btn common">Customer Page</a>
+            <a href="/logout" class="nav-btn logout">Logout</a>
+        </div>
+    </div>
+
+
+
+    <br>
+
+    <div class="main-container magnify-surface">
+        <div class="manager-toolbar">
+            <div class="title-section">
+                <h1 class="manager-title">Manager Dashboard</h1>
+                <div class="date-buttons-container">
+                    <p id="todayDate"></p>
+                    <div class="button-group">
+                        <button id="z-report">End Day</button>
+                        <button id="resetDateBtn">Reset Date to Today</button>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                type="button"
+                class="magnify-toggle"
+                id="magnifyToggle"
+                aria-pressed="false"
+                aria-label="Enable magnifier"
+                title="Enable magnifier"
+            >
+                🔍
+            </button>
+
+        </div>
+
+
+        <div class="data-section">
+            <input type="checkbox" id="toggle-reports" class="toggle-section">
+            <label for="toggle-reports" class="section-header">
+                <h2>Reports</h2>
+            </label>
+
+            <div class="reports-grid">
+                <button id="reports">Reports</button>
+                <button id="inventoryReport">Inventory Report</button>
+                <button id="menuReport">Menu Report</button>
+                <button id="employeeReport">Employee Report</button>
+                <button id="salesReport">Sales Report</button>
+                <button id="itemizedSalesReport">Itemized Sales Report</button>
+                <button id="x-reports">X-Reports</button>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <input type="checkbox" id="toggle-chart" class="toggle-section">
+            <label for="toggle-chart" class="section-header">
+                <h2>Inventory Chart</h2>
+            </label>
+
+            <div class="section-controls">
+                <button id="inventoryChartRefresh" class="refresh-btn">Refresh</button>
+            </div>
+
+            <div class="data-grid">
+                <canvas id="inventoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="data-section">
+            <input type="checkbox" id="toggle-menu" class="toggle-section">
+            <label for="toggle-menu" class="section-header">
+                <h2>Menu Items</h2>
+            </label>
+            <div class="section-controls">
+                <button class="add-btn">+</button>
+                <button class="delete-btn">-</button>
+                <button class="update-btn">Edit</button>
+            </div>
+            <div class="data-grid">
+                <% menuItems.forEach(item => { %>
+                    <div id="hoverTag" class="data-row" data-id="<%= item.itemid %>">
+                        <div class="cell" data-column="itemname"><%= item.itemname %></div>
+                        <div class="cell" data-column="itemprice"><%= item.itemprice %></div>
+                        <button onClick="deleteItem('menuitems', <%= item.itemid %>)" class="hidden">DELETE</button>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Inventory Items -->
+        <div class="data-section">
+            <input type="checkbox" id="toggle-inventory" class="toggle-section">
+            <label for="toggle-inventory" class="section-header">
+                <h2>Inventory Items</h2>
+            </label>
+            <div class="section-controls">
+                <button class="add-btn">+</button>
+                <button class="delete-btn">-</button>
+                <button class="update-btn">Edit</button>
+            </div>
+            <div class="data-grid">
+                <% inventoryItems.forEach(item => { %>
+                    <div id="hoverTag" class="data-row" data-id="<%= item.inventoryid %>">
+                        <div class="cell" data-column="ingredientname"><%= item.ingredientname %></div>
+                        <div class="cell" data-column="ingredientquantity"><%= item.ingredientquantity %></div>
+                        <button onClick="deleteItem('inventory', <%= item.inventoryid %>)" class="hidden">DELETE</button>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Recipes Section -->
+        <div class="data-section">
+            <input type="checkbox" id="toggle-recipes" class="toggle-section">
+            <label for="toggle-recipes" class="section-header">
+                <h2>Recipes</h2>
+            </label>
+            
+            <div class="section-controls">
+                 <button class="delete-btn">-</button>
+            </div>
+
+            <div class="data-grid recipes-grid">
+                <% Object.values(recipes).forEach(recipeGroup => { %>
+                    <div class="recipe-card" data-itemid="<%= recipeGroup.itemid %>">
+                        <div class="recipe-card-header">
+                            <h3><%= recipeGroup.itemname %></h3>
+
+                        </div>
+                        <ul>
+                            <% recipeGroup.ingredients.forEach(ing => { %>
+                                <li class="recipe-item" data-id="<%= ing.recipeid %>" 
+                                    data-inventoryid="<%= ing.inventoryid %>" 
+                                    data-quantity="<%= ing.quantity %>" 
+                                    data-unit="<%= ing.unit %>">
+
+                                    <span class="recipe-text">
+                                        <%= ing.ingredientname %> - <%= ing.quantity %> <%= ing.unit %>
+                                    </span>
+                                    <button onclick="deleteItem('recipes', <%= ing.recipeid %>)" class="hidden">
+                                        ✕
+                                    </button>
+
+                                    <button class="edit-ingredient-btn">Edit</button>
+                                </li>
+                            <% }) %>
+                        </ul>
+                        <button class="add-ingredient-btn" data-itemid="<%= recipeGroup.itemid %>" data-itemname="<%= recipeGroup.itemname %>">
+                            + Add Ingredient
+                        </button>
+                    </div>
+                <% }) %>
+                
+                <!-- Empty state for when no recipes exist -->
+                <% if (Object.keys(recipes).length === 0) { %>
+                    <div class="empty-recipes-message">
+                        <p>No recipes yet. Add menu items first, then create recipes for them!</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Employees -->
+        <div class="data-section">
+            <input type="checkbox" id="toggle-employees" class="toggle-section">
+            <label for="toggle-employees" class="section-header">
+                <h2>Employees</h2>
+            </label>
+            <div class="section-controls">
+                <button class="add-btn">+</button>
+                <button class="delete-btn">-</button>
+                <button class="update-btn">Edit</button>
+            </div>
+            <div class="data-grid">
+                <% employees.forEach(emp => { %>
+                    <div id="hoverTag" class="data-row" data-id="<%= emp.employeeid %>">
+                        <div class="cell" data-column="employeename"><%= emp.employeename %></div>
+                        <div class="cell" data-column="email"><%= emp.email %></div>
+                        <div class="cell" data-column="role"><%= emp.role %></div>
+                        <button onClick="deleteItem('employees', <%= emp.employeeid %>)" class="hidden">DELETE</button>
+                    </div>
+                <% }) %>
+            </div>
+
+        </div>
+
+        <!-- Generic modal -->
+        <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+        
+            <form id="addForm">
+            
+            <!-- Name field (all sections) -->
+            <div class="form-field" data-section="menuitems inventory employees">
+                <label>Name:</label>
+                <input type="text" name="name" required>
+            </div>
+
+            <!-- Description field (menuitems only) -->
+            <div class="form-field" data-section="menuitems">
+                <label>Description:</label>
+                <input type="text" name="description">
+            </div>
+
+            <!-- Price field (menuitems only) -->
+            <div class="form-field" data-section="menuitems">
+                <label>Price:</label>
+                <input type="number" step="0.01" name="price">
+            </div>
+
+            <!-- Quantity field (inventory only) -->
+            <div class="form-field" data-section="inventory">
+                <label>Quantity:</label>
+                <input type="number" step="0.01" name="ingredientquantity">
+            </div>
+
+            <!-- Unit field (inventory only) -->
+            <div class="form-field" data-section="inventory">
+                <label>Unit:</label>
+                <input type="text" name="unit">
+            </div>
+
+            <button type="submit">Add</button>
+            </form>
+        </div>
+        </div>
+
+        <div id="reportsScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeModalBtn" class="close">&times;</span>
+                <h2>General Overview</h2>
+                <p id="totalSales">Total Sales: </p>
+                <p id="totalOrders">Total Orders: </p>
+                <p id="peakHour">Peak Sales Hour: </p>
+                <p id="popularDrink">Most Popular Drink: </p>
+            </div>
+        </div>
+
+        <div id="inventoryScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeInvBtn" class="close">&times;</span>
+                <h2>Inventory Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDate">Start Date:</label>
+                <input type="datetime-local" id="startDate">
+
+                <label for="endDate">End Date:</label>
+                <input type="datetime-local" id="endDate">
+
+                <button id="generateReportBtn">Generate Report</button>
+                </div>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                    <table id="inventoryTable">
+                        <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Qty</th>
+                            <th>Used</th>
+                            <th>Remaining</th>
+                            <th>Unit</th>
+                        </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="menuScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeMenuBtn" class="close">&times;</span>
+                <h2>Menu Report</h2>
+                <p>*Best selling item highlighed in green</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                <table id="menuTable">
+                    <thead>
+                    <tr>
+                        <th>Menu Item</th>
+                        <th>Cost</th>
+                        <th>Times Ordered</th>
+                    </tr>
+                    </thead>
+                    <tbody id="menuTableBody">
+                    <!-- rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="employeeScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeEmployeeBtn" class="close">&times;</span>
+                <h2>Employee Report</h2>
+                <p>*Best performing employee highlighed in green</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                <table id="employeeTable">
+                    <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Drinks Made</th>
+                    </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                    <!-- rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="salesScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeSalesBtn" class="close">&times;</span>
+                <h2>Sales Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDate">Start Date:</label>
+                <input type="datetime-local" id="salesStartDate">
+
+                <label for="endDate">End Date:</label>
+                <input type="datetime-local" id="salesEndDate">
+
+                <button id="generateSalesReportBtn">Generate Report</button>
+                </div>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                    <p>Most popular drink: </p>
+                    <p>Most popular hour: </p>
+                    <table id="salesTable">
+                        <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>Customer</th>
+                            <th>Total ($)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="salesReportTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="itemizedSalesScreen" class="modal">
+            <div class="modal-content">
+                <span id="closeItemizedSalesBtn" class="close">&times;</span>
+                <h2>Itemized Sales Report</h2>
+
+                <!-- 🔹 Date Filter Section -->
+                <div class="filter-section">
+                <label for="startDateItemSales">Start Date:</label>
+                <input type="datetime-local" id="startDateItemSales">
+
+                <label for="endDateItemSales">End Date:</label>
+                <input type="datetime-local" id="endDateItemSales">
+
+                <button id="generateItemizedReportBtn">Generate Report</button>
+                </div>
+
+                <p>*Best selling item highlighed in green</p>
+                <p>*Best grossing item highlighed in yellow</p>
+                <p>*Best selling and highest grossing item highlighed in orange</p>
+
+                <!-- 🔹 Report Table -->
+                <div class="table-container">
+                    <table id="itemizedSalesTable">
+                        <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Qty Sold</th>
+                            <th>Total Sales ($)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="itemizedSalesTableBody">
+                        <!-- rows will be dynamically inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="xReportScreen" class="modal">
+            <div class="modal-content">
+
+                <span id="closeXReportBtn" class="close">&times;</span>
+                <h1>X Report (Today, per hour)</h1>
+                <p>Live values from database. Grouped by hour for the current date.</p>
+
+                <!-- Sales per hour -->
+                <details open>
+                    <summary>Sales ($) per hour</summary>
+                    <table id="tblSales">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Sales ($)</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Orders per hour -->
+                <details>
+                    <summary>Orders per hour</summary>
+                    <table id="tblOrders">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Orders</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Unique customers per hour -->
+                <details>
+                    <summary>Unique customers per hour</summary>
+                    <table id="tblCustomers">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Customers</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Items sold per hour -->
+                <details>
+                    <summary>Items sold per hour</summary>
+                    <table id="tblItems">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Items</th>
+                        </tr>
+                    </table>
+                </details>
+
+                <!-- Average order value per hour -->
+                <details>
+                    <summary>Average order value ($) per hour</summary>
+                    <table id="tblAvg">
+                        <tr>
+                            <th>Hour</th>
+                            <th>Avg ($)</th>
+                        </tr>
+                    </table>
+                </details>
+
+            </div>
+        </div>
+
+        <div id="z-reportScreen"class="modal">
+            <div class="modal-content">
+                <span id="zReportCloseBtn" class="close">&times;</span>
+                <h1>Z-Report: End of Day Summary</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="zReportTable">
+                        <!-- rows get added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    <script>
+        (function () {
+            const MAGNIFY_SCALE_ACTIVE = 1.35;
+            const MAGNIFY_SCALE_IDLE = 1;
+            const magnifyToggleBtn = document.getElementById('magnifyToggle');
+            const rootElement = document.documentElement;
+            const magnifySurface = document.querySelector('.magnify-surface');
+            let magnifierEnabled = false;
+            let magnifierFrame = null;
+            let pendingMagnifyState = null;
+
+            function syncMagnifyState(isActive) {
+                rootElement.classList.toggle('magnify-active', isActive);
+                magnifyToggleBtn?.classList.toggle('is-active', isActive);
+                if (magnifyToggleBtn) {
+                    magnifyToggleBtn.setAttribute('aria-pressed', String(isActive));
+                    magnifyToggleBtn.setAttribute('aria-label', isActive ? 'Disable magnifier' : 'Enable magnifier');
+                    magnifyToggleBtn.title = isActive ? 'Disable magnifier' : 'Enable magnifier';
+                }
+                toggleMagnifierTracking(isActive);
+            }
+
+            // Always start with magnifier disabled - only activate when button is pressed
+            syncMagnifyState(false);
+
+            magnifyToggleBtn?.addEventListener('click', () => {
+                const isActive = !rootElement.classList.contains('magnify-active');
+                syncMagnifyState(isActive);
+            });
+
+            function toggleMagnifierTracking(shouldEnable) {
+                if (!magnifySurface) return;
+                if (shouldEnable && !magnifierEnabled) {
+                    magnifierEnabled = true;
+                    magnifySurface.addEventListener('pointermove', handleMagnifierPointerMove);
+                    magnifySurface.addEventListener('pointerleave', handleMagnifierPointerLeave);
+                    magnifySurface.addEventListener('pointerdown', handleMagnifierPointerMove);
+                    rootElement.style.setProperty('--magnify-scale', MAGNIFY_SCALE_IDLE);
+                } else if (!shouldEnable && magnifierEnabled) {
+                    magnifierEnabled = false;
+                    magnifySurface.removeEventListener('pointermove', handleMagnifierPointerMove);
+                    magnifySurface.removeEventListener('pointerleave', handleMagnifierPointerLeave);
+                    magnifySurface.removeEventListener('pointerdown', handleMagnifierPointerMove);
+                    if (magnifierFrame) {
+                        cancelAnimationFrame(magnifierFrame);
+                        magnifierFrame = null;
+                    }
+                    pendingMagnifyState = null;
+                    rootElement.style.setProperty('--magnify-scale', '1');
+                    rootElement.style.removeProperty('--magnify-origin-x');
+                    rootElement.style.removeProperty('--magnify-origin-y');
+                }
+            }
+
+            function handleMagnifierPointerMove(event) {
+                if (!magnifierEnabled || !magnifySurface) return;
+                const rect = magnifySurface.getBoundingClientRect();
+                const originX = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
+                const originY = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
+                pendingMagnifyState = { originX, originY };
+                if (!magnifierFrame) {
+                    magnifierFrame = requestAnimationFrame(applyPendingMagnifierState);
+                }
+            }
+
+            function handleMagnifierPointerLeave() {
+                pendingMagnifyState = null;
+                rootElement.style.setProperty('--magnify-scale', MAGNIFY_SCALE_IDLE);
+            }
+
+            function applyPendingMagnifierState() {
+                magnifierFrame = null;
+                if (!pendingMagnifyState) return;
+                rootElement.style.setProperty('--magnify-origin-x', `${pendingMagnifyState.originX}px`);
+                rootElement.style.setProperty('--magnify-origin-y', `${pendingMagnifyState.originY}px`);
+                rootElement.style.setProperty('--magnify-scale', MAGNIFY_SCALE_ACTIVE);
+            }
+        })();
+    </script>
+    <script src="/js/manager-reports.js"></script>
+    <script src="/js/manager-handler.js"></script>
+    <script src="/js/manager-modal.js"></script>
+    <script src="/js/manager-recipe-handler.js"></script>
+
+</body>
+</html>

@@ -45,4 +45,12 @@ router.post('/checkout', async (req, res) => {
     return res.status(500).json({ message: 'Server error during checkout.' });
   }
 });
+
+
+// Landing page
+router.get('/landing', (req, res) => {
+  res.render('landing');
+});
+
+
 module.exports = router;
