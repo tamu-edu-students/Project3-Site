@@ -22,6 +22,7 @@ passport.use(new GoogleStrategy({
 
         // default role
         let role = 'customer'; 
+        let employeeId = null;
 
         if (result.rows.length > 0) {
 
