@@ -59,19 +59,30 @@ html.magnify-active .magnify-surface {
 
 .manager-toolbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
     gap: 16px;
+    position: relative;
+}
+
+.title-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
 .manager-title {
     margin: 0;
     font-size: 2rem;
     color: #004a75;
+    text-align: center;
 }
 
 .magnify-toggle {
+    position: absolute;
+    right: 0;
     width: 52px;
     height: 52px;
     border: none;
@@ -654,13 +665,28 @@ html.magnify-active .magnify-surface {
     text-align: right;
 }
 
+/* Date and buttons container */
+.date-buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
 #todayDate { 
-    margin-left: 300px;
+    margin: 0;
     font-size: 1.2rem;
     font-weight: bold;
     color: #004a75; /* matches your headings */
-    margin-bottom: 15px;
     text-align: center;
+}
+
+/* Button group container */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
 }
 
 /* Style for the "End Day" button */
@@ -686,6 +712,33 @@ html.magnify-active .magnify-surface {
 }
 
 #z-report:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Style for the "Reset Date to Today" button */
+#resetDateBtn {
+    padding: 12px 24px;
+    background-color: #ffc107; /* yellow button */
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: block;
+    margin: 0 auto; /* center the button */
+}
+
+#resetDateBtn:hover {
+    background-color: #e0a800;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+#resetDateBtn:active {
     transform: translateY(0);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
