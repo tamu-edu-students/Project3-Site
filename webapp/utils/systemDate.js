@@ -1,20 +1,24 @@
 let systemDate = new Date();
-systemDate.setHours(0, 0, 0, 0); // optional: zero out time
 
 module.exports = {
-  // Get the current system date
-  getDate: () => new Date(systemDate.getTime()),
+  // Get the system date with current time (uses artificial date but current time)
+  getDate: () => {
+    const now = new Date();
+    const artificialDate = new Date(systemDate);
+    // Set the time from current time, but keep the date from systemDate
+    artificialDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+    return artificialDate;
+  },
 
-  // Increment system date by N days (default 1)
+  // Increment system date by N days (default 1, preserves time)
   incrementDate: (days = 1) => {
     systemDate.setDate(systemDate.getDate() + days);
     return new Date(systemDate.getTime());
   },
 
-  // Reset system date to today
+  // Reset system date to current date and time
   resetDate: () => {
-    const now = new Date();
-    systemDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    systemDate = new Date();
     return new Date(systemDate.getTime());
   },
 
