@@ -9,21 +9,23 @@
     <div class="top-bar">
         <!-- Left side: logged in user -->
         <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
-            <span class="navbar-user">
-                Logged in as <%= user.displayName %>, <%= user.role %>
-            </span>
+          <span class="navbar-user">
+            Logged in as <%= user.displayName %>, <%= user.role %>
+          </span>
         <% } %>
-
-        <!-- Right side: navigation buttons -->
-        <div class="nav-buttons">
-            <a href="/manager" class="nav-btn common">Manager Page</a>
-            <a href="/cashier" class="nav-btn common">Cashier Page</a>
-            <a href="/customer" class="nav-btn common">Customer Page</a>
-            <a href="/logout" class="nav-btn logout">Logout</a>
+      
+        <!-- Right side: weather + navigation -->
+        <div class="nav-buttons" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <!-- Weather badge as gradient button -->
+          <a id="weatherBadge" class="nav-btn weather-btn" aria-live="polite">Loading…</a>
+      
+          <a href="/manager" class="nav-btn common">Manager Page</a>
+          <a href="/cashier" class="nav-btn common">Cashier Page</a>
+          <a href="/customer" class="nav-btn common">Customer Page</a>
+          <a href="/logout" class="nav-btn logout">Logout</a>
         </div>
     </div>
-
-
+      
 
     <br>
 
@@ -575,6 +577,44 @@
                 rootElement.style.setProperty('--magnify-origin-y', `${pendingMagnifyState.originY}px`);
                 rootElement.style.setProperty('--magnify-scale', MAGNIFY_SCALE_ACTIVE);
             }
+        })();
+        (function () 
+        {
+            const badge = document.getElementById('weatherBadge');
+            if (!badge) return;
+
+            const KEY = 'd823bf23c750aa077748b72b78818e3e';
+            const CITY = 'College Station';
+            // Weatherstack: units=f => Fahrenheit
+            const url = `http://api.weatherstack.com/current?access_key=${KEY}&query=${CITY}`;
+
+            async function loadWeather() {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                if (data.success === false || data.error) {
+                throw new Error(data.error?.info || 'API error');
+                }
+
+                const c = data.current || {};
+                const loc = data.location?.name || 'College Station';
+                const desc = Array.isArray(c.weather_descriptions) ? c.weather_descriptions[0] : '';
+                const temp = Math.round((Number.isFinite(c.temperature) ? Math.round(c.temperature) : '-') * 9/5 + 32);
+                const feels = Math.round((Number.isFinite(c.feelslike) ? Math.round(c.feelslike) : '-') * 9/5 + 32);
+
+                badge.textContent = `${loc}: ${temp}°F, ${desc} (feels ${feels}°)`;
+            } catch (e) {
+                console.error(e);
+                badge.textContent = 'Weather unavailable';
+            }
+            }
+
+            // Load immediately on page render
+            loadWeather();
+            // Optional: refresh every 10 minutes
+            // setInterval(loadWeather, 10 * 60 * 1000);
         })();
     </script>
     <script src="/js/manager-reports.js"></script>
