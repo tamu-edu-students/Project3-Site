@@ -1,5 +1,7 @@
 /* Boba Tea Shop Customer Interface Styles */
-
+html.big-text {
+    --customer-font-scale: 1.50;
+  }
 * {
     margin: 0;
     padding: 0;
@@ -25,15 +27,16 @@ body {
     color: #333;
 }
 
-html.magnify-active {
-    --customer-font-scale: 1.2;
-}
+
 
 html.magnify-active body {
     cursor: zoom-in;
     line-height: 1.6;
 }
-
+.magnify-surface {
+    transform-origin: var(--magnify-origin-x) var(--magnify-origin-y);
+    transition: transform 0.12s ease-out;
+}
 html.magnify-active .magnify-toggle {
     cursor: pointer;
 }
@@ -1413,4 +1416,30 @@ html.magnify-active .modal-content {
 .nav-btn.logout:hover {
     background: #c9302c;
     transform: translateY(-1px);
+}
+
+.text-size-toggle {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff, #ffecec);
+    color: #8B4513;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.text-size-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.text-size-toggle.is-active {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
 }
