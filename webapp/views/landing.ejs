@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/css/landing.css">
+    <title>Landing</title>
+</head>
+  <body>
+    <div class="login-container">
+        <div class="logo">I am a...</div>
+
+        <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
+          <a href="/manager" class="btn-google">
+            Manager
+          </a>
+        <% } %>
+
+        <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
+          <a href="/cashier" class="btn-google">
+            Cashier
+          </a>
+        <% } %>
+
+        <a href="/customer" class="btn-google">
+            Customer
+        </a>
+        
+    </div>
+  </body>
+</html>

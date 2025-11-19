@@ -8,7 +8,7 @@ const router = express.Router();
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/callback'
+    callbackURL: process.env.GOOGLE_CALLBACK_URL
 }, async (accessToken, refreshToken, profile, done) => {
 
     try {
@@ -87,17 +87,20 @@ router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
 
-    if (req.user.role === 'manager') {
-        res.redirect('/manager');
-    } 
+        /*
+        if (req.user.role === 'manager') {
+            res.redirect('/manager');
+        } 
 
-    else if (req.user.role === 'cashier') {
-        res.redirect('/cashier');
-    } 
-    
-    else {
-        res.redirect('/customer');
-    }
+        else if (req.user.role === 'cashier') {
+            res.redirect('/cashier');
+        } 
+        
+        else {
+            res.redirect('/customer');
+        }
+        */
+        res.redirect('/customer/landing');
 
   }
 );

@@ -15,7 +15,10 @@
         <% } %>
 
         <!-- Right side: navigation buttons -->
-        <div class="nav-buttons">
+        <div class="nav-buttons" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+
+            <a id="weatherBadge" class="nav-btn weather-btn" aria-live="polite">Loading…</a>
+
             <a href="/manager" class="nav-btn common">Manager Page</a>
             <a href="/cashier" class="nav-btn common">Cashier Page</a>
             <a href="/customer" class="nav-btn common">Customer Page</a>
@@ -29,13 +32,16 @@
 
     <div class="main-container magnify-surface">
         <div class="manager-toolbar">
-            <h1 class="manager-title">Manager Dashboard</h1>
-
-            <p id="todayDate"></p>
-
-            <button id="z-report">End Day</button>
-
-            <button id="resetDateBtn">Reset Date to Today</button>
+            <div class="title-section">
+                <h1 class="manager-title">Manager Dashboard</h1>
+                <div class="date-buttons-container">
+                    <p id="todayDate"></p>
+                    <div class="button-group">
+                        <button id="z-report">End Day</button>
+                        <button id="resetDateBtn">Reset Date to Today</button>
+                    </div>
+                </div>
+            </div>
 
             <button id="translateBtn" data-lang="es">Translate to Spanish</button>
 
@@ -498,6 +504,47 @@
                 </table>
             </div>
         </div>
+
+    <script>
+        (function () 
+        {
+            const badge = document.getElementById('weatherBadge');
+            if (!badge) return;
+
+            const KEY = '<%= WEATHER_KEY %>';
+            const CITY = 'College Station';
+            // Weatherstack: units=f => Fahrenheit
+            const url = `http://api.weatherstack.com/current?access_key=${KEY}&query=${CITY}`;
+
+            async function loadWeather() {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                if (data.success === false || data.error) {
+                throw new Error(data.error?.info || 'API error');
+                }
+
+                const c = data.current || {};
+                const loc = data.location?.name || 'College Station';
+                const desc = Array.isArray(c.weather_descriptions) ? c.weather_descriptions[0] : '';
+                const temp = Math.round((Number.isFinite(c.temperature) ? Math.round(c.temperature) : '-') * 9/5 + 32);
+                const feels = Math.round((Number.isFinite(c.feelslike) ? Math.round(c.feelslike) : '-') * 9/5 + 32);
+
+                badge.textContent = `${loc}: ${temp}°F, ${desc} (feels ${feels}°)`;
+            } catch (e) {
+                console.error(e);
+                badge.textContent = 'Weather unavailable';
+            }
+            }
+
+            // Load immediately on page render
+            loadWeather();
+            // Optional: refresh every 10 minutes
+            // setInterval(loadWeather, 10 * 60 * 1000);
+        })();
+    </script>
 
 
     <script>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 const systemDate = require('../utils/systemDate');
+require('dotenv').config();
 
 // Ensure user has proper roles
 const { ensureRole } = require('./protected');
@@ -58,7 +59,8 @@ router.get('/', async (req, res) => {
             inventoryItems,
             recipes: groupedRecipes,
             employees,
-            user: req.user
+            user: req.user,
+            WEATHER_KEY: process.env.WEATHER_KEY
         });
 
         console.log("manager.js loaded!");
