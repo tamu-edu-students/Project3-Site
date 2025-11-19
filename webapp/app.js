@@ -37,12 +37,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/translate', require('./routes/translate'));
 
 // Unauthenticated route
 app.use('/', require('./routes/unauthenticated'));
 
 // Authentication route
 app.use('/auth', require('./routes/authenticate'));
+
 
 // All protected page routes
 const { ensureRole } = require('./routes/protected');

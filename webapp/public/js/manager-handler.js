@@ -375,5 +375,4 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error resetting date:", err);
         }
     });
-
 });
