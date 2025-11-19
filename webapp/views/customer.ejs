@@ -58,6 +58,16 @@
           >
             🔍
           </button>
+          <button
+          type="button"
+          class="text-size-toggle"
+          id="textSizeToggle"
+          aria-pressed="false"
+          aria-label="Increase text size"
+          title="Increase text size"
+        >
+          🔠
+        </button>
           <div class="cart-icon-container">
             <button class="cart-icon-btn" id="cartIconBtn">
               <span class="cart-icon">🛒</span>
@@ -248,7 +258,30 @@
     }
 
     syncMagnifyState(storedMagnifyPreference);
+    const textSizeToggle = document.getElementById('textSizeToggle');
 
+    let textLarge = false;
+    try {
+      textLarge = localStorage.getItem('vamsa_text_large') === 'true';
+    } catch {}
+
+    function applyTextSizeState(isLarge) {
+      document.documentElement.classList.toggle('big-text', isLarge);
+      textSizeToggle.classList.toggle('is-active', isLarge);
+      textSizeToggle.setAttribute('aria-pressed', String(isLarge));
+      textSizeToggle.title = isLarge ? "Reduce text size" : "Increase text size";
+    }
+
+applyTextSizeState(textLarge);
+
+textSizeToggle.addEventListener('click', () => {
+  textLarge = !textLarge;
+  applyTextSizeState(textLarge);
+
+  try {
+    localStorage.setItem('vamsa_text_large', String(textLarge));
+  } catch {}
+});
     magnifyToggleBtn?.addEventListener('click', () => {
       const isActive = !rootElement.classList.contains('magnify-active');
       syncMagnifyState(isActive);
