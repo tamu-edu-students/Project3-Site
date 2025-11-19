@@ -19,6 +19,7 @@
 
       <!-- Right side: navigation buttons -->
       <div class="nav-buttons">
+          <button id="translateBtn" data-lang="es">Translate to Spanish</button>
           <% if (user && (user.role === 'manager')) { %>
               <a href="/manager" class="nav-btn common">Manager Page</a>
           <% } %>
@@ -544,5 +545,6 @@
       document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
     }
   </script>
+  <script src="/js/translator.js"></script>
 </body>
 </html>
