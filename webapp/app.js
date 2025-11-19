@@ -3,6 +3,7 @@ const session = require('express-session');
 const passport = require('passport');
 const dotenv = require('dotenv');
 const path = require('path');
+const fetch = require('node-fetch');
 
 dotenv.config();
 
@@ -51,6 +52,25 @@ const { ensureRole } = require('./routes/protected');
 app.use('/manager', ensureRole('manager'), require('./routes/manager'));
 app.use('/cashier', ensureRole('cashier'), require('./routes/cashier'));
 app.use('/customer', ensureRole('customer'), require('./routes/customer'));
+
+// API
+
+// Weather proxy route
+app.get('/api/weather', async (req, res) => {
+    const KEY = process.env.WEATHER_KEY;
+    const CITY = "College Station";
+
+    const url = `http://api.weatherstack.com/current?access_key=${KEY}&query=${CITY}`;
+
+    try {
+        const r = await fetch(url);
+        const data = await r.json();
+        res.json(data);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Weather unavailable" });
+    }
+});
  
 
 app.listen(port, () => {

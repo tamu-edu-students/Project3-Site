@@ -511,10 +511,8 @@
             const badge = document.getElementById('weatherBadge');
             if (!badge) return;
 
-            const KEY = '<%= WEATHER_KEY %>';
-            const CITY = 'College Station';
             // Weatherstack: units=f => Fahrenheit
-            const url = `http://api.weatherstack.com/current?access_key=${KEY}&query=${CITY}`;
+            const url = `/api/weather`;
 
             async function loadWeather() {
             try {
