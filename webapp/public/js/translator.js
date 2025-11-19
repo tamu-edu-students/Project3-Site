@@ -1,6 +1,11 @@
 let pageLang = "en"; // actual language of the page
 const btn = document.getElementById("translateBtn");
 
+// Set initial button text with flag
+if (btn) {
+    btn.innerHTML = `<span>🇪🇸</span> <span>Translate to Spanish</span>`;
+}
+
 btn?.addEventListener("click", async function () {
     // Determine target language based on current page language
     const targetLang = pageLang === "en" ? "es" : "en";
@@ -41,8 +46,12 @@ btn?.addEventListener("click", async function () {
     // Update current page language
     pageLang = targetLang;
 
-    // Update button label for UX
-    btn.textContent = pageLang === "en" ? "Translate to Spanish" : "Translate to English";
+    // Update button label for UX with flag emoji
+    if (pageLang === "en") {
+        btn.innerHTML = `<span>🇪🇸</span> <span>Translate to Spanish</span>`;
+    } else {
+        btn.innerHTML = `<span>🇺🇸</span> <span>Translate to English</span>`;
+    }
 
     console.log("Page translated to", pageLang);
 });
