@@ -12,7 +12,7 @@
     --magnify-origin-x: 50%;
     --magnify-origin-y: 50%;
 }
-
+/* Customer font scale makes everything larger */
 html {
     font-size: calc(16px * var(--customer-font-scale));
     transition: font-size 0.25s ease-in-out;
