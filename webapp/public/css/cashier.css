@@ -12,7 +12,7 @@
     --magnify-origin-x: 50%;
     --magnify-origin-y: 50%;
 }
-
+/* Customer font scale makes everything larger */
 html {
     font-size: calc(16px * var(--customer-font-scale));
     transition: font-size 0.25s ease-in-out;
@@ -1314,7 +1314,7 @@ html.magnify-active .modal-content {
 .cart-modal-body .cart-total,
 .cart-modal-footer{display:none;}
 
-/* Enlarge the totals card */
+/* Makes the totals larger */
 .cart-total {
     box-sizing: border-box;
     display: inline-block;   /* shrink-wrap to content, not full width */
