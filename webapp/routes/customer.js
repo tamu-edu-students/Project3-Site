@@ -1,20 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
-const systemDate = require('../utils/systemDate');
+let systemDate;
+try { systemDate = require('../utils/systemDate'); } catch { /* optional */ }
+require('dotenv').config();
 
-// Get cutstomer page
+// GET /customer -> render page (like manager does, pass user + WEATHER_KEY)
 router.get('/', async (req, res, next) => {
   try {
     const menuItems = await db.getAll('menuitems');
-    res.render('customer', { menuItems });
+    res.render('customer', {
+      menuItems,
+      user: req.user,
+      WEATHER_KEY: process.env.WEATHER_KEY // not used on client, but matches manager signature
+    });
   } catch (err) {
     next(err);
   }
 });
 
-
-// create order, items, and deduct inventory 
+// POST /customer/checkout -> create order + items + deduct inventory
 router.post('/checkout', async (req, res) => {
   try {
     const cart = Array.isArray(req.body?.cart) ? req.body.cart : [];
@@ -28,16 +33,18 @@ router.post('/checkout', async (req, res) => {
       sugarLevel
     }));
 
-    const orderDate = systemDate.getDate();
+    const orderDate = (systemDate && typeof systemDate.getDate === 'function')
+      ? systemDate.getDate()
+      : new Date();
 
     const result = await db.createOrderAndDeductInventory(normalized, {
-      customerId: req.user.customerId, 
+      customerId: req.user?.customerId ?? 0,
       employeeId: 0, // kiosk/customer page -> no employee
       systemDate: orderDate
     });
 
-    if (!result.ok) {
-      return res.status(400).json({ message: 'Insufficient inventory', shortages: result.shortages });
+    if (!result?.ok) {
+      return res.status(400).json({ message: 'Insufficient inventory', shortages: result?.shortages });
     }
     return res.json({ ok: true, orderId: result.orderId });
   } catch (err) {
@@ -46,11 +53,9 @@ router.post('/checkout', async (req, res) => {
   }
 });
 
-
-// Landing page
+// Optional landing page
 router.get('/landing', (req, res) => {
   res.render('landing');
 });
-
 
 module.exports = router;

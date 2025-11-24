@@ -20,6 +20,9 @@
       <!-- Right side: navigation buttons -->
       <div class="nav-buttons">
           <button id="translateBtn" data-lang="es"><span>🇪🇸</span> <span>Translate to Spanish</span></button>
+          <!-- Weather badge (same element ID/class pattern as manager.ejs) -->
+          <a id="weatherBadge" class="nav-btn weather-btn" aria-live="polite">Loading…</a>
+
           <% if (user && (user.role === 'manager')) { %>
               <a href="/manager" class="nav-btn common">Manager Page</a>
           <% } %>
@@ -36,9 +39,7 @@
       </div>
   </div>
 
-
   <br>
-
 
   <div class="container">
     <header class="header">
@@ -59,15 +60,15 @@
             🔍
           </button>
           <button
-          type="button"
-          class="text-size-toggle"
-          id="textSizeToggle"
-          aria-pressed="false"
-          aria-label="Increase text size"
-          title="Increase text size"
-        >
-          🔠
-        </button>
+            type="button"
+            class="text-size-toggle"
+            id="textSizeToggle"
+            aria-pressed="false"
+            aria-label="Increase text size"
+            title="Increase text size"
+          >
+            🔠
+          </button>
           <div class="cart-icon-container">
             <button class="cart-icon-btn" id="cartIconBtn">
               <span class="cart-icon">🛒</span>
@@ -228,11 +229,12 @@
     const taxRateLabel = document.getElementById('taxRateLabel');
     taxRateLabel.textContent = `(${(TAX_RATE*100).toFixed(2)}%)`;
 
-    // --- magnify toggle ---
+    // --- magnify toggle & text-size toggle ---
     const MAGNIFY_STORAGE_KEY = 'vamsa_customer_magnifier';
     const MAGNIFY_SCALE_ACTIVE = 1.35;
     const MAGNIFY_SCALE_IDLE = 1;
     const magnifyToggleBtn = document.getElementById('magnifyToggle');
+    const textSizeToggle = document.getElementById('textSizeToggle');
     const rootElement = document.documentElement;
     const magnifySurface = document.querySelector('.magnify-surface');
     let magnifierEnabled = false;
@@ -251,45 +253,22 @@
     }
 
     let storedMagnifyPreference = false;
-    try {
-      storedMagnifyPreference = localStorage.getItem(MAGNIFY_STORAGE_KEY) === 'true';
-    } catch (err) {
-      console.warn('Magnifier preference unavailable', err);
-    }
-
+    try { storedMagnifyPreference = localStorage.getItem(MAGNIFY_STORAGE_KEY) === 'true'; } catch {}
     syncMagnifyState(storedMagnifyPreference);
-    const textSizeToggle = document.getElementById('textSizeToggle');
 
     let textLarge = false;
-    try {
-      textLarge = localStorage.getItem('vamsa_text_large') === 'true';
-    } catch {}
-
+    try { textLarge = localStorage.getItem('vamsa_text_large') === 'true'; } catch {}
     function applyTextSizeState(isLarge) {
       document.documentElement.classList.toggle('big-text', isLarge);
       textSizeToggle.classList.toggle('is-active', isLarge);
       textSizeToggle.setAttribute('aria-pressed', String(isLarge));
       textSizeToggle.title = isLarge ? "Reduce text size" : "Increase text size";
     }
-
-applyTextSizeState(textLarge);
-
-textSizeToggle.addEventListener('click', () => {
-  textLarge = !textLarge;
-  applyTextSizeState(textLarge);
-
-  try {
-    localStorage.setItem('vamsa_text_large', String(textLarge));
-  } catch {}
-});
-    magnifyToggleBtn?.addEventListener('click', () => {
-      const isActive = !rootElement.classList.contains('magnify-active');
-      syncMagnifyState(isActive);
-      try {
-        localStorage.setItem(MAGNIFY_STORAGE_KEY, String(isActive));
-      } catch (err) {
-        console.warn('Unable to persist magnifier preference', err);
-      }
+    applyTextSizeState(textLarge);
+    textSizeToggle.addEventListener('click', () => {
+      textLarge = !textLarge;
+      applyTextSizeState(textLarge);
+      try { localStorage.setItem('vamsa_text_large', String(textLarge)); } catch {}
     });
 
     function toggleMagnifierTracking(shouldEnable) {
@@ -322,9 +301,7 @@ textSizeToggle.addEventListener('click', () => {
       const originX = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
       const originY = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
       pendingMagnifyState = { originX, originY };
-      if (!magnifierFrame) {
-        magnifierFrame = requestAnimationFrame(applyPendingMagnifierState);
-      }
+      if (!magnifierFrame) { magnifierFrame = requestAnimationFrame(applyPendingMagnifierState); }
     }
 
     function handleMagnifierPointerLeave() {
@@ -344,21 +321,11 @@ textSizeToggle.addEventListener('click', () => {
     let cart = [];
 
     // open/close cart
-    cartIconBtn.addEventListener('click', () => {
-      cartModal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-      updateCartDisplay();
-    });
-    cartCloseBtn.addEventListener('click', () => {
-      cartModal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    });
-    window.addEventListener('click', (e) => {
-      if (e.target === cartModal) {
-        cartModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-      }
-    });
+    const openCart = () => { cartModal.style.display = 'block'; document.body.style.overflow = 'hidden'; updateCartDisplay(); };
+    const closeCart = () => { cartModal.style.display = 'none'; document.body.style.overflow = 'auto'; };
+    cartIconBtn.addEventListener('click', openCart);
+    cartCloseBtn.addEventListener('click', closeCart);
+    window.addEventListener('click', (e) => { if (e.target === cartModal) closeCart(); });
 
     clearCartBtn.addEventListener('click', () => {
       if (cart.length && confirm('Clear cart?')) {
@@ -473,6 +440,7 @@ textSizeToggle.addEventListener('click', () => {
     }
 
     // drink card -> open customizer
+    const customizationModal = document.getElementById('customizationModal');
     document.querySelectorAll('.drink-card').forEach(card => {
       card.addEventListener('click', () => {
         const drink = card.getAttribute('data-drink');
@@ -486,7 +454,6 @@ textSizeToggle.addEventListener('click', () => {
     });
 
     // ----- customization modal -----
-    const customizationModal = document.getElementById('customizationModal');
     const closeBtn = customizationModal.querySelector('.close');
     const cancelBtn = document.querySelector('.btn-cancel');
     const addToCartBtn = document.querySelector('.btn-add-to-cart');
@@ -540,6 +507,12 @@ textSizeToggle.addEventListener('click', () => {
     document.querySelectorAll('input[name="sugarLevel"]').forEach(r => r.addEventListener('change', updateSummary));
     document.querySelectorAll('input[name="toppings"]').forEach(c => c.addEventListener('change', updateSummary));
 
+    const resetModal = () => {
+      document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
+      document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
+      document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
+    };
+
     closeBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
     cancelBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
 
@@ -571,13 +544,48 @@ textSizeToggle.addEventListener('click', () => {
       cartModal.style.display = 'block';
       updateCartDisplay();
     });
-
-    function resetModal(){
-      document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
-      document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
-      document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
-    }
   </script>
+
+  <!-- Weather (same pattern as manager.ejs: fetch from server proxy) -->
+  <script>
+    (function () {
+      const badge = document.getElementById('weatherBadge');
+      if (!badge) return;
+
+      // Weatherstack proxy from server (no key on client)
+      const url = `/api/weather`;
+
+      async function loadWeather() {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+
+          if (data.success === false || data.error) {
+            throw new Error(data.error?.info || 'API error');
+          }
+
+          const c   = data.current || {};
+          const loc = data.location?.name || 'College Station';
+          const desc = Array.isArray(c.weather_descriptions) ? c.weather_descriptions[0] : '';
+          const temp  = Math.round((Number.isFinite(c.temperature) ? c.temperature : 0) * 9/5 + 32);
+          const feels = Math.round((Number.isFinite(c.feelslike) ? c.feelslike : 0) * 9/5 + 32);
+
+          // const temp  = (typeof c.temperature === 'number') ? Math.round(c.temperature) : '–';
+          // const feels = (typeof c.feelslike   === 'number') ? Math.round(c.feelslike)   : '–';
+
+          badge.textContent = `${loc}: ${temp}°F, ${desc} (feels ${feels}°)`;
+        } catch (e) {
+          console.error(e);
+          badge.textContent = 'Weather unavailable';
+        }
+      }
+
+      loadWeather();
+      // setInterval(loadWeather, 10 * 60 * 1000); // optional refresh
+    })();
+  </script>
+
   <script src="/js/translator.js"></script>
 </body>
 </html>

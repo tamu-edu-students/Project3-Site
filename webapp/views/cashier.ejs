@@ -19,6 +19,9 @@
       <!-- Right side: navigation buttons -->
       <div class="nav-buttons">
           <button id="translateBtn" data-lang="es"><span>🇪🇸</span> <span>Translate to Spanish</span></button>
+          <!-- Weather badge (same pattern as manager.ejs) -->
+          <a id="weatherBadge" class="nav-btn weather-btn" aria-live="polite">Loading…</a>
+
           <a href="/manager" class="nav-btn common">Manager Page</a>
           <a href="/cashier" class="nav-btn common">Cashier Page</a>
           <a href="/customer" class="nav-btn common">Customer Page</a>
@@ -55,7 +58,8 @@
         </div>
       </div>
     </header>
-<!-- get iteams from dB -->
+
+    <!-- get items from DB -->
     <main class="main-content">
       <section class="drinks-section">
         <h2 class="section-title">Menu</h2>
@@ -222,22 +226,13 @@
     }
 
     let storedMagnifyPreference = false;
-    try {
-      storedMagnifyPreference = localStorage.getItem(MAGNIFY_STORAGE_KEY) === 'true';
-    } catch (err) {
-      console.warn('Magnifier preference unavailable', err);
-    }
-
+    try { storedMagnifyPreference = localStorage.getItem(MAGNIFY_STORAGE_KEY) === 'true'; } catch {}
     syncMagnifyState(storedMagnifyPreference);
 
     magnifyToggleBtn?.addEventListener('click', () => {
       const isActive = !rootElement.classList.contains('magnify-active');
       syncMagnifyState(isActive);
-      try {
-        localStorage.setItem(MAGNIFY_STORAGE_KEY, String(isActive));
-      } catch (err) {
-        console.warn('Unable to persist magnifier preference', err);
-      }
+      try { localStorage.setItem(MAGNIFY_STORAGE_KEY, String(isActive)); } catch {}
     });
 
     function toggleMagnifierTracking(shouldEnable) {
@@ -488,6 +483,12 @@
     document.querySelectorAll('input[name="sugarLevel"]').forEach(r => r.addEventListener('change', updateSummary));
     document.querySelectorAll('input[name="toppings"]').forEach(c => c.addEventListener('change', updateSummary));
 
+    function resetModal(){
+      document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
+      document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
+      document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
+    }
+
     closeBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
     cancelBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
 
@@ -519,13 +520,46 @@
       cartModal.style.display = 'block';
       updateCartDisplay();
     });
-
-    function resetModal(){
-      document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
-      document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
-      document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
-    }
   </script>
+
+  <!-- Weather (same code path as manager: fetch from server proxy) -->
+  <script>
+    (function () {
+      const badge = document.getElementById('weatherBadge');
+      if (!badge) return;
+
+      // Weatherstack: server proxy endpoint
+      const url = `/api/weather`;
+
+      async function loadWeather() {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+
+          if (data.success === false || data.error) {
+            throw new Error(data.error?.info || 'API error');
+          }
+
+          const c = data.current || {};
+          const loc = data.location?.name || 'College Station';
+          const desc = Array.isArray(c.weather_descriptions) ? c.weather_descriptions[0] : '';
+          // If proxy returns Celsius, match manager.ejs conversion:
+          const temp = Math.round((Number.isFinite(c.temperature) ? c.temperature : 0) * 9/5 + 32);
+          const feels = Math.round((Number.isFinite(c.feelslike) ? c.feelslike : 0) * 9/5 + 32);
+
+          badge.textContent = `${loc}: ${temp}°F, ${desc} (feels ${feels}°)`;
+        } catch (e) {
+          console.error(e);
+          badge.textContent = 'Weather unavailable';
+        }
+      }
+
+      loadWeather();
+      // setInterval(loadWeather, 10 * 60 * 1000); // optional refresh
+    })();
+  </script>
+
   <script src="/js/translator.js"></script>
 </body>
 </html>

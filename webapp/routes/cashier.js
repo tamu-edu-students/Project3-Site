@@ -1,13 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
-const systemDate = require('../utils/systemDate');
+let systemDate;
+try { systemDate = require('../utils/systemDate'); } catch { /* optional */ }
+require('dotenv').config();
 
-// get cashier page
+// GET /cashier -> page (match manager style: pass user + WEATHER_KEY)
 router.get('/', async (req, res) => {
   try {
     const menuItems = await db.getAll('menuitems');
-    res.render('cashier', { menuItems });
+    res.render('cashier', {
+      menuItems,
+      user: req.user,
+      WEATHER_KEY: process.env.WEATHER_KEY
+    });
     console.log('cashier.js loaded!');
   } catch (err) {
     console.error(err);
@@ -15,7 +21,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-//create order, items, and deduct inventory
+// POST /cashier/checkout -> create order + items + deduct inventory
 router.post('/checkout', async (req, res) => {
   try {
     const cart = Array.isArray(req.body?.cart) ? req.body.cart : [];
@@ -29,17 +35,18 @@ router.post('/checkout', async (req, res) => {
       sugarLevel
     }));
 
-    // If you have logged-in cashier, pass real employeeId here
-    const orderDate = systemDate.getDate();
+    const orderDate = (systemDate && typeof systemDate.getDate === 'function')
+      ? systemDate.getDate()
+      : new Date();
 
     const result = await db.createOrderAndDeductInventory(normalized, {
       customerId: 0,
-      employeeId: req.user.employeeId,
+      employeeId: req.user?.employeeId ?? 0,
       systemDate: orderDate
     });
 
-    if (!result.ok) {
-      return res.status(400).json({ message: 'Insufficient inventory', shortages: result.shortages });
+    if (!result?.ok) {
+      return res.status(400).json({ message: 'Insufficient inventory', shortages: result?.shortages || [] });
     }
     return res.json({ ok: true, orderId: result.orderId });
   } catch (err) {
