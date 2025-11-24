@@ -15,6 +15,7 @@ html.big-text {
     --magnify-origin-y: 50%;
 }
 
+/* customer font scale makes everything larger */
 html {
     font-size: calc(16px * var(--customer-font-scale));
     transition: font-size 0.25s ease-in-out;
