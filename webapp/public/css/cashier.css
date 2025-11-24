@@ -1314,7 +1314,7 @@ html.magnify-active .modal-content {
 .cart-modal-body .cart-total,
 .cart-modal-footer{display:none;}
 
-/* Enlarge the totals card */
+/* Makes the totals larger */
 .cart-total {
     box-sizing: border-box;
     display: inline-block;   /* shrink-wrap to content, not full width */
