@@ -256,6 +256,13 @@
     try { storedMagnifyPreference = localStorage.getItem(MAGNIFY_STORAGE_KEY) === 'true'; } catch {}
     syncMagnifyState(storedMagnifyPreference);
 
+    magnifyToggleBtn?.addEventListener('click', () => {
+      const isActive = !rootElement.classList.contains('magnify-active');
+      syncMagnifyState(isActive);
+      try { localStorage.setItem(MAGNIFY_STORAGE_KEY, String(isActive)); } catch {}
+    });
+
+
     let textLarge = false;
     try { textLarge = localStorage.getItem('vamsa_text_large') === 'true'; } catch {}
     function applyTextSizeState(isLarge) {
