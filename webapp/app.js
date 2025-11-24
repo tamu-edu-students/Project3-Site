@@ -60,7 +60,7 @@ app.get('/api/weather', async (req, res) => {
     const KEY = process.env.WEATHER_KEY;
     const CITY = "College Station";
 
-    const url = `http://api.weatherstack.com/current?access_key=${KEY}&query=${CITY}`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=30.62&longitude=-96.33&current_weather=true`;
 
     try {
         const r = await fetch(url);

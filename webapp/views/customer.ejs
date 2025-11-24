@@ -553,43 +553,57 @@
     });
   </script>
 
-  <!-- Weather (same pattern as manager.ejs: fetch from server proxy) -->
+  <!-- Weather (same code path as manager: fetch from server proxy) -->
   <script>
     (function () {
       const badge = document.getElementById('weatherBadge');
       if (!badge) return;
 
-      // Weatherstack proxy from server (no key on client)
-      const url = `/api/weather`;
+      const url = `/api/weather`; // new backend proxy
+
+      // Basic WMO weather code descriptions
+      const weatherDescriptions = {
+        0: "Clear sky",
+        1: "Mainly clear",
+        2: "Partly cloudy",
+        3: "Overcast",
+        45: "Fog",
+        48: "Depositing rime fog",
+        51: "Light drizzle",
+        53: "Moderate drizzle",
+        55: "Dense drizzle",
+        61: "Slight rain",
+        63: "Moderate rain",
+        65: "Heavy rain",
+        80: "Light rain showers",
+        81: "Rain showers",
+        82: "Violent rain showers",
+        95: "Thunderstorm",
+        96: "Thunderstorm w/ hail",
+        99: "Thunderstorm w/ heavy hail"
+      };
 
       async function loadWeather() {
         try {
           const res = await fetch(url);
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          
           const data = await res.json();
 
-          if (data.success === false || data.error) {
-            throw new Error(data.error?.info || 'API error');
-          }
+          const cw = data.current_weather;
+          if (!cw) throw new Error("No weather data");
 
-          const c   = data.current || {};
-          const loc = data.location?.name || 'College Station';
-          const desc = Array.isArray(c.weather_descriptions) ? c.weather_descriptions[0] : '';
-          const temp  = Math.round((Number.isFinite(c.temperature) ? c.temperature : 0) * 9/5 + 32);
-          const feels = Math.round((Number.isFinite(c.feelslike) ? c.feelslike : 0) * 9/5 + 32);
+          const tempF = Math.round((cw.temperature * 9) / 5 + 32);
+          const desc = weatherDescriptions[cw.weathercode] || "Weather";
 
-          // const temp  = (typeof c.temperature === 'number') ? Math.round(c.temperature) : '–';
-          // const feels = (typeof c.feelslike   === 'number') ? Math.round(c.feelslike)   : '–';
-
-          badge.textContent = `${loc}: ${temp}°F, ${desc} (feels ${feels}°)`;
+          badge.textContent = `College Station: ${tempF}°F, ${desc}`;
         } catch (e) {
-          console.error(e);
-          badge.textContent = 'Weather unavailable';
+          console.error("Weather client error:", e);
+          badge.textContent = "Weather unavailable";
         }
       }
 
       loadWeather();
-      // setInterval(loadWeather, 10 * 60 * 1000); // optional refresh
     })();
   </script>
 
