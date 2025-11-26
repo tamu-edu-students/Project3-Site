@@ -80,11 +80,27 @@
     </header>
 
     <main class="main-content">
+      <!-- Weather-Based Recommendation Section -->
+      <section class="recommendation-section" id="recommendationSection" style="display: none;">
+        <div class="recommendation-banner">
+          <h2 class="recommendation-title">
+            <span id="recommendationIcon">🌡️</span>
+            <span id="recommendationText">Weather-Based Recommendation</span>
+          </h2>
+          <p class="recommendation-subtitle" id="recommendationSubtitle">
+            Based on today's weather, we recommend:
+          </p>
+        </div>
+        <div class="recommended-drinks-grid" id="recommendedDrinksGrid">
+          <!-- Recommended drinks will be inserted here -->
+        </div>
+      </section>
+
       <section class="drinks-section">
         <h2 class="section-title">Our Signature Drinks</h2>
         <div class="drinks-grid">
           <% menuItems.forEach(item => { %>
-            <div class="drink-card" data-drink="<%= item.itemname %>">
+            <div class="drink-card" data-drink="<%= item.itemname %>" data-description="<%= item.itemdescription || '' %>">
               <div class="drink-image classic"></div>
               <h3 class="drink-name"><%= item.itemname %></h3>
               <p class="drink-description"><%= item.itemdescription %></p>
@@ -583,6 +599,98 @@
         99: "Thunderstorm w/ heavy hail"
       };
 
+      // Function to categorize drinks as milky or fruity
+      function categorizeDrink(drinkName, description) {
+        const name = (drinkName || '').toLowerCase();
+        const desc = (description || '').toLowerCase();
+        const combined = `${name} ${desc}`;
+
+        // Keywords for milky drinks
+        const milkyKeywords = ['milk', 'cream', 'latte', 'cappuccino', 'mocha', 'vanilla', 'caramel', 
+                               'chocolate', 'matcha latte', 'taro', 'coconut milk', 'almond milk', 
+                               'oat milk', 'smoothie', 'milkshake', 'frappe', 'white', 'creamy'];
+        
+        // Keywords for fruity drinks
+        const fruityKeywords = ['fruit', 'fruity', 'mango', 'strawberry', 'pineapple', 'watermelon', 
+                                'peach', 'lychee', 'passion', 'citrus', 'lemon', 'lime', 'orange', 
+                                'berry', 'blueberry', 'raspberry', 'kiwi', 'grape', 'apple', 'cherry',
+                                'pomegranate', 'dragon fruit', 'guava', 'papaya', 'coconut water'];
+
+        const isMilky = milkyKeywords.some(keyword => combined.includes(keyword));
+        const isFruity = fruityKeywords.some(keyword => combined.includes(keyword));
+
+        if (isMilky && !isFruity) return 'milky';
+        if (isFruity && !isMilky) return 'fruity';
+        // If both or neither, default based on name length/description
+        return isFruity ? 'fruity' : 'milky';
+      }
+
+      // Function to get all drinks from the page (excluding recommended cards)
+      function getAllDrinks() {
+        const drinkCards = document.querySelectorAll('.drink-card:not(.recommended-drink-card)');
+        return Array.from(drinkCards).map(card => ({
+          name: card.getAttribute('data-drink'),
+          description: card.getAttribute('data-description') || '',
+          element: card
+        }));
+      }
+
+      // Function to display recommendations
+      function displayRecommendations(tempF, drinks, category) {
+        const section = document.getElementById('recommendationSection');
+        const grid = document.getElementById('recommendedDrinksGrid');
+        const titleText = document.getElementById('recommendationText');
+        const subtitle = document.getElementById('recommendationSubtitle');
+        const icon = document.getElementById('recommendationIcon');
+
+        if (!section || !grid) return;
+
+        // Filter drinks by category
+        const recommendedDrinks = drinks.filter(drink => 
+          categorizeDrink(drink.name, drink.description) === category
+        );
+
+        if (recommendedDrinks.length === 0) {
+          section.style.display = 'none';
+          return;
+        }
+
+        // Update title and subtitle
+        if (category === 'milky') {
+          icon.textContent = '🥛';
+          titleText.textContent = 'Perfect for Cooler Weather';
+          subtitle.textContent = `It's ${tempF}°F outside - warm up with our creamy, milky drinks!`;
+        } else {
+          icon.textContent = '🍹';
+          titleText.textContent = 'Perfect for Warmer Weather';
+          subtitle.textContent = `It's ${tempF}°F outside - cool down with our refreshing, fruity drinks!`;
+        }
+
+        // Display recommended drinks (limit to 3-4 for better UX)
+        const displayDrinks = recommendedDrinks.slice(0, 4);
+        grid.innerHTML = '';
+        
+        displayDrinks.forEach(drink => {
+          const card = drink.element.cloneNode(true);
+          card.classList.add('recommended-drink-card');
+          card.style.cursor = 'pointer';
+          
+          // Add click handler to trigger the original card's click
+          card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const drinkName = card.getAttribute('data-drink');
+            const originalCard = document.querySelector(`.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card)`);
+            if (originalCard) {
+              originalCard.click();
+            }
+          });
+          
+          grid.appendChild(card);
+        });
+
+        section.style.display = 'block';
+      }
+
       async function loadWeather() {
         try {
           const res = await fetch(url);
@@ -597,6 +705,17 @@
           const desc = weatherDescriptions[cw.weathercode] || "Weather";
 
           badge.textContent = `College Station: ${tempF}°F, ${desc}`;
+
+          // Determine recommendation based on temperature
+          // Below 70°F = milky drinks (colder weather)
+          // 70°F and above = fruity drinks (hotter weather)
+          const TEMP_THRESHOLD = 70;
+          const recommendationCategory = tempF < TEMP_THRESHOLD ? 'milky' : 'fruity';
+
+          // Get all drinks and display recommendations
+          const allDrinks = getAllDrinks();
+          displayRecommendations(tempF, allDrinks, recommendationCategory);
+
         } catch (e) {
           console.error("Weather client error:", e);
           badge.textContent = "Weather unavailable";
