@@ -1469,3 +1469,38 @@ html.magnify-active .modal-content {
     transform: translateY(0);
     filter: brightness(0.98);
   }
+
+  /* Search Bar Container */
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 10px;
+}
+
+/* Search Input */
+#searchInput {
+    width: 60%;
+    max-width: 400px;
+    padding: 12px 18px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    outline: none;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+#searchInput::placeholder {
+    color: #999;
+}
+
+#searchInput:hover {
+    border-color: #ff9a9e;
+}
+
+#searchInput:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
+}

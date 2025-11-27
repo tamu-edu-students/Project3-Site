@@ -59,10 +59,16 @@
       </div>
     </header>
 
+
     <!-- get items from DB -->
     <main class="main-content">
       <section class="drinks-section">
         <h2 class="section-title">Menu</h2>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search drinks...">
+        </div>
+
         <div class="drinks-grid">
           <% menuItems.forEach(item => { %>
             <div class="drink-card" data-drink="<%= item.itemname %>">
@@ -578,5 +584,6 @@
 
 
   <script src="/js/translator.js"></script>
+  <script src="/js/cashier.js"></script>
 </body>
 </html>

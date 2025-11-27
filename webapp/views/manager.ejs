@@ -98,6 +98,7 @@
                 <h2>Menu Items</h2>
             </label>
             <div class="section-controls">
+                <input type="text" class="search-input" data-target="menuitems" placeholder="Search…">
                 <button class="add-btn">+</button>
                 <button class="delete-btn">-</button>
                 <button class="update-btn">Edit</button>
@@ -120,6 +121,7 @@
                 <h2>Inventory Items</h2>
             </label>
             <div class="section-controls">
+                <input type="text" class="search-input" data-target="inventory" placeholder="Search…">
                 <button class="add-btn">+</button>
                 <button class="delete-btn">-</button>
                 <button class="update-btn">Edit</button>
@@ -143,7 +145,8 @@
             </label>
             
             <div class="section-controls">
-                 <button class="delete-btn">-</button>
+                <input type="text" class="search-input" data-target="recipes" placeholder="Search…">
+                <button class="delete-btn">-</button>
             </div>
 
             <div class="data-grid recipes-grid">
@@ -193,6 +196,7 @@
                 <h2>Employees</h2>
             </label>
             <div class="section-controls">
+                <input type="text" class="search-input" data-target="employees" placeholder="Search…">
                 <button class="add-btn">+</button>
                 <button class="delete-btn">-</button>
                 <button class="update-btn">Edit</button>
@@ -212,44 +216,44 @@
 
         <!-- Generic modal -->
         <div id="addModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-        
-            <form id="addForm">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
             
-            <!-- Name field (all sections) -->
-            <div class="form-field" data-section="menuitems inventory employees">
-                <label>Name:</label>
-                <input type="text" name="name" required>
-            </div>
+                <form id="addForm">
+                
+                <!-- Name field (all sections) -->
+                <div class="form-field" data-section="menuitems inventory employees">
+                    <label>Name:</label>
+                    <input type="text" name="name" required>
+                </div>
 
-            <!-- Description field (menuitems only) -->
-            <div class="form-field" data-section="menuitems">
-                <label>Description:</label>
-                <input type="text" name="description">
-            </div>
+                <!-- Description field (menuitems only) -->
+                <div class="form-field" data-section="menuitems">
+                    <label>Description:</label>
+                    <input type="text" name="description">
+                </div>
 
-            <!-- Price field (menuitems only) -->
-            <div class="form-field" data-section="menuitems">
-                <label>Price:</label>
-                <input type="number" step="0.01" name="price">
-            </div>
+                <!-- Price field (menuitems only) -->
+                <div class="form-field" data-section="menuitems">
+                    <label>Price:</label>
+                    <input type="number" step="0.01" name="price">
+                </div>
 
-            <!-- Quantity field (inventory only) -->
-            <div class="form-field" data-section="inventory">
-                <label>Quantity:</label>
-                <input type="number" step="0.01" name="ingredientquantity">
-            </div>
+                <!-- Quantity field (inventory only) -->
+                <div class="form-field" data-section="inventory">
+                    <label>Quantity:</label>
+                    <input type="number" step="0.01" name="ingredientquantity">
+                </div>
 
-            <!-- Unit field (inventory only) -->
-            <div class="form-field" data-section="inventory">
-                <label>Unit:</label>
-                <input type="text" name="unit">
-            </div>
+                <!-- Unit field (inventory only) -->
+                <div class="form-field" data-section="inventory">
+                    <label>Unit:</label>
+                    <input type="text" name="unit">
+                </div>
 
-            <button type="submit">Add</button>
-            </form>
-        </div>
+                <button type="submit">Add</button>
+                </form>
+            </div>
         </div>
 
         <div id="reportsScreen" class="modal">

@@ -96,8 +96,16 @@
         </div>
       </section>
 
+      
+
       <section class="drinks-section">
         <h2 class="section-title">Our Signature Drinks</h2>
+
+       
+        <div class="search-container">
+          <input type="text" id="searchInput" placeholder="Search drinks...">
+        </div>
+
         <div class="drinks-grid">
           <% menuItems.forEach(item => { %>
             <div class="drink-card" data-drink="<%= item.itemname %>" data-description="<%= item.itemdescription || '' %>">
@@ -727,5 +735,6 @@
   </script>
 
   <script src="/js/translator.js"></script>
+  <script src="/js/customer.js"></script>
 </body>
 </html>
