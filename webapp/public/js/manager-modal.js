@@ -53,7 +53,10 @@ async function openAddModal(sectionName) {
         const addRowBtn = document.createElement('button');
         addRowBtn.type = 'button';
         addRowBtn.textContent = '+ Add Item';
+        addRowBtn.classList.add("btn-add-row");
+
         form.appendChild(addRowBtn);
+        form.appendChild(document.createElement('br'));
         form.appendChild(document.createElement('br'));
 
         // Fetch inventory for select options
@@ -84,6 +87,8 @@ async function openAddModal(sectionName) {
             const remove = document.createElement('button');
             remove.type = 'button';
             remove.textContent = '✕';
+            remove.classList.add("btn-remove");
+
             remove.onclick = () => row.remove();
 
             row.appendChild(select);
@@ -134,11 +139,13 @@ async function openAddModal(sectionName) {
     const submitBtn = document.createElement('button');
     submitBtn.type = 'submit';
     submitBtn.textContent = 'Add';
+    submitBtn.classList.add("btn-primary");
     form.appendChild(submitBtn);
 
     const cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
     cancelBtn.textContent = 'Cancel';
+    cancelBtn.classList.add("btn-secondary");
     cancelBtn.onclick = () => { modal.style.display = 'none'; };
     form.appendChild(cancelBtn);
 

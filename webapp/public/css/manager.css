@@ -921,3 +921,148 @@ html.magnify-active .magnify-surface {
     transform: translateY(0);
     filter: brightness(0.98);
   }
+
+/* ===== Modal Container ===== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+/* ===== Modal Box ===== */
+.modal-content {
+    background: #ffffff;
+    margin: 80px auto;
+    padding: 20px 24px;
+    border-radius: 10px;
+    width: 450px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    animation: popIn 0.15s ease-out;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ===== Close Button (X) ===== */
+.close-btn, 
+.close {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close:hover {
+    color: red;
+}
+
+/* ===== Form Fields ===== */
+.modal-content label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content input[type="email"],
+.modal-content input[type="datetime-local"],
+.modal-content select {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+}
+
+/* ===== Ingredient Row Styling ===== */
+.ingredient-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 110px 40px;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ingredient-row input,
+.ingredient-row select {
+    padding: 6px;
+    font-size: 13px;
+}
+
+/* Remove (✕) button */
+.btn-remove {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+}
+.btn-remove:hover {
+    background: #c70000;
+}
+
+/* ===== Buttons ===== */
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 15px;
+    margin-right: 8px;
+}
+
+/* Primary Action (Add / Save) */
+.btn-primary {
+    background: #0077ff;
+    color: white;
+}
+.btn-primary:hover {
+    background: #005fcc;
+}
+
+/* Cancel button */
+.btn-secondary {
+    background: #d3d3d3;
+    color: #333;
+}
+.btn-secondary:hover {
+    background: #bcbcbc;
+}
+
+/* Add ingredient row button */
+.btn-add-row {
+    background: #28a745;
+    color: white;
+}
+.btn-add-row:hover {
+    background: #1e7e34;
+}
+
+/* Title inside modal */
+.modal-content h3,
+.modal-content h4 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #222;
+}
+

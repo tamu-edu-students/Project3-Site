@@ -376,3 +376,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+// Search functionality for manager sections
+document.addEventListener("DOMContentLoaded", () => {
+
+    const searchInputs = document.querySelectorAll(".search-input");
+
+    searchInputs.forEach(input => {
+        input.addEventListener("input", () => {
+            const query = input.value.toLowerCase();
+            const target = input.dataset.target;
+
+            let rows;
+
+            if (target === "menuitems") {
+                rows = document.querySelectorAll('[data-column="itemname"]').forEach(cell => {
+                    toggleRow(cell, query);
+                });
+            }
+
+            if (target === "inventory") {
+                rows = document.querySelectorAll('[data-column="ingredientname"]').forEach(cell => {
+                    toggleRow(cell, query);
+                });
+            }
+
+            if (target === "employees") {
+                rows = document.querySelectorAll('[data-column="employeename"]').forEach(cell => {
+                    toggleRow(cell, query);
+                });
+            }
+
+            if (target === "recipes") {
+                rows = document.querySelectorAll(".recipe-card h3").forEach(nameTag => {
+                    const card = nameTag.closest(".recipe-card");
+                    const text = nameTag.textContent.toLowerCase();
+                    card.style.display = text.includes(query) ? "" : "none";
+                });
+            }
+        });
+    });
+
+    function toggleRow(cell, query) {
+        const row = cell.closest(".data-row");
+        const text = cell.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? "" : "none";
+    }
+
+});
