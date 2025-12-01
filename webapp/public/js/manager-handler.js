@@ -295,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if(section === 'menuitems') {
                     window.reloadMenuItems();
+                    window.reloadRecipes();
                 } 
 
                 else if (section === 'inventory') {

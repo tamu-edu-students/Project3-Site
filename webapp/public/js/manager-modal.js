@@ -33,7 +33,10 @@ window.reloadMenuItems = async function() {
 
         row.innerHTML = `
             <div class="cell" data-column="itemname">${item.itemname}</div>
-            <div class="cell" data-column="itemprice">${item.itemprice}</div>
+            <div class="price-wrapper">
+                <div>$</div>
+                <div class="cell" data-column="itemprice">${item.itemprice}</div>
+            </div>
             <button onClick="deleteItem('menuitems', ${item.itemid})" class="hidden">DELETE</button>
         `;
 
@@ -56,7 +59,14 @@ window.reloadInventoryItems = async function() {
 
         row.innerHTML = `
             <div class="cell" data-column="ingredientname">${item.ingredientname}</div>
-            <div class="cell" data-column="ingredientquantity">${item.ingredientquantity}</div>
+            <div class="price-wrapper">
+                <div class="cell" data-column="ingredientquantity">
+                    ${item.ingredientquantity}
+                </div>
+                <div class="cell" data-column="unit">
+                    ${item.unit}
+                </div>
+            </div>
             <button onClick="deleteItem('inventory', ${item.inventoryid})" class="hidden">DELETE</button>
         `;
 
@@ -456,6 +466,7 @@ async function openAddModal(sectionName) {
             modal.style.display = 'none';
             //location.reload();
             reloadMenuItems();
+            reloadRecipes();
 
         } catch (err) {
             console.error('Error adding menu item + ingredients:', err);
