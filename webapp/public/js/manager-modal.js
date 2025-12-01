@@ -4,7 +4,227 @@ document.querySelector('#addModal .close-btn').onclick = function() {
     document.getElementById('addModal').style.display = "none";
 };
 
+window.showToast = function showToast(message, type = "success") {
+    const container = document.getElementById("toastContainer");
+    const toast = document.createElement("div");
+
+    toast.classList.add("toast");
+    if (type === "error") toast.classList.add("error");
+    else toast.classList.add("success");
+
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    // Remove after animation completes
+    setTimeout(() => toast.remove(), 3500);
+}
+
+window.reloadMenuItems = async function() {
+    const res = await fetch('/manager/menuitems');
+    const menuItems = await res.json();
+
+    const grid = document.querySelector('#menuItemSection .data-grid');
+    grid.innerHTML = ''; // Clear old items
+
+    menuItems.forEach(item => {
+        const row = document.createElement('div');
+        row.classList.add('data-row');
+        row.dataset.id = item.itemid;
+
+        row.innerHTML = `
+            <div class="cell" data-column="itemname">${item.itemname}</div>
+            <div class="cell" data-column="itemprice">${item.itemprice}</div>
+            <button onClick="deleteItem('menuitems', ${item.itemid})" class="hidden">DELETE</button>
+        `;
+
+        grid.appendChild(row);
+    });
+}
+
+window.reloadInventoryItems = async function() {
+    const res = await fetch('/manager/inventory');
+    const inventoryItems = await res.json();
+
+    const grid = document.querySelector('#inventorySection .data-grid'); 
+    console.log(grid);
+    grid.innerHTML = ''; // Clear existing content
+
+    inventoryItems.forEach(item => {
+        const row = document.createElement('div');
+        row.classList.add('data-row');
+        row.dataset.id = item.inventoryid;
+
+        row.innerHTML = `
+            <div class="cell" data-column="ingredientname">${item.ingredientname}</div>
+            <div class="cell" data-column="ingredientquantity">${item.ingredientquantity}</div>
+            <button onClick="deleteItem('inventory', ${item.inventoryid})" class="hidden">DELETE</button>
+        `;
+
+        grid.appendChild(row);
+    });
+}
+
+function attachRecipeCardHandlers() {
+    document.querySelectorAll('.add-ingredient-btn').forEach(btn => {
+        btn.onclick = async () => {
+            const itemId = btn.dataset.itemid;
+            const itemName = btn.dataset.itemname;
+            const res = await fetch('/manager/inventory');
+            const inventoryItems = await res.json();
+
+            createIngredientModal(`Add ingredient to ${itemName}`, inventoryItems, {}, async (data) => {
+                data.itemid = parseInt(itemId);
+                const res = await fetch('/manager/recipes/add', {
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify(data)
+                });
+                if(res.ok) {
+                    reloadRecipes();
+                    showToast('Ingredient added successfully!');
+                }
+                else {
+                    alert('Failed to add ingredient');
+                }
+            });
+        };
+    });
+
+    document.querySelectorAll('.edit-ingredient-btn').forEach(btn => {
+        btn.onclick = async (e) => {
+            e.stopPropagation();
+            const li = btn.closest('.recipe-item');
+            const recipeId = li.dataset.id;
+            const currentInventoryId = li.dataset.inventoryid;
+            const currentQty = parseFloat(li.dataset.quantity);
+            const currentUnit = li.dataset.unit;
+            const itemName = li.dataset.itemname || 'this item';
+
+            const invRes = await fetch('/manager/inventory');
+            const inventoryItems = await invRes.json();
+
+            createIngredientModal(`Edit ingredient for ${itemName}`, inventoryItems, {
+                inventoryid: currentInventoryId,
+                quantity: currentQty,
+                unit: currentUnit
+            }, async (data) => {
+                const updateRes = await fetch(`/manager/recipes/update/${recipeId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (updateRes.ok) {
+                    reloadRecipes();
+                    showToast('Ingredient updated successfully!');
+                } 
+                else alert('Failed to update ingredient');
+            });
+        };
+    });
+}
+
+
+window.reloadRecipes = async function() {
+    try {
+        const res = await fetch('/manager/recipes');
+        const recipesData = await res.json();
+
+        const container = document.querySelector('.data-grid.recipes-grid');
+        container.innerHTML = ''; // Clear old recipes
+
+        const recipeGroups = Object.values(recipesData);
+
+        if (recipeGroups.length === 0) {
+            // Empty state
+            const emptyMessage = document.createElement('div');
+            emptyMessage.classList.add('empty-recipes-message');
+            emptyMessage.innerHTML = `<p>No recipes yet. Add menu items first, then create recipes for them!</p>`;
+            container.appendChild(emptyMessage);
+            return;
+        }
+
+        recipeGroups.forEach(group => {
+            const card = document.createElement('div');
+            card.classList.add('recipe-card');
+            card.dataset.itemid = group.itemid;
+
+            const header = document.createElement('div');
+            header.classList.add('recipe-card-header');
+            header.innerHTML = `<h3>${group.itemname}</h3>`;
+            card.appendChild(header);
+
+            const ul = document.createElement('ul');
+            group.ingredients.forEach(ing => {
+                const li = document.createElement('li');
+                li.classList.add('recipe-item');
+                li.dataset.id = ing.recipeid;
+                li.dataset.inventoryid = ing.inventoryid;
+                li.dataset.quantity = ing.quantity;
+                li.dataset.unit = ing.unit;
+
+                li.innerHTML = `
+                    <span class="recipe-text">
+                        ${ing.ingredientname} - ${ing.quantity} ${ing.unit}
+                    </span>
+                    <button onclick="deleteItem('recipes', ${ing.recipeid})" class="hidden">✕</button>
+                    <button class="edit-ingredient-btn">Edit</button>
+                `;
+
+                ul.appendChild(li);
+            });
+
+            card.appendChild(ul);
+
+            const addBtn = document.createElement('button');
+            addBtn.classList.add('add-ingredient-btn');
+            addBtn.dataset.itemid = group.itemid;
+            addBtn.dataset.itemname = group.itemname;
+            addBtn.textContent = '+ Add Ingredient';
+
+            card.appendChild(addBtn);
+
+            container.appendChild(card);
+
+            attachRecipeCardHandlers();
+        });
+    } catch (err) {
+        console.error('Failed to reload recipes:', err);
+    }
+};
+
+
+window.reloadEmployees = async function() {
+    const res = await fetch('/manager/employees');
+    const employees = await res.json();
+
+    // Adjust selector if your HTML has a wrapper like #employeeSection
+    const grid = document.querySelector('#employeeSection .data-grid'); 
+
+    grid.innerHTML = ''; // Clear old rows
+
+    employees.forEach(emp => {
+        const row = document.createElement('div');
+        row.classList.add('data-row');
+        row.dataset.id = emp.employeeid;
+
+        row.innerHTML = `
+            <div class="cell" data-column="employeename">${emp.employeename}</div>
+            <div class="cell" data-column="email">${emp.email}</div>
+            <div class="cell" data-column="role">${emp.role}</div>
+            <button onClick="deleteItem('employees', ${emp.employeeid})" class="hidden">DELETE</button>
+        `;
+
+        grid.appendChild(row);
+    });
+}
+
+
+
+
 async function openAddModal(sectionName) {
+
+    console.log("Add modal opened for section:", sectionName);
+
     const modal = document.getElementById('addModal');
     const form = document.getElementById('addForm');
     
@@ -164,11 +384,25 @@ async function openAddModal(sectionName) {
                 body: JSON.stringify(data)
             });
             if (res.ok) {
-                alert('Added!');
-                modal.style.display = 'none';
-                location.reload();
+                
+                //modal.style.display = 'none';
+                //setTimeout(() => location.reload(), 3500); 
+                //location.reload();
+                if (sectionName === 'inventory') {
+                    showToast(`New inventory item added successfully!`);
+                    await reloadInventoryItems();
+                    modal.style.display = 'none';
+
+                }
+                if (sectionName === 'employees') {
+                    showToast(`New employee added successfully!`);
+                    await reloadEmployees();
+                    modal.style.display = 'none';
+
+                }
+
             } else {
-                alert('Failed to add');
+                showToast('Failed to add', 'error');
             }
             return;
         }
@@ -218,9 +452,10 @@ async function openAddModal(sectionName) {
                 if (!res.ok) console.warn('Failed to add recipe:', await res.text());
             }
 
-            alert('Menu item and ingredients added!');
+            showToast(`New menu item added successfully!`);
             modal.style.display = 'none';
-            location.reload();
+            //location.reload();
+            reloadMenuItems();
 
         } catch (err) {
             console.error('Error adding menu item + ingredients:', err);
