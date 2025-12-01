@@ -109,6 +109,7 @@
       </div>
 
       <div class="modal-footer cart-footer">
+        <button class="btn-add-more-drinks" id="addMoreDrinksBtn">Add More Drinks</button>
         <button class="btn-clear-cart" id="clearCartBtn">Clear Cart</button>
         <button class="btn-checkout" id="checkoutBtn" disabled>Checkout</button>
       </div>
@@ -202,6 +203,7 @@
     const cartCloseBtn = document.querySelector('.cart-close');
     const clearCartBtn = document.getElementById('clearCartBtn');
     const checkoutBtn = document.getElementById('checkoutBtn');
+    const addMoreDrinksBtn = document.getElementById('addMoreDrinksBtn');
     const cartSubtotalEl = document.getElementById('cartSubtotal');
     const cartTaxEl = document.getElementById('cartTax');
     const cartTotalEl = document.getElementById('cartTotal');
@@ -307,6 +309,11 @@
         cartModal.style.display = 'none';
         document.body.style.overflow = 'auto';
       }
+    });
+
+    addMoreDrinksBtn.addEventListener('click', () => {
+      cartModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
     });
 
     clearCartBtn.addEventListener('click', () => {
