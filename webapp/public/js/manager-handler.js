@@ -1,10 +1,69 @@
-
 const sectionMap = {
     'menu items': 'menuitems',
     'inventory items': 'inventory',
     'employees': 'employees',
     'recipes': 'recipes'
 };
+
+function showConfirm(message) {
+    return new Promise((resolve) => {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        `;
+
+        // Modal box
+        const box = document.createElement('div');
+        box.style.cssText = `
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 300px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+        `;
+
+        const msg = document.createElement('p');
+        msg.textContent = message;
+        msg.style.marginBottom = '20px';
+        box.appendChild(msg);
+
+        // Buttons
+        const btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display: flex; justify-content: space-around;';
+
+        const yesBtn = document.createElement('button');
+        yesBtn.textContent = "Yes";
+        yesBtn.style.cssText = 'padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:6px; cursor:pointer;';
+        yesBtn.onclick = () => {
+            overlay.remove();
+            resolve(true);
+        };
+
+        const noBtn = document.createElement('button');
+        noBtn.textContent = "No";
+        noBtn.style.cssText = 'padding:8px 16px; background:#f44336; color:white; border:none; border-radius:6px; cursor:pointer;';
+        noBtn.onclick = () => {
+            overlay.remove();
+            resolve(false);
+        };
+
+        btnRow.appendChild(noBtn);
+        btnRow.appendChild(yesBtn);
+        box.appendChild(btnRow);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.data-section').forEach(section => {
             const sectionName = sectionMap[section.querySelector('h2').textContent.toLowerCase()];
@@ -121,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             await Promise.all(updatePromises); // wait for all updates in parallel
-            alert('All updates saved!');
+            showToast("Updates saved successfully!");
             exitEditMode(section, dataGrid, saveBtn, cancelBtn, controls);
         });
     }
@@ -214,13 +273,15 @@ document.addEventListener('DOMContentLoaded', () => {
             addBtn.addEventListener('click', (event) => {
                 event.stopPropagation();
                 const sectionName = sectionMap[section.querySelector('h2').textContent.toLowerCase()];
+                console.log("Opening add modal for section:", sectionName);
                 openAddModal(sectionName);
             });
         }
     });
 
     async function deleteItem(section, itemId) {
-        if (!confirm("Are you sure you want to delete this item?")) return;
+        const confirmed = await showConfirm("Are you sure you want to delete this item?");
+        if (!confirmed) return;
 
         try {
             const res = await fetch(`/manager/${section}/delete/${itemId}`, {
@@ -229,14 +290,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (res.ok) {
-            // Remove the item from the UI
-            document.querySelector(`[data-id='${itemId}']`).remove();
-            location.reload();
-            } else {
-            const text = await res.text();
-            alert("Failed to delete item: " + text);
+                // Remove the item from the UI
+                document.querySelector(`[data-id='${itemId}']`).remove();
+
+                if(section === 'menuitems') {
+                    window.reloadMenuItems();
+                } 
+
+                else if (section === 'inventory') {
+                    window.reloadInventoryItems();
+                } 
+
+                else if (section === 'employees') {
+                    window.reloadEmployees();
+                }
+
+                showToast("Deleted successfully!");
+            } 
+            
+            else {
+                const text = await res.text();
+                alert("Failed to delete item: " + text);
             }
-        } catch (err) {
+
+        } 
+        
+        catch (err) {
             console.error(err);
             alert("Error deleting item");
         }

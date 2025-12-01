@@ -70,6 +70,83 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/inventory', async (req, res) => {
+    try {
+        const inventory = await db.getAll('inventory');
+        res.json(inventory);
+    } catch (err) {
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+router.get('/menuitems', async (req, res) => {
+    try {
+        const items = await db.getAll('menuitems');
+        res.json(items);
+    } catch (err) {
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+router.get('/employees', async (req, res) => {
+    try {
+        const employees = await db.getAll('employees');
+        res.json(employees);
+    } catch (err) {
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+// Route to get recipes as JSON
+router.get('/recipes', async (req, res) => {
+    try {
+        const recipesQuery = `
+            SELECT
+                r.recipeid,
+                r.itemid,
+                m.itemname,
+                r.inventoryid,
+                i.ingredientname,
+                r.quantity,
+                r.unit
+            FROM recipes r
+            JOIN menuitems m ON r.itemid = m.itemid
+            JOIN inventory i ON r.inventoryid = i.inventoryid
+            ORDER BY r.itemid;
+        `;
+
+        const recipesResult = await db.pool.query(recipesQuery);
+        const recipesRows = recipesResult.rows;
+
+        // Group recipes by menu item
+        const groupedRecipes = {};
+        recipesRows.forEach(r => {
+            if (!groupedRecipes[r.itemid]) {
+                groupedRecipes[r.itemid] = {
+                    itemid: r.itemid,
+                    itemname: r.itemname,
+                    ingredients: []
+                };
+            }
+            groupedRecipes[r.itemid].ingredients.push({
+                recipeid: r.recipeid,
+                inventoryid: r.inventoryid,
+                ingredientname: r.ingredientname,
+                quantity: r.quantity,
+                unit: r.unit
+            });
+        });
+
+        res.json(groupedRecipes); // <-- return JSON
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
+
+
 
 // Special add route for recipes
 router.post('/recipes/add', async (req, res) => {

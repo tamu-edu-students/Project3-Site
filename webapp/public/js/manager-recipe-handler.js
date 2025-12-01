@@ -19,8 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers:{'Content-Type':'application/json'},
                     body: JSON.stringify(data)
                 });
-                if(res.ok) location.reload();
-                else alert('Failed to add ingredient');
+                if(res.ok) {
+                    reloadRecipes();
+                    showToast('Ingredient added successfully!');
+                }
+                else {
+                    alert('Failed to add ingredient');
+                }
             });
         });
 
@@ -44,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!invRes.ok) { alert('Failed to load inventory'); return; }
             const inventoryItems = await invRes.json();
 
-            showEditIngredientForm(recipeCard, li, recipeId, currentInventoryId, currentQty, currentUnit, inventoryItems);
+            //showEditIngredientForm(recipeCard, li, recipeId, currentInventoryId, currentQty, currentUnit, inventoryItems);
         });
     });
 });
@@ -195,8 +200,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                if (updateRes.ok) location.reload();
-                else alert('Failed to update ingredient');
+                if (updateRes.ok) {
+                    reloadRecipes();
+                    showToast('Ingredient updated successfully!');
+                } 
+                else {
+                    alert('Failed to update ingredient');
+                }
             });
         });
     });
