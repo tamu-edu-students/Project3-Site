@@ -1109,3 +1109,10 @@ button {
 @keyframes fadeOut {
   to { opacity: 0; transform: translate(-50%, -40%); }
 }
+
+.price-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+}
