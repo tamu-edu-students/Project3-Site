@@ -679,6 +679,8 @@ async function getTopPopularDrinks(limit = 5) {
       SUM(oi."Quantity") AS total_quantity
     FROM orderitems oi
     JOIN menuitems m ON oi."Item ID" = m.itemid
+    JOIN orders o ON oi."Order ID" = o."Order ID"
+    WHERE o."Order Date" >= NOW() - INTERVAL '1 month'
     GROUP BY m.itemname, m.itemdescription
     ORDER BY times_ordered DESC, total_quantity DESC
     LIMIT $1
