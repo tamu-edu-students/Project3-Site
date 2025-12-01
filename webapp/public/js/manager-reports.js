@@ -1,3 +1,66 @@
+// Helper to get localized labels for reports based on current page language
+function getReportLabel(key) {
+  const lang = window.pageLang || 'en';
+
+  const labels = {
+    en: {
+      totalSales: 'Total Sales',
+      totalOrders: 'Total Orders',
+      peakHour: 'Peak Sales Hour',
+      popularDrink: 'Most Popular Drink',
+      mostPopularDrink: 'Most popular drink',
+      mostPopularHour: 'Most popular hour',
+    },
+    es: {
+      totalSales: 'Ventas totales',
+      totalOrders: 'Pedidos totales',
+      peakHour: 'Hora pico de ventas',
+      popularDrink: 'Bebida más popular',
+      mostPopularDrink: 'Bebida más popular',
+      mostPopularHour: 'Hora más popular',
+    },
+  };
+
+  const set = labels[lang] || labels.en;
+  return set[key] || labels.en[key] || key;
+}
+
+// Helper to translate arbitrary text segments if the current page language
+// is not English. Returns the input array unchanged when in English.
+async function translateIfNeeded(texts) {
+  const lang = window.pageLang || 'en';
+
+  if (!Array.isArray(texts) || texts.length === 0) {
+    return [];
+  }
+
+  if (lang === 'en') {
+    return texts;
+  }
+
+  try {
+    const res = await fetch('/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        target: lang,
+        texts,
+      }),
+    });
+
+    const data = await res.json();
+    if (!data || !Array.isArray(data.translations)) {
+      console.error('Translation response malformed:', data);
+      return texts;
+    }
+
+    return data.translations;
+  } catch (e) {
+    console.error('Translation error in reports:', e);
+    return texts;
+  }
+}
+
 document.getElementById('reports').addEventListener('click', async () => {
     console.log('Reports button clicked!');
     const modal = document.getElementById('reportsScreen');
@@ -8,10 +71,17 @@ document.getElementById('reports').addEventListener('click', async () => {
         const data = await res.json();
         console.log('Fetched report data:', data);
 
-        document.getElementById('totalSales').textContent = `Total Sales: ${data.totalSales}`;
-        document.getElementById('totalOrders').textContent = `Total Orders: ${data.totalOrders}`;
-        document.getElementById('peakHour').textContent = `Peak Sales Hour: ${data.peakHour}`;
-        document.getElementById('popularDrink').textContent = `Most Popular Drink: ${data.popularDrink}`;
+        // Translate the popular drink name if needed
+        const [translatedPopularDrink] = await translateIfNeeded([data.popularDrink]);
+
+        document.getElementById('totalSales').textContent =
+          `${getReportLabel('totalSales')}: ${data.totalSales}`;
+        document.getElementById('totalOrders').textContent =
+          `${getReportLabel('totalOrders')}: ${data.totalOrders}`;
+        document.getElementById('peakHour').textContent =
+          `${getReportLabel('peakHour')}: ${data.peakHour}`;
+        document.getElementById('popularDrink').textContent =
+          `${getReportLabel('popularDrink')}: ${translatedPopularDrink || data.popularDrink}`;
     } catch (err) {
         console.error('Error fetching report data:', err);
     }
@@ -54,7 +124,7 @@ document.getElementById('generateReportBtn').addEventListener('click', async () 
 });
 
 // 🧮 Helper function to populate inventory table
-function populateInventoryTable(items) {
+async function populateInventoryTable(items) {
   const tbody = document.getElementById('inventoryTableBody');
   tbody.innerHTML = ''; // clear previous rows
 
@@ -63,10 +133,16 @@ function populateInventoryTable(items) {
     return;
   }
 
-  items.forEach(item => {
+  // Translate ingredient names in one batch if needed
+  const ingredientNames = items.map(item => item.ingredient);
+  const translatedIngredients = await translateIfNeeded(ingredientNames);
+
+  items.forEach((item, index) => {
+    const displayIngredient = translatedIngredients[index] || item.ingredient;
+
     const row = `
       <tr>
-        <td>${item.ingredient}</td>
+        <td>${displayIngredient}</td>
         <td>${item.quantity_in_stock}</td>
         <td>${item.total_used}</td>
         <td>${item.remaining}</td>
@@ -98,12 +174,17 @@ document.getElementById('menuReport').addEventListener('click', async () => {
     const maxOrders = Math.max(...timesOrderedNumbers);
     console.log('Max orders:', maxOrders);
 
-    data.forEach(item => {
+    // Translate all item names in one batch if needed
+    const itemNames = data.map(item => item.itemname);
+    const translatedNames = await translateIfNeeded(itemNames);
+
+    data.forEach((item, index) => {
       const highlightClass = item.times_ordered == maxOrders ? 'highlight-row' : '';
+      const displayName = translatedNames[index] || item.itemname;
 
       const row = `
         <tr class="${highlightClass}">
-          <td>${item.itemname}</td>
+          <td>${displayName}</td>
           <td style="text-align: center">${formatter.format(item.itemprice)}</td>
           <td style="text-align: center">${item.times_ordered}</td>
         </tr>
@@ -185,10 +266,13 @@ async function salesReport(start, end ) {
       tbody.appendChild(tr);
     });
 
+    // Translate the most popular drink name if needed
+    const [translatedMostPopular] = await translateIfNeeded([data.mostPopularItem]);
+
     document.querySelector('.table-container p:nth-child(1)').textContent = 
-      `Most popular drink: ${data.mostPopularItem}`;
+      `${getReportLabel('mostPopularDrink')}: ${translatedMostPopular || data.mostPopularItem}`;
     document.querySelector('.table-container p:nth-child(2)').textContent = 
-      `Most popular hour: ${data.peakHour}`;
+      `${getReportLabel('mostPopularHour')}: ${data.peakHour}`;
 
 
   } catch (err) {
@@ -227,8 +311,12 @@ document.getElementById("generateItemizedReportBtn").addEventListener("click", a
         const maxQty = Math.max(...data.map(item => Number(item.quantity)));
         const maxRev = Math.max(...data.map(item => Number(item.sales)));
 
+        // Translate all item names in one batch if needed
+        const itemNames = data.map(item => item.itemName);
+        const translatedNames = await translateIfNeeded(itemNames);
+
         // 🔹 Insert new rows
-        data.forEach(item => {
+        data.forEach((item, index) => {
             const row = document.createElement("tr");
             const qty = Number(item.quantity);
             const rev = Number(item.sales);
@@ -245,8 +333,10 @@ document.getElementById("generateItemizedReportBtn").addEventListener("click", a
               row.style.fontWeight = "bold";
             }
 
+            const displayName = translatedNames[index] || item.itemName;
+
             row.innerHTML = `
-                <td>${item.itemName}</td>
+                <td>${displayName}</td>
                 <td>${item.quantity}</td>
                 <td>$${Number(item.sales).toFixed(2)}</td>
             `;
@@ -502,10 +592,13 @@ async function loadZReport(date) {
     const table = document.getElementById("zReportTable");
     table.innerHTML = ""; // Clear old contents
 
+    // Translate best-selling drink name if needed
+    const [translatedBestItem] = await translateIfNeeded([data.mostPopularItem.itemname]);
+
     const rows = [
         { desc: "Total Sales", value: `$${Number(data.totalSales).toFixed(2)}` },
         { desc: "Total Orders", value: `${data.totalOrders}`},
-        { desc: "Best-Selling Item", value: `${data.mostPopularItem.itemname}`},
+        { desc: "Best-Selling Item", value: `${translatedBestItem || data.mostPopularItem.itemname}`},
         { desc: "Top Employee", value: `${data.bestEmployee.employeename}`},
         { desc: "Peak Sales Hour", value: `${data.bestHour}`}
     ];
