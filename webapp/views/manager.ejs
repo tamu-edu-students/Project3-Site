@@ -556,9 +556,23 @@
             const desc = weatherDescriptions[cw.weathercode] || "Weather";
 
             badge.textContent = `College Station: ${tempF}°F, ${desc}`;
+            
+            // Translate weather badge if page is in Spanish
+            if (window.translateNewContent && (window.pageLang === 'es')) {
+              setTimeout(() => {
+                window.translateNewContent(badge);
+              }, 50);
+            }
             } catch (e) {
             console.error("Weather client error:", e);
             badge.textContent = "Weather unavailable";
+            
+            // Translate error message if page is in Spanish
+            if (window.translateNewContent && (window.pageLang === 'es')) {
+              setTimeout(() => {
+                window.translateNewContent(badge);
+              }, 50);
+            }
             }
         }
 
