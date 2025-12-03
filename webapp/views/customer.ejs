@@ -96,6 +96,22 @@
         </div>
       </section>
 
+      <!-- Popular Drinks Recommendation Section -->
+      <section class="recommendation-section" id="popularDrinksSection" style="display: none;">
+        <div class="recommendation-banner">
+          <h2 class="recommendation-title">
+            <span id="popularDrinksIcon">⭐</span>
+            <span id="popularDrinksText">Most Popular Drink</span>
+          </h2>
+          <p class="recommendation-subtitle" id="popularDrinksSubtitle">
+            Based on the past month's order history, our most popular drink:
+          </p>
+        </div>
+        <div class="recommended-drinks-grid" id="popularDrinksGrid">
+          <!-- Popular drinks will be inserted here -->
+        </div>
+      </section>
+
       
 
       <section class="drinks-section">
@@ -153,6 +169,7 @@
       </div>
 
       <div class="modal-footer cart-footer">
+        <button class="btn-add-more-drinks" id="addMoreDrinksBtn">Add More Drinks</button>
         <button class="btn-clear-cart" id="clearCartBtn">Clear Cart</button>
         <button class="btn-checkout" id="checkoutBtn" disabled>Checkout</button>
       </div>
@@ -246,6 +263,7 @@
     const cartCloseBtn = document.querySelector('.cart-close');
     const clearCartBtn = document.getElementById('clearCartBtn');
     const checkoutBtn = document.getElementById('checkoutBtn');
+    const addMoreDrinksBtn = document.getElementById('addMoreDrinksBtn');
     const cartSubtotalEl = document.getElementById('cartSubtotal');
     const cartTaxEl = document.getElementById('cartTax');
     const cartTotalEl = document.getElementById('cartTotal');
@@ -357,6 +375,10 @@
     cartIconBtn.addEventListener('click', openCart);
     cartCloseBtn.addEventListener('click', closeCart);
     window.addEventListener('click', (e) => { if (e.target === cartModal) closeCart(); });
+
+    addMoreDrinksBtn.addEventListener('click', () => {
+      closeCart();
+    });
 
     clearCartBtn.addEventListener('click', () => {
       if (cart.length && confirm('Clear cart?')) {
@@ -766,6 +788,99 @@
       }
 
       loadWeather();
+    })();
+  </script>
+
+  <!-- Popular Drinks Recommendation -->
+  <script>
+    (function () {
+      const section = document.getElementById('popularDrinksSection');
+      const grid = document.getElementById('popularDrinksGrid');
+      if (!section || !grid) return;
+
+      // Function to get all drinks from the page (excluding recommended cards)
+      function getAllDrinks() {
+        const drinkCards = document.querySelectorAll('.drink-card:not(.recommended-drink-card):not(.popular-drink-card)');
+        return Array.from(drinkCards).map(card => ({
+          name: card.getAttribute('data-drink'),
+          description: card.getAttribute('data-description') || '',
+          element: card
+        }));
+      }
+
+      // Function to display popular drinks
+      function displayPopularDrinks(popularDrinkNames) {
+        if (!popularDrinkNames || popularDrinkNames.length === 0) {
+          section.style.display = 'none';
+          return;
+        }
+
+        // Wait a bit to ensure all drink cards are rendered
+        setTimeout(() => {
+          const allDrinks = getAllDrinks();
+          const popularDrinks = allDrinks.filter(drink => 
+            popularDrinkNames.includes(drink.name)
+          );
+
+          if (popularDrinks.length === 0) {
+            section.style.display = 'none';
+            return;
+          }
+
+          // Sort by popularity order (maintain the order from API)
+          const sortedPopularDrinks = popularDrinkNames
+            .map(name => popularDrinks.find(d => d.name === name))
+            .filter(d => d !== undefined);
+
+          // Display only the most popular drink
+          const displayDrink = sortedPopularDrinks[0];
+          if (!displayDrink) {
+            section.style.display = 'none';
+            return;
+          }
+          
+          grid.innerHTML = '';
+          const card = displayDrink.element.cloneNode(true);
+          card.classList.add('popular-drink-card');
+          card.style.cursor = 'pointer';
+          
+          // Add click handler to trigger the original card's click
+          card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const drinkName = card.getAttribute('data-drink');
+            const originalCard = document.querySelector(`.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card):not(.popular-drink-card)`);
+            if (originalCard) {
+              originalCard.click();
+            }
+          });
+          
+          grid.appendChild(card);
+
+          section.style.display = 'block';
+        }, 100);
+      }
+
+      async function loadPopularDrinks() {
+        try {
+          const res = await fetch('/api/popular-drinks?limit=1');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          
+          const data = await res.json();
+          const popularDrinkNames = data.drinks.map(d => d.name);
+          
+          displayPopularDrinks(popularDrinkNames);
+        } catch (e) {
+          console.error("Popular drinks client error:", e);
+          section.style.display = 'none';
+        }
+      }
+
+      // Load popular drinks after page loads
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadPopularDrinks);
+      } else {
+        loadPopularDrinks();
+      }
     })();
   </script>
 

@@ -670,6 +670,36 @@ async function getPeakSalesHourForDate(date) {
   }
 }
 
+async function getTopPopularDrinks(limit = 5) {
+  const query = `
+    SELECT 
+      m.itemname,
+      m.itemdescription,
+      COUNT(*) AS times_ordered,
+      SUM(oi."Quantity") AS total_quantity
+    FROM orderitems oi
+    JOIN menuitems m ON oi."Item ID" = m.itemid
+    JOIN orders o ON oi."Order ID" = o."Order ID"
+    WHERE o."Order Date" >= NOW() - INTERVAL '1 month'
+    GROUP BY m.itemname, m.itemdescription
+    ORDER BY times_ordered DESC, total_quantity DESC
+    LIMIT $1
+  `;
+
+  try {
+    const result = await pool.query(query, [limit]);
+    return result.rows.map(row => ({
+      name: row.itemname,
+      description: row.itemdescription || '',
+      timesOrdered: parseInt(row.times_ordered, 10),
+      totalQuantity: parseInt(row.total_quantity, 10)
+    }));
+  } catch (err) {
+    console.error('Database error in getTopPopularDrinks:', err);
+    throw err;
+  }
+}
+
 module.exports = {
   createOrderAndDeductInventory,
   applyOrderAndDeductInventory,
@@ -699,5 +729,6 @@ module.exports = {
   getMostPopularMenuItemForDate,
   getTopEmployeeForDate,
   getPeakSalesHourForDate,
+  getTopPopularDrinks,
   pool
 };

@@ -4,6 +4,7 @@ const passport = require('passport');
 const dotenv = require('dotenv');
 const path = require('path');
 const fetch = require('node-fetch');
+const db = require('./db/database');
 
 dotenv.config();
 
@@ -69,6 +70,18 @@ app.get('/api/weather', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Weather unavailable" });
+    }
+});
+
+// Popular drinks route
+app.get('/api/popular-drinks', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 5;
+        const popularDrinks = await db.getTopPopularDrinks(limit);
+        res.json({ drinks: popularDrinks });
+    } catch (err) {
+        console.error('Error fetching popular drinks:', err);
+        res.status(500).json({ error: "Failed to fetch popular drinks" });
     }
 });
  

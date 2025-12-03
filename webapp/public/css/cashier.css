@@ -1297,8 +1297,17 @@ html.magnify-active .modal-content {
   display:flex;gap:12px;padding:14px 22px;background:#fff;border-top:1px solid #eee;
   position:sticky;bottom:0;
 }
-.cart-footer .btn-clear-cart,.cart-footer .btn-checkout{
+.cart-footer .btn-add-more-drinks,.cart-footer .btn-clear-cart,.cart-footer .btn-checkout{
   border:none;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;
+}
+.cart-footer .btn-add-more-drinks{
+  background:linear-gradient(135deg,#4CAF50,#45a049);color:#fff;
+  box-shadow:0 4px 12px rgba(76,175,80,.3);
+}
+.cart-footer .btn-add-more-drinks:hover{
+  background:linear-gradient(135deg,#45a049,#4CAF50);
+  box-shadow:0 6px 16px rgba(76,175,80,.4);
+  transform:translateY(-1px);
 }
 .cart-footer .btn-clear-cart{background:#efefef;color:#333}
 .cart-footer .btn-clear-cart:hover{background:#e5e5e5}
