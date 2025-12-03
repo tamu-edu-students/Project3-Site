@@ -745,6 +745,13 @@
         });
 
         section.style.display = 'block';
+
+        // Translate the newly added content if page is in Spanish
+        if (lang === 'es' && window.translateNewContent) {
+          setTimeout(() => {
+            window.translateNewContent(section);
+          }, 100);
+        }
       }
 
 
@@ -940,6 +947,14 @@
           grid.appendChild(card);
 
           section.style.display = 'block';
+
+          // Translate the newly added content if page is in Spanish
+          const lang = window.pageLang || sessionStorage.getItem('vamsa_page_language') || 'en';
+          if (lang === 'es' && window.translateNewContent) {
+            setTimeout(() => {
+              window.translateNewContent(section);
+            }, 150);
+          }
         }, 100);
       }
 
