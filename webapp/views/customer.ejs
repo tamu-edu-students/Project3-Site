@@ -664,9 +664,7 @@
           element: card
         }));
       }
-
-      // Function to display recommendations
-      async function displayRecommendations(tempF, drinks, category) {
+      function displayRecommendations(tempF, drinks, category) {
         const section = document.getElementById('recommendationSection');
         const grid = document.getElementById('recommendedDrinksGrid');
         const titleText = document.getElementById('recommendationText');
@@ -701,16 +699,28 @@
         titleText.dataset.originalText = titleEnglish;
         subtitle.dataset.originalText = subtitleEnglish;
 
-        if (!titleText.dataset.originalText) {
-          titleText.dataset.originalText = titleEnglish;
-        }
-        if (!subtitle.dataset.originalText) {
-          subtitle.dataset.originalText = subtitleEnglish;
-        }
+        // Determine session language
+        const lang = window.pageLang || sessionStorage.getItem('vamsa_page_language') || 'en';
 
-        // Display the text in English by default
-        // titleText.textContent = titleEnglish;
-        // subtitle.textContent = subtitleEnglish;
+        // Set visible text based on session language
+        if (lang === 'en') {
+          titleText.textContent = titleEnglish;
+          subtitle.textContent = subtitleEnglish;
+        } else {
+          // Insert English temporarily (needed for translator)
+          titleText.textContent = titleEnglish;
+          subtitle.textContent = subtitleEnglish;
+
+          // Translate to session language
+          const translateLater = () => {
+            if (window.translateNewContent) {
+              window.translateNewContent(section);
+            } else {
+              setTimeout(translateLater, 50);
+            }
+          };
+          setTimeout(translateLater, 0);
+        }
 
         // Display recommended drinks (limit to 4)
         const displayDrinks = recommendedDrinks.slice(0, 4);
@@ -725,7 +735,9 @@
           card.addEventListener('click', e => {
             e.stopPropagation();
             const drinkName = card.getAttribute('data-drink');
-            const originalCard = document.querySelector(`.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card)`);
+            const originalCard = document.querySelector(
+              `.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card)`
+            );
             if (originalCard) originalCard.click();
           });
 
@@ -733,21 +745,92 @@
         });
 
         section.style.display = 'block';
-
-        // --- Translation handling ---
-        const lang = window.pageLang || localStorage.getItem('vamsa_page_language') || 'en';
-
-        if (lang !== 'en') {
-          const translateLater = () => {
-            if (window.translateNewContent) {
-              window.translateNewContent(section);
-            } else {
-              setTimeout(translateLater, 50);
-            }
-          };
-          setTimeout(translateLater, 0);
-        }
       }
+
+
+      // Function to display recommendations
+      // function displayRecommendations(tempF, drinks, category) {
+      //   const section = document.getElementById('recommendationSection');
+      //   const grid = document.getElementById('recommendedDrinksGrid');
+      //   const titleText = document.getElementById('recommendationText');
+      //   const subtitle = document.getElementById('recommendationSubtitle');
+      //   const icon = document.getElementById('recommendationIcon');
+
+      //   if (!section || !grid || !titleText || !subtitle || !icon) return;
+
+      //   // Filter drinks by category
+      //   const recommendedDrinks = drinks.filter(drink =>
+      //     categorizeDrink(drink.name, drink.description) === category
+      //   );
+
+      //   if (recommendedDrinks.length === 0) {
+      //     section.style.display = 'none';
+      //     return;
+      //   }
+
+      //   // Set default English text based on category
+      //   let titleEnglish, subtitleEnglish;
+      //   if (category === 'milky') {
+      //     icon.textContent = '🥛';
+      //     titleEnglish = 'Perfect for Cooler Weather';
+      //     subtitleEnglish = `It's ${tempF}°F outside - warm up with our creamy, milky drinks!`;
+      //   } else {
+      //     icon.textContent = '🍹';
+      //     titleEnglish = 'Perfect for Warmer Weather';
+      //     subtitleEnglish = `It's ${tempF}°F outside - cool down with our refreshing, fruity drinks!`;
+      //   }
+
+      //   // Store original English text for translation toggles
+      //   titleText.dataset.originalText = titleEnglish;
+      //   subtitle.dataset.originalText = subtitleEnglish;
+
+      //   if (!titleText.dataset.originalText) {
+      //     titleText.dataset.originalText = titleEnglish;
+      //   }
+      //   if (!subtitle.dataset.originalText) {
+      //     subtitle.dataset.originalText = subtitleEnglish;
+      //   }
+
+      //   // Display the text in English by default
+      //   titleText.textContent = titleEnglish;
+      //   subtitle.textContent = subtitleEnglish;
+
+      //   // Display recommended drinks (limit to 4)
+      //   const displayDrinks = recommendedDrinks.slice(0, 4);
+      //   grid.innerHTML = '';
+
+      //   displayDrinks.forEach(drink => {
+      //     const card = drink.element.cloneNode(true);
+      //     card.classList.add('recommended-drink-card');
+      //     card.style.cursor = 'pointer';
+
+      //     // Trigger original card click
+      //     card.addEventListener('click', e => {
+      //       e.stopPropagation();
+      //       const drinkName = card.getAttribute('data-drink');
+      //       const originalCard = document.querySelector(`.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card)`);
+      //       if (originalCard) originalCard.click();
+      //     });
+
+      //     grid.appendChild(card);
+      //   });
+
+      //   section.style.display = 'block';
+
+      //   // --- Translation handling ---
+      //   const lang = window.pageLang || localStorage.getItem('vamsa_page_language') || 'en';
+
+      //   if (lang !== 'en') {
+      //     const translateLater = () => {
+      //       if (window.translateNewContent) {
+      //         window.translateNewContent(section);
+      //       } else {
+      //         setTimeout(translateLater, 50);
+      //       }
+      //     };
+      //     setTimeout(translateLater, 0);
+      //   }
+      // }
 
       async function loadWeather() {
         try {
