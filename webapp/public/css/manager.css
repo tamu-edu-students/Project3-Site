@@ -1,8 +1,5 @@
 :root {
     --manager-font-scale: 1;
-    --magnify-scale: 1;
-    --magnify-origin-x: 50%;
-    --magnify-origin-y: 50%;
 }
 
 html {
@@ -25,24 +22,6 @@ body {
     transition: line-height 0.25s ease-in-out;
 }
 
-.magnify-surface {
-    transform-origin: var(--magnify-origin-x) var(--magnify-origin-y);
-    transition: transform 0.12s ease-out;
-}
-
-html.magnify-active {
-    --manager-font-scale: 1.2;
-}
-
-html.magnify-active body {
-    cursor: zoom-in;
-    line-height: 1.6;
-}
-
-html.magnify-active .magnify-surface {
-    transform: scale(var(--magnify-scale));
-    will-change: transform;
-}
 
 /* ===== Main Container ===== */
 .main-container {
@@ -80,39 +59,7 @@ html.magnify-active .magnify-surface {
     text-align: center;
 }
 
-.magnify-toggle {
-    position: absolute;
-    right: 0;
-    width: 52px;
-    height: 52px;
-    border: none;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ffffff, #ecf8ff);
-    color: #0072a0;
-    font-size: 1.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
-}
 
-.magnify-toggle:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-}
-
-.magnify-toggle:focus-visible {
-    outline: 3px solid rgba(0, 114, 160, 0.35);
-    outline-offset: 3px;
-}
-
-.magnify-toggle.is-active {
-    background: linear-gradient(135deg, #0077c8, #009ae0);
-    color: #fff;
-    box-shadow: 0 8px 22px rgba(0, 133, 204, 0.35);
-}
 
 /* ===== Section Styling ===== */
 .data-section {
