@@ -10,9 +10,6 @@ html.big-text {
 
 :root {
     --customer-font-scale: 1;
-    --magnify-scale: 1;
-    --magnify-origin-x: 50%;
-    --magnify-origin-y: 50%;
 }
 
 /* customer font scale makes everything larger */
@@ -30,43 +27,10 @@ body {
 
 
 
-html.magnify-active body {
-    cursor: zoom-in;
-    line-height: 1.6;
-}
-.magnify-surface {
-    transform-origin: var(--magnify-origin-x) var(--magnify-origin-y);
-    transition: transform 0.12s ease-out;
-}
-html.magnify-active .magnify-toggle {
-    cursor: pointer;
-}
-
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-}
-
-.magnify-surface {
-    transform-origin: var(--magnify-origin-x) var(--magnify-origin-y);
-    transition: transform 0.12s ease-out;
-}
-
-html.magnify-active .magnify-surface {
-    transform: scale(var(--magnify-scale));
-    will-change: transform;
-}
-
-/* Ensure modals also get the magnify transform */
-html.magnify-active .modal {
-    transform-origin: var(--magnify-origin-x) var(--magnify-origin-y);
-}
-
-html.magnify-active .modal-content {
-    transform: scale(var(--magnify-scale));
-    will-change: transform;
-    transition: transform 0.12s ease-out;
 }
 
 /* Top Bar Styles */
@@ -154,37 +118,7 @@ html.magnify-active .modal-content {
     position: relative;
 }
 
-.magnify-toggle {
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ffffff, #ffecec);
-    color: #8B4513;
-    font-size: 1.6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
-}
 
-.magnify-toggle:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-}
-
-.magnify-toggle:focus-visible {
-    outline: 3px solid rgba(255, 107, 107, 0.4);
-    outline-offset: 3px;
-}
-
-.magnify-toggle.is-active {
-    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-}
 
 .cart-icon-btn {
     background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
@@ -556,10 +490,6 @@ html.magnify-active .modal-content {
         gap: 16px;
     }
 
-    .magnify-toggle {
-        width: 48px;
-        height: 48px;
-    }
     
     .header-content {
         flex-direction: column;
@@ -627,11 +557,6 @@ html.magnify-active .modal-content {
         font-size: 1.8rem;
     }
 
-    .magnify-toggle {
-        width: 44px;
-        height: 44px;
-        font-size: 1.4rem;
-    }
 }
 
 /* Animation for page load */
@@ -1599,6 +1524,105 @@ html.magnify-active .modal-content {
 .text-size-toggle.is-active {
     background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
     color: white;
+}
+
+/* Magnify Toggle Button */
+.magnify-toggle-btn {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff, #ffecec);
+    color: #8B4513;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.magnify-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.magnify-toggle-btn:focus-visible {
+    outline: 3px solid rgba(255, 107, 107, 0.4);
+    outline-offset: 3px;
+}
+
+.magnify-toggle-btn.is-active {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+/* Magnified elements */
+body.magnify-mode .drink-card,
+body.magnify-mode button:not(.exit-magnify-btn):not(.magnify-toggle-btn),
+body.magnify-mode a,
+body.magnify-mode .option-btn,
+body.magnify-mode .topping-checkbox,
+body.magnify-mode .cart-item,
+body.magnify-mode .summary-item {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border 0.2s ease-out;
+}
+
+.magnified {
+    transform: scale(1.3) !important;
+    transform-origin: center center;
+    z-index: 100 !important;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.4) !important;
+    border: 2px solid #ff6b6b !important;
+    pointer-events: auto;
+}
+
+/* Exit Magnify Button */
+.exit-magnify-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.exit-magnify-btn:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.5);
+}
+
+.exit-magnify-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+/* Magnify mode styles */
+body.magnify-mode {
+    cursor: crosshair;
+}
+
+body.magnify-mode .drink-card,
+body.magnify-mode button,
+body.magnify-mode a,
+body.magnify-mode .option-btn,
+body.magnify-mode .topping-checkbox {
+    cursor: crosshair;
 }
 
 /* Weather Button Styling */

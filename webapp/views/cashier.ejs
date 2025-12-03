@@ -6,7 +6,7 @@
   <title>VAMSA - Cashier</title>
   <link rel="stylesheet" href="/css/cashier.css" />
 </head>
-<body class="magnify-surface">
+<body>
 
   <div class="top-bar">
       <!-- Left side: logged in user -->
@@ -39,16 +39,6 @@
           <p class="tagline">Ring up orders quickly</p>
         </div>
         <div class="header-controls">
-          <button
-            type="button"
-            class="magnify-toggle"
-            id="magnifyToggle"
-            aria-pressed="false"
-            aria-label="Enable magnifier"
-            title="Enable magnifier"
-          >
-            🔍
-          </button>
           <div class="cart-icon-container">
             <button class="cart-icon-btn" id="cartIconBtn">
               <span class="cart-icon">🛒</span>
@@ -211,85 +201,6 @@
     const taxRateLabel = document.getElementById('taxRateLabel');
     taxRateLabel.textContent = `(${(TAX_RATE*100).toFixed(2)}%)`;
 
-    // --- magnify toggle ---
-    const MAGNIFY_STORAGE_KEY = 'vamsa_customer_magnifier';
-    const MAGNIFY_SCALE_ACTIVE = 1.35;
-    const MAGNIFY_SCALE_IDLE = 1;
-    const magnifyToggleBtn = document.getElementById('magnifyToggle');
-    const rootElement = document.documentElement;
-    const magnifySurface = document.querySelector('.magnify-surface');
-    let magnifierEnabled = false;
-    let magnifierFrame = null;
-    let pendingMagnifyState = null;
-
-    function syncMagnifyState(isActive) {
-      rootElement.classList.toggle('magnify-active', isActive);
-      magnifyToggleBtn?.classList.toggle('is-active', isActive);
-      if (magnifyToggleBtn) {
-        magnifyToggleBtn.setAttribute('aria-pressed', String(isActive));
-        magnifyToggleBtn.setAttribute('aria-label', isActive ? 'Disable magnifier' : 'Enable magnifier');
-        magnifyToggleBtn.title = isActive ? 'Disable magnifier' : 'Enable magnifier';
-      }
-      toggleMagnifierTracking(isActive);
-    }
-
-    let storedMagnifyPreference = false;
-    try { storedMagnifyPreference = localStorage.getItem(MAGNIFY_STORAGE_KEY) === 'true'; } catch {}
-    syncMagnifyState(storedMagnifyPreference);
-
-    magnifyToggleBtn?.addEventListener('click', () => {
-      const isActive = !rootElement.classList.contains('magnify-active');
-      syncMagnifyState(isActive);
-      try { localStorage.setItem(MAGNIFY_STORAGE_KEY, String(isActive)); } catch {}
-    });
-
-    function toggleMagnifierTracking(shouldEnable) {
-      if (!magnifySurface) return;
-      if (shouldEnable && !magnifierEnabled) {
-        magnifierEnabled = true;
-        magnifySurface.addEventListener('pointermove', handleMagnifierPointerMove);
-        magnifySurface.addEventListener('pointerleave', handleMagnifierPointerLeave);
-        magnifySurface.addEventListener('pointerdown', handleMagnifierPointerMove);
-        rootElement.style.setProperty('--magnify-scale', MAGNIFY_SCALE_IDLE);
-      } else if (!shouldEnable && magnifierEnabled) {
-        magnifierEnabled = false;
-        magnifySurface.removeEventListener('pointermove', handleMagnifierPointerMove);
-        magnifySurface.removeEventListener('pointerleave', handleMagnifierPointerLeave);
-        magnifySurface.removeEventListener('pointerdown', handleMagnifierPointerMove);
-        if (magnifierFrame) {
-          cancelAnimationFrame(magnifierFrame);
-          magnifierFrame = null;
-        }
-        pendingMagnifyState = null;
-        rootElement.style.setProperty('--magnify-scale', '1');
-        rootElement.style.removeProperty('--magnify-origin-x');
-        rootElement.style.removeProperty('--magnify-origin-y');
-      }
-    }
-
-    function handleMagnifierPointerMove(event) {
-      if (!magnifierEnabled || !magnifySurface) return;
-      const rect = magnifySurface.getBoundingClientRect();
-      const originX = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
-      const originY = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
-      pendingMagnifyState = { originX, originY };
-      if (!magnifierFrame) {
-        magnifierFrame = requestAnimationFrame(applyPendingMagnifierState);
-      }
-    }
-
-    function handleMagnifierPointerLeave() {
-      pendingMagnifyState = null;
-      rootElement.style.setProperty('--magnify-scale', MAGNIFY_SCALE_IDLE);
-    }
-
-    function applyPendingMagnifierState() {
-      magnifierFrame = null;
-      if (!pendingMagnifyState) return;
-      rootElement.style.setProperty('--magnify-origin-x', `${pendingMagnifyState.originX}px`);
-      rootElement.style.setProperty('--magnify-origin-y', `${pendingMagnifyState.originY}px`);
-      rootElement.style.setProperty('--magnify-scale', MAGNIFY_SCALE_ACTIVE);
-    }
 
     let basePrice = 0;
     let cart = [];
