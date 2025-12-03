@@ -10,6 +10,10 @@ function getReportLabel(key) {
       popularDrink: 'Most Popular Drink',
       mostPopularDrink: 'Most popular drink',
       mostPopularHour: 'Most popular hour',
+      bestSellingItem: 'Best-Selling Item',
+      topEmployee: 'Top Employee',
+      noDataAvailable: 'No data available',
+      noSalesFound: 'No sales found for this date range.',
     },
     es: {
       totalSales: 'Ventas totales',
@@ -18,6 +22,10 @@ function getReportLabel(key) {
       popularDrink: 'Bebida más popular',
       mostPopularDrink: 'Bebida más popular',
       mostPopularHour: 'Hora más popular',
+      bestSellingItem: 'Artículo más vendido',
+      topEmployee: 'Empleado destacado',
+      noDataAvailable: 'No hay datos disponibles',
+      noSalesFound: 'No se encontraron ventas para este rango de fechas.',
     },
   };
 
@@ -82,6 +90,9 @@ document.getElementById('reports').addEventListener('click', async () => {
           `${getReportLabel('peakHour')}: ${data.peakHour}`;
         document.getElementById('popularDrink').textContent =
           `${getReportLabel('popularDrink')}: ${translatedPopularDrink || data.popularDrink}`;
+        
+        // Note: No need to call translateNewContent here because getReportLabel()
+        // already returns the correct language based on window.pageLang
     } catch (err) {
         console.error('Error fetching report data:', err);
     }
@@ -129,7 +140,8 @@ async function populateInventoryTable(items) {
   tbody.innerHTML = ''; // clear previous rows
 
   if (!items || items.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No data available</td></tr>';
+    const noDataText = getReportLabel('noDataAvailable');
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">${noDataText}</td></tr>`;
     return;
   }
 
@@ -137,20 +149,27 @@ async function populateInventoryTable(items) {
   const ingredientNames = items.map(item => item.ingredient);
   const translatedIngredients = await translateIfNeeded(ingredientNames);
 
-  items.forEach((item, index) => {
-    const displayIngredient = translatedIngredients[index] || item.ingredient;
+    items.forEach((item, index) => {
+      const displayIngredient = translatedIngredients[index] || item.ingredient;
 
-    const row = `
-      <tr>
-        <td>${displayIngredient}</td>
-        <td>${item.quantity_in_stock}</td>
-        <td>${item.total_used}</td>
-        <td>${item.remaining}</td>
-        <td>${item.unit}</td>
-      </tr>
-    `;
-    tbody.insertAdjacentHTML('beforeend', row);
-  });
+      const row = `
+        <tr>
+          <td>${displayIngredient}</td>
+          <td>${item.quantity_in_stock}</td>
+          <td>${item.total_used}</td>
+          <td>${item.remaining}</td>
+          <td>${item.unit}</td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML('beforeend', row);
+    });
+    
+    // Translate the table if page is in Spanish
+    if (window.translateNewContent && (window.pageLang === 'es')) {
+      setTimeout(() => {
+        window.translateNewContent(tbody);
+      }, 50);
+    }
 }
 
 document.getElementById('menuReport').addEventListener('click', async () => {
@@ -191,6 +210,13 @@ document.getElementById('menuReport').addEventListener('click', async () => {
       `; 
       tbody.insertAdjacentHTML('beforeend', row);
     });
+    
+    // Translate the table if page is in Spanish
+    if (window.translateNewContent && (window.pageLang === 'es')) {
+      setTimeout(() => {
+        window.translateNewContent(tbody);
+      }, 50);
+    }
   } catch (err) {
     console.error('Error fetching menu report data:', err);
   } 
@@ -224,6 +250,13 @@ document.getElementById('employeeReport').addEventListener('click', async () => 
       `; 
       tbody.insertAdjacentHTML('beforeend', row);
     });
+    
+    // Translate the table if page is in Spanish
+    if (window.translateNewContent && (window.pageLang === 'es')) {
+      setTimeout(() => {
+        window.translateNewContent(tbody);
+      }, 50);
+    }
   } catch (err) {
     console.error('Error fetching menu report data:', err);
   } 
@@ -273,7 +306,16 @@ async function salesReport(start, end ) {
       `${getReportLabel('mostPopularDrink')}: ${translatedMostPopular || data.mostPopularItem}`;
     document.querySelector('.table-container p:nth-child(2)').textContent = 
       `${getReportLabel('mostPopularHour')}: ${data.peakHour}`;
-
+    
+    // Translate the table if page is in Spanish
+    if (window.translateNewContent && (window.pageLang === 'es')) {
+      setTimeout(() => {
+        const salesScreen = document.getElementById('salesScreen');
+        if (salesScreen) {
+          window.translateNewContent(salesScreen);
+        }
+      }, 50);
+    }
 
   } catch (err) {
     console.error('Error fetching sales report data:', err);
@@ -345,13 +387,21 @@ document.getElementById("generateItemizedReportBtn").addEventListener("click", a
         });
 
         if (data.length === 0) {
+            const noSalesText = getReportLabel('noSalesFound');
             tableBody.innerHTML = `
                 <tr>
                     <td colspan="3" style="text-align: center; opacity: 0.6;">
-                        No sales found for this date range.
+                        ${noSalesText}
                     </td>
                 </tr>
             `;
+        }
+        
+        // Translate the table if page is in Spanish
+        if (window.translateNewContent && (window.pageLang === 'es')) {
+          setTimeout(() => {
+            window.translateNewContent(tableBody);
+          }, 50);
         }
 
     } catch (err) {
@@ -596,11 +646,11 @@ async function loadZReport(date) {
     const [translatedBestItem] = await translateIfNeeded([data.mostPopularItem.itemname]);
 
     const rows = [
-        { desc: "Total Sales", value: `$${Number(data.totalSales).toFixed(2)}` },
-        { desc: "Total Orders", value: `${data.totalOrders}`},
-        { desc: "Best-Selling Item", value: `${translatedBestItem || data.mostPopularItem.itemname}`},
-        { desc: "Top Employee", value: `${data.bestEmployee.employeename}`},
-        { desc: "Peak Sales Hour", value: `${data.bestHour}`}
+        { desc: getReportLabel("totalSales"), value: `$${Number(data.totalSales).toFixed(2)}` },
+        { desc: getReportLabel("totalOrders"), value: `${data.totalOrders}`},
+        { desc: getReportLabel("bestSellingItem"), value: `${translatedBestItem || data.mostPopularItem.itemname}`},
+        { desc: getReportLabel("topEmployee"), value: `${data.bestEmployee.employeename}`},
+        { desc: getReportLabel("peakHour"), value: `${data.bestHour}`}
     ];
 
     rows.forEach(row => {
@@ -611,6 +661,13 @@ async function loadZReport(date) {
         `;
         table.appendChild(tr);
     });
+    
+    // Translate the table if page is in Spanish (for any dynamically added content)
+    if (window.translateNewContent && (window.pageLang === 'es')) {
+      setTimeout(() => {
+        window.translateNewContent(table);
+      }, 50);
+    }
 }
 
 const today = new Date().toISOString().split("T")[0];
