@@ -17,6 +17,9 @@ try {
 }
 
 // Set initial button text with flag based on stored language preference
+// Note: pageLang starts as "en" because HTML content is in English
+// We'll translate it if storedLang is "es"
+
 if (btn) {
     if (storedLang === "es") {
         btn.innerHTML = `<span>🇺🇸</span> <span>Translate to English</span>`;
@@ -25,126 +28,221 @@ if (btn) {
     }
 }
 
-btn?.addEventListener("click", async function () {
-    // Determine target language based on current page language
-    const targetLang = pageLang === "en" ? "es" : "en";
-
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+// Helper function to get all text nodes that should be translated
+function getAllTranslatableTextNodes(rootElement = document.body) {
+    const walker = document.createTreeWalker(
+        rootElement,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: function(node) {
+                // Skip script and style tags
+                if (node.parentNode.closest("script, style")) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                // Only include nodes with non-empty text
+                if (node.nodeValue.trim().length === 0) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        }
+    );
+    
     const textNodes = [];
     let node;
-
     while (node = walker.nextNode()) {
-        const trimmed = node.nodeValue.trim();
-        if (trimmed.length > 0 && !node.parentNode.closest("script, style")) {
-            const parent = node.parentNode;
-
-            // Ensure we always capture the original English text when we first see this node
-            if (!parent.dataset.originalText) {
-                parent.dataset.originalText = node.nodeValue;
-            }
-
-            textNodes.push({ node, text: node.nodeValue });
-        }
+        textNodes.push(node);
     }
+    return textNodes;
+}
 
-    const originalTexts = textNodes.map(({ node }) => {
-        const parent = node.parentNode;
-        const storedOriginal = parent.dataset.originalText;
-
-        // When toggling back to English, some nodes may have been added later and never
-        // had an originalText stored. Fall back to the current text so they still translate.
-        if (targetLang === "en") {
-            return storedOriginal || node.nodeValue;
-        }
-
-        // When translating away from English, use the current text (which is the
-        // original English for nodes seen for the first time on this pass).
-        if (!storedOriginal) {
+// Main translation function
+async function translatePage(targetLang) {
+    console.log(`translatePage called with targetLang: ${targetLang}, current pageLang: ${pageLang}`);
+    
+    const textNodes = getAllTranslatableTextNodes();
+    console.log(`Found ${textNodes.length} text nodes to translate`);
+    
+    // Prepare original texts for translation
+    const originalTexts = textNodes.map((node) => {
+        const parent = node.parentElement;
+        
+        // Always store the original English text if not already stored
+        // When translating to Spanish, store current text as original
+        // When translating to English, we need the stored original
+        if (!parent.dataset.originalText) {
+            // Store current text as original (this is English when first loading)
             parent.dataset.originalText = node.nodeValue;
         }
-
+        
+        // If translating back to English, use stored original
+        if (targetLang === "en" && parent.dataset.originalText) {
+            return parent.dataset.originalText;
+        }
+        
+        // If translating to Spanish, use stored original if available, otherwise current text
+        if (targetLang === "es") {
+            return parent.dataset.originalText || node.nodeValue;
+        }
+        
         return node.nodeValue;
     });
 
-    const res = await fetch("/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            target: targetLang,
-            texts: originalTexts
-        })
-    });
+    // If translating to English, restore original texts directly
+    if (targetLang === "en") {
+        console.log("Translating page back to English...");
+        textNodes.forEach((node, i) => {
+            const parent = node.parentElement;
+            if (parent.dataset.originalText) {
+                node.nodeValue = parent.dataset.originalText;
+            } else {
+                // If no original stored, keep current text (shouldn't happen, but safety check)
+                console.warn("No original text stored for node:", node.nodeValue.substring(0, 50));
+            }
+        });
+        
+        // Update page language
+        pageLang = "en";
+        window.pageLang = "en";
+        
+        // Save preference
+        try {
+            sessionStorage.setItem(LANGUAGE_STORAGE_KEY, "en");
+            console.log("Saved language preference: en");
+        } catch (e) {
+            console.warn("Could not save language preference:", e);
+        }
+        
+        // Update button
+        if (btn) {
+            btn.innerHTML = `<span>🇪🇸</span> <span>Translate to Spanish</span>`;
+        }
+        
+        console.log("Page translated to English");
+        return;
+    }
 
-    const data = await res.json();
-
-    data.translations.forEach((t, i) => {
-        textNodes[i].node.nodeValue = t;
-    });
-
-    // Update current page language
-    pageLang = targetLang;
-    window.pageLang = pageLang;
-
-    // Save language preference to localStorage
+    // Translate to Spanish using API
     try {
-        sessionStorage.setItem(LANGUAGE_STORAGE_KEY, pageLang);
+        const res = await fetch("/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                target: "es",
+                texts: originalTexts
+            })
+        });
+
+        if (!res.ok) {
+            throw new Error(`Translation failed: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (!data.translations || data.translations.length !== textNodes.length) {
+            throw new Error("Translation response mismatch");
+        }
+
+        // Apply translations
+        data.translations.forEach((translation, i) => {
+            textNodes[i].nodeValue = translation;
+        });
+
+        // Update page language
+        pageLang = "es";
+        window.pageLang = "es";
+        
+        // Save preference
+        try {
+            sessionStorage.setItem(LANGUAGE_STORAGE_KEY, "es");
+            console.log("Saved language preference: es");
+        } catch (e) {
+            console.warn("Could not save language preference:", e);
+        }
+        
+        // Update button
+        if (btn) {
+            btn.innerHTML = `<span>🇺🇸</span> <span>Translate to English</span>`;
+        }
+        
+        console.log("Page translated to Spanish successfully");
     } catch (e) {
-        console.warn("Could not save language preference to sessionStorage:", e);
+        console.error("Translation error:", e);
+        alert("Translation failed. Please try again.");
     }
+}
 
-    // Update button label for UX with flag emoji
-    if (pageLang === "en") {
-        btn.innerHTML = `<span>🇪🇸</span> <span>Translate to Spanish</span>`;
-    } else {
-        btn.innerHTML = `<span>🇺🇸</span> <span>Translate to English</span>`;
+// Button click handler
+btn?.addEventListener("click", async function () {
+    // Determine target language based on current page language
+    const targetLang = pageLang === "en" ? "es" : "en";
+    
+    console.log(`Translating page from ${pageLang} to ${targetLang}`);
+    await translatePage(targetLang);
+    
+    // After translation, also translate any dynamically added content
+    if (targetLang === "es") {
+        setTimeout(() => {
+            translateNewContent(document.body);
+        }, 500);
+        setTimeout(() => {
+            translateNewContent(document.body);
+        }, 1500);
+        setTimeout(() => {
+            translateNewContent(document.body);
+        }, 2500);
     }
-
-    console.log("Page translated to", pageLang);
 });
 
 // Function to translate newly added content (exposed globally for other scripts)
 window.translateNewContent = async function(element = document.body) {
-    // Only translate if current page language is Spanish
-    if (pageLang !== "es") {
+    // Only translate if current page language is Spanish or should be Spanish
+    const shouldTranslate = pageLang === "es" || (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish());
+    if (!shouldTranslate) {
         return;
     }
 
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
-    const textNodes = [];
-    let node;
+    // If element itself has originalText (like weather badge), handle it specially
+    if (element.dataset && element.dataset.originalText && element.textContent) {
+        const originalText = element.dataset.originalText;
+        try {
+            const res = await fetch("/translate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    target: "es",
+                    texts: [originalText]
+                })
+            });
 
-    while (node = walker.nextNode()) {
-        const trimmed = node.nodeValue.trim();
-        if (trimmed.length > 0 && !node.parentNode.closest("script, style")) {
-            const parent = node.parentNode;
-
-            // Store original text if not already stored
-            // This is the English text that we want to translate
-            if (!parent.dataset.originalText) {
-                parent.dataset.originalText = node.nodeValue;
+            if (res.ok) {
+                const data = await res.json();
+                if (data.translations && data.translations.length > 0) {
+                    element.textContent = data.translations[0];
+                }
             }
-
-            textNodes.push({ node, text: node.nodeValue });
+        } catch (e) {
+            console.warn("Failed to translate element:", e);
         }
+        return;
     }
 
+    const textNodes = getAllTranslatableTextNodes(element);
+    
     if (textNodes.length === 0) {
         return;
     }
 
-    const originalTexts = textNodes.map(({ node }) => {
-        const parent = node.parentNode;
-        const storedOriginal = parent.dataset.originalText;
+    const originalTexts = textNodes.map((node) => {
+        const parent = node.parentElement;
         
-        // Always use the stored original (English) text for translation
-        // If no original is stored, store the current text as original and use it
-        if (!storedOriginal) {
+        // Store original text if not already stored
+        if (!parent.dataset.originalText) {
             parent.dataset.originalText = node.nodeValue;
-            return node.nodeValue;
         }
         
-        // Use the stored original English text for translation
-        return storedOriginal;
+        // Always use stored original for translation
+        return parent.dataset.originalText || node.nodeValue;
     });
 
     try {
@@ -157,32 +255,92 @@ window.translateNewContent = async function(element = document.body) {
             })
         });
 
+        if (!res.ok) {
+            throw new Error(`Translation failed: ${res.status}`);
+        }
+
         const data = await res.json();
 
-        data.translations.forEach((t, i) => {
-            textNodes[i].node.nodeValue = t;
-        });
+        if (data.translations && data.translations.length === textNodes.length) {
+            data.translations.forEach((translation, i) => {
+                textNodes[i].nodeValue = translation;
+            });
+        }
     } catch (e) {
         console.warn("Failed to translate new content:", e);
     }
 };
 
 // Auto-translate on page load if language preference is Spanish
-// The page content is in English, so if stored preference is Spanish, translate it
-if (storedLang === "es" && pageLang === "en") {
-    // Wait for DOM to be fully loaded before translating
-    const performAutoTranslate = () => {
-        setTimeout(() => {
-            if (btn && pageLang === "en") {
-                // Trigger translation to Spanish by clicking the button
-                btn.click();
-            }
-        }, 100); // Small delay to ensure all content is rendered
+// The page content is always in English initially, so we need to translate if preference is Spanish
+function performAutoTranslate() {
+    // Check stored preference
+    let currentStoredLang = "en";
+    try {
+        currentStoredLang = sessionStorage.getItem(LANGUAGE_STORAGE_KEY) || "en";
+    } catch (e) {
+        console.warn("Could not read language preference:", e);
+    }
+    
+    // Only translate if preference is Spanish and page is still in English
+    if (currentStoredLang === "es" && pageLang === "en") {
+        console.log("Auto-translating page to Spanish (stored preference is Spanish)...");
+        translatePage("es").then(() => {
+            // Also translate any content that might be added after initial load
+            setTimeout(() => {
+                if (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()) {
+                    translateNewContent(document.body);
+                }
+            }, 1000);
+            
+            // One more pass for very late-loading content
+            setTimeout(() => {
+                if (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()) {
+                    translateNewContent(document.body);
+                }
+            }, 2000);
+            
+            // Final pass for any remaining content
+            setTimeout(() => {
+                if (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()) {
+                    translateNewContent(document.body);
+                }
+            }, 3000);
+        }).catch(err => {
+            console.error("Auto-translate failed:", err);
+        });
+    } else {
+        console.log(`Skipping auto-translate: storedLang=${currentStoredLang}, pageLang=${pageLang}`);
+    }
+}
+
+// Wait for DOM to be fully loaded and all scripts initialized before translating
+if (storedLang === "es") {
+    // Wait for all content to load
+    const runAutoTranslate = () => {
+        setTimeout(performAutoTranslate, 500); // Wait for initial content to render
     };
     
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', performAutoTranslate);
+        document.addEventListener('DOMContentLoaded', runAutoTranslate);
     } else {
-        performAutoTranslate();
+        runAutoTranslate();
     }
+    
+    // Also try on window load as a backup
+    window.addEventListener('load', () => {
+        setTimeout(performAutoTranslate, 100);
+    });
 }
+
+// Expose a function to check if page should be in Spanish
+window.shouldTranslateToSpanish = function() {
+    try {
+        return sessionStorage.getItem(LANGUAGE_STORAGE_KEY) === 'es';
+    } catch (e) {
+        return false;
+    }
+};
+
+// Also expose translatePage globally for manual calls if needed
+window.translatePage = translatePage;
