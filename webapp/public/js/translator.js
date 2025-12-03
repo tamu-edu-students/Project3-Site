@@ -39,6 +39,10 @@ function getAllTranslatableTextNodes(rootElement = document.body) {
                 if (node.parentNode.closest("script, style")) {
                     return NodeFilter.FILTER_REJECT;
                 }
+                // Skip price elements - prices should not be translated
+                if (node.parentElement && node.parentElement.classList.contains('price')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
                 // Only include nodes with non-empty text
                 if (node.nodeValue.trim().length === 0) {
                     return NodeFilter.FILTER_REJECT;
@@ -54,6 +58,12 @@ function getAllTranslatableTextNodes(rootElement = document.body) {
         textNodes.push(node);
     }
     return textNodes;
+}
+
+// Helper function to get all input placeholders that should be translated
+function getAllTranslatablePlaceholders(rootElement = document.body) {
+    const inputs = rootElement.querySelectorAll('input[placeholder][data-original-placeholder]');
+    return Array.from(inputs);
 }
 
 // Main translation function
@@ -98,6 +108,14 @@ async function translatePage(targetLang) {
             } else {
                 // If no original stored, keep current text (shouldn't happen, but safety check)
                 console.warn("No original text stored for node:", node.nodeValue.substring(0, 50));
+            }
+        });
+        
+        // Restore original placeholders
+        const placeholders = getAllTranslatablePlaceholders();
+        placeholders.forEach(input => {
+            if (input.dataset.originalPlaceholder) {
+                input.placeholder = input.dataset.originalPlaceholder;
             }
         });
         
@@ -147,6 +165,33 @@ async function translatePage(targetLang) {
         data.translations.forEach((translation, i) => {
             textNodes[i].nodeValue = translation;
         });
+
+        // Translate placeholders
+        const placeholders = getAllTranslatablePlaceholders();
+        if (placeholders.length > 0) {
+            const placeholderTexts = placeholders.map(input => input.dataset.originalPlaceholder || input.placeholder);
+            try {
+                const placeholderRes = await fetch("/translate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        target: "es",
+                        texts: placeholderTexts
+                    })
+                });
+
+                if (placeholderRes.ok) {
+                    const placeholderData = await placeholderRes.json();
+                    if (placeholderData.translations && placeholderData.translations.length === placeholders.length) {
+                        placeholders.forEach((input, i) => {
+                            input.placeholder = placeholderData.translations[i];
+                        });
+                    }
+                }
+            } catch (e) {
+                console.warn("Failed to translate placeholders:", e);
+            }
+        }
 
         // Update page language
         pageLang = "es";
