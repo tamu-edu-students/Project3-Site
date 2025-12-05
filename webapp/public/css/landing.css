@@ -127,3 +127,13 @@ body {
         right: 15px;
     }
 }
+
+/* Menu Board Button */
+.btn-menuboard {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
+    margin-top: 10px;
+}
+
+.btn-menuboard:hover {
+    background: linear-gradient(135deg, #3db8b0, #358a7a) !important;
+}

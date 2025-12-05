@@ -1,6 +1,7 @@
 // routes/unauthenticated.js
 const express = require('express');
 const router = express.Router();
+const db = require('../db/database');
 
 // Index page
 router.get('/', (req, res) => {
@@ -30,6 +31,16 @@ router.get('/logout', (req, res) => {
 // Unauthorized page
 router.get('/unauthorized', (req, res) => {
   res.status(403).render('unauthorized');
+});
+
+// Menu board page (read-only, no authentication required)
+router.get('/menuboard', async (req, res, next) => {
+  try {
+    const menuItems = await db.getAll('menuitems');
+    res.render('menuboard', { menuItems });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

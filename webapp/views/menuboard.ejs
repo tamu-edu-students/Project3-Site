@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VAMSA - Menu Board</title>
+  <link rel="stylesheet" href="/css/menuboard.css" />
+</head>
+<body>
+  <div class="menuboard-container">
+    <header class="menuboard-header">
+      <h1 class="menuboard-title">🧋 VAMSA Menu</h1>
+      <p class="menuboard-subtitle">Our Signature Drinks</p>
+    </header>
+
+    <main class="menuboard-content">
+      <div class="menu-grid">
+        <% menuItems.forEach(item => { %>
+          <div class="menu-item-card">
+            <div class="menu-item-image"></div>
+            <div class="menu-item-info">
+              <h3 class="menu-item-name"><%= item.itemname %></h3>
+              <% if (item.itemdescription) { %>
+                <p class="menu-item-description"><%= item.itemdescription %></p>
+              <% } %>
+              <div class="menu-item-price">
+                $<%= (typeof item.itemprice === 'number' ? item.itemprice : parseFloat(String(item.itemprice).replace(',', '.')) || 0).toFixed(2) %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </main>
+
+    <footer class="menuboard-footer">
+      <p>Thank you for choosing VAMSA! 🧋</p>
+    </footer>
+  </div>
+</body>
+</html>
+
