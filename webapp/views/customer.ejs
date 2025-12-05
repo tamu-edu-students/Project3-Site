@@ -47,6 +47,16 @@
           >
             aA
           </button>
+          <button
+            type="button"
+            class="contrast-toggle"
+            id="contrastToggle"
+            aria-pressed="false"
+            aria-label="Toggle high contrast mode"
+            title="Toggle high contrast mode"
+          >
+            🎨
+          </button>
           <div class="cart-icon-container">
             <button class="cart-icon-btn" id="cartIconBtn">
               <span class="cart-icon">🛒</span>
@@ -265,6 +275,26 @@
       textLarge = !textLarge;
       applyTextSizeState(textLarge);
       try { localStorage.setItem('vamsa_text_large', String(textLarge)); } catch {}
+    });
+
+    // --- contrast toggle ---
+    const contrastToggle = document.getElementById('contrastToggle');
+    let highContrast = false;
+    try { highContrast = localStorage.getItem('vamsa_high_contrast') === 'true'; } catch {}
+    
+    function applyContrastState(isHighContrast) {
+      document.body.classList.toggle('high-contrast-mode', isHighContrast);
+      contrastToggle.classList.toggle('is-active', isHighContrast);
+      contrastToggle.setAttribute('aria-pressed', String(isHighContrast));
+      contrastToggle.textContent = '🎨';
+      contrastToggle.title = isHighContrast ? "Disable high contrast mode" : "Enable high contrast mode";
+    }
+    
+    applyContrastState(highContrast);
+    contrastToggle.addEventListener('click', () => {
+      highContrast = !highContrast;
+      applyContrastState(highContrast);
+      try { localStorage.setItem('vamsa_high_contrast', String(highContrast)); } catch {}
     });
 
     let basePrice = 0;

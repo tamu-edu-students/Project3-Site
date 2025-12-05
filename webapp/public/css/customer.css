@@ -676,6 +676,7 @@ body {
     display: flex;
     gap: 30px;
     align-items: flex-start;
+    color: #000000;
 }
 
 .customizations-column {
@@ -799,10 +800,30 @@ body {
     display: flex;
     flex-direction: column;
     overflow: visible;
+    color: #000000 !important;
+}
+
+.order-summary * {
+    color: #000000 !important;
+}
+
+.order-summary .summary-content,
+.order-summary .summary-content *,
+.order-summary .summary-item,
+.order-summary .summary-item *,
+.order-summary .summary-label,
+.order-summary .summary-value,
+.order-summary .price-breakdown,
+.order-summary .price-breakdown *,
+.order-summary .price-line,
+.order-summary .price-line *,
+.order-summary .total-price,
+.order-summary .total-price * {
+    color: #000000 !important;
 }
 
 .order-summary h3 {
-    color: #8B4513;
+    color: #000000 !important;
     font-size: 1.2rem;
     margin-bottom: 12px;
     padding-bottom: 8px;
@@ -823,16 +844,29 @@ body {
     align-items: flex-start;
     font-size: 0.9rem;
     line-height: 1.4;
+    color: #000000;
+}
+
+.summary-item * {
+    color: #000000;
 }
 
 .summary-label {
     font-weight: 600;
-    color: #666;
+    color: #000000 !important;
     flex: 1;
 }
 
+.order-summary .summary-label,
+.summary-item .summary-label,
+.price-line .summary-label,
+.total-price .summary-label,
+.price-breakdown .summary-label {
+    color: #000000 !important;
+}
+
 .summary-value {
-    color: #333;
+    color: #000000 !important;
     text-align: right;
     flex: 1;
 }
@@ -840,7 +874,24 @@ body {
 .summary-value.total {
     font-size: 1.3rem;
     font-weight: bold;
-    color: #ff6b6b;
+    color: #000000 !important;
+}
+
+#summaryDrinkName,
+#summaryIceLevel,
+#summarySugarLevel,
+#summaryToppings,
+#summaryBasePrice,
+#summaryToppingsPrice,
+#summaryTotalPrice,
+.order-summary #summaryDrinkName,
+.order-summary #summaryIceLevel,
+.order-summary #summarySugarLevel,
+.order-summary #summaryToppings,
+.order-summary #summaryBasePrice,
+.order-summary #summaryToppingsPrice,
+.order-summary #summaryTotalPrice {
+    color: #000000 !important;
 }
 
 .toppings-list {
@@ -856,7 +907,7 @@ body {
 
 .toppings-list li {
     padding: 3px 0;
-    color: #555;
+    color: #000000;
     font-size: 0.85rem;
     position: relative;
     padding-left: 20px;
@@ -880,12 +931,26 @@ body {
 .price-breakdown {
     flex-direction: column;
     gap: 8px;
+    color: #000000;
+}
+
+.price-breakdown * {
+    color: #000000 !important;
 }
 
 .price-line {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #000000;
+}
+
+.price-line span {
+    color: #000000 !important;
+}
+
+.price-line .summary-label {
+    color: #000000 !important;
 }
 
 .total-price {
@@ -894,6 +959,11 @@ body {
     border-top: 2px solid #ddd;
     margin-bottom: 15px;
     flex-shrink: 0;
+    color: #000000;
+}
+
+.total-price * {
+    color: #000000 !important;
 }
 
 /* Summary Buttons */
@@ -1056,7 +1126,7 @@ body {
 
 .empty-cart-message {
     text-align: center;
-    color: #999;
+    color: #000000;
     font-size: 1.1rem;
     padding: 40px 20px;
     font-style: italic;
@@ -1099,7 +1169,7 @@ body {
 
 .cart-item-detail {
     font-size: 0.85rem;
-    color: #666;
+    color: #000000;
 }
 
 .cart-item-price {
@@ -1112,7 +1182,7 @@ body {
 .cart-item-price-value {
     font-size: 1.2rem;
     font-weight: bold;
-    color: #ff6b6b;
+    color: #000000;
 }
 
 .btn-remove-item {
@@ -1305,9 +1375,9 @@ body {
 }
 .cart-item:hover{background:#fffdfd;box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .cart-item-name{margin:0 0 6px;font-size:1.05rem;color:#3d2a19;}
-.cart-item-details{display:flex;flex-wrap:wrap;gap:10px;color:#6a6a6a;font-size:.92rem;}
+.cart-item-details{display:flex;flex-wrap:wrap;gap:10px;color:#000000;font-size:.92rem;}
 .cart-item-right{display:grid;gap:8px;justify-items:end;}
-.cart-item-price-value{font-weight:800;color:#ff6b6b;}
+.cart-item-price-value{font-weight:800;color:#000000;}
 
 /* Qty steppers */
 .qty-wrap{
@@ -1316,10 +1386,10 @@ body {
 }
 .qty-btn{
   appearance:none;border:none;background:#f4f4f4;width:28px;height:28px;
-  border-radius:8px;font-weight:800;cursor:pointer;line-height:1;
+  border-radius:8px;font-weight:800;cursor:pointer;line-height:1;color:#000000;
 }
 .qty-btn:hover{background:#ececec;}
-.qty-value{min-width:20px;text-align:center;font-weight:700}
+.qty-value{min-width:20px;text-align:center;font-weight:700;color:#000000;}
 
 /* Remove */
 .btn-remove-item{
@@ -1332,10 +1402,12 @@ body {
 .cart-summary{
   margin-top:6px;padding:14px;border-radius:14px;background:#fff;border:1px solid #eee;
 }
-.cart-summary .summary-row{display:flex;justify-content:space-between;padding:6px 0;}
+.cart-summary .summary-row{display:flex;justify-content:space-between;padding:6px 0;color:#000000;}
+.cart-summary .summary-row span{color:#000000;}
 .cart-summary .summary-divider{height:1px;background:#eee;margin:8px 0;}
-.cart-summary .total-row{font-weight:900;font-size:1.15rem;}
-.cart-summary small{color:#888}
+.cart-summary .total-row{font-weight:900;font-size:1.15rem;color:#000000;}
+.cart-summary .total-row span{color:#000000;}
+.cart-summary small{color:#000000;}
 .cart-total small {
     display: none;
   }
@@ -1524,6 +1596,282 @@ body {
 .text-size-toggle.is-active {
     background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
     color: white;
+}
+
+/* Contrast Toggle Button */
+.contrast-toggle {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff, #ffecec);
+    color: #8B4513;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contrast-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.contrast-toggle.is-active {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: #fff;
+}
+
+/* High Contrast Mode Styles */
+body.high-contrast-mode {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .container {
+    background: #1a1a1a;
+}
+
+body.high-contrast-mode .top-bar {
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .navbar-user {
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .header {
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .logo {
+    color: #ffffff !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+body.high-contrast-mode .tagline {
+    color: #e0e0e0 !important;
+}
+
+body.high-contrast-mode .drink-card {
+    background: #2d2d2d !important;
+    border: 3px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .drink-name {
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .drink-description {
+    color: #e0e0e0 !important;
+}
+
+body.high-contrast-mode .price {
+    color: #ffff00 !important;
+    font-weight: bold;
+}
+
+body.high-contrast-mode .section-title {
+    color: #ffffff !important;
+    border-bottom: 3px solid #ffffff;
+}
+
+body.high-contrast-mode .recommendation-section {
+    background: #2d2d2d !important;
+    border: 3px solid #ffffff;
+}
+
+body.high-contrast-mode .recommendation-banner {
+    background: #1a1a1a !important;
+    border-bottom: 3px solid #ffffff;
+}
+
+body.high-contrast-mode .recommendation-title,
+body.high-contrast-mode .recommendation-subtitle {
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .nav-btn {
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .nav-btn:hover {
+    background: #404040 !important;
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast-mode .cart-icon-btn {
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .cart-badge {
+    background: #ff0000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff;
+}
+
+body.high-contrast-mode .modal-content {
+    background: #2d2d2d !important;
+    border: 3px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .modal-header {
+    background: #1a1a1a !important;
+    border-bottom: 3px solid #ffffff;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .close {
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .close:hover {
+    color: #ffff00 !important;
+}
+
+body.high-contrast-mode .option-btn,
+body.high-contrast-mode .topping-checkbox {
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    background: #2d2d2d !important;
+}
+
+body.high-contrast-mode .option-btn:hover,
+body.high-contrast-mode .topping-checkbox:hover {
+    background: #404040 !important;
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast-mode input[type="radio"]:checked + span,
+body.high-contrast-mode input[type="checkbox"]:checked + span {
+    background: #ffff00 !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+}
+
+body.high-contrast-mode .btn-add-to-cart,
+body.high-contrast-mode .btn-checkout {
+    background: #ffff00 !important;
+    color: #000000 !important;
+    border: 3px solid #ffffff !important;
+    font-weight: bold;
+}
+
+body.high-contrast-mode .btn-add-to-cart:hover,
+body.high-contrast-mode .btn-checkout:hover {
+    background: #ffff99 !important;
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast-mode .btn-cancel,
+body.high-contrast-mode .btn-clear-cart {
+    background: #2d2d2d !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+}
+
+body.high-contrast-mode .btn-cancel:hover,
+body.high-contrast-mode .btn-clear-cart:hover {
+    background: #404040 !important;
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast-mode .cart-item {
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .cart-item-name {
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .cart-item-details {
+    color: #e0e0e0 !important;
+}
+
+body.high-contrast-mode .summary-row {
+    color: #ffffff !important;
+    border-bottom: 1px solid #ffffff;
+}
+
+body.high-contrast-mode .summary-label {
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .summary-value {
+    color: #ffff00 !important;
+    font-weight: bold;
+}
+
+/* Override high contrast mode for order summary - keep text black */
+body.high-contrast-mode .order-summary {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%) !important;
+    border-left: 3px solid #ff6b6b !important;
+}
+
+body.high-contrast-mode .order-summary,
+body.high-contrast-mode .order-summary *,
+body.high-contrast-mode .order-summary .summary-label,
+body.high-contrast-mode .order-summary .summary-value,
+body.high-contrast-mode .order-summary .summary-item,
+body.high-contrast-mode .order-summary .summary-item *,
+body.high-contrast-mode .order-summary .summary-content,
+body.high-contrast-mode .order-summary .summary-content *,
+body.high-contrast-mode .order-summary .price-breakdown,
+body.high-contrast-mode .order-summary .price-breakdown *,
+body.high-contrast-mode .order-summary .price-line,
+body.high-contrast-mode .order-summary .price-line *,
+body.high-contrast-mode .order-summary .total-price,
+body.high-contrast-mode .order-summary .total-price *,
+body.high-contrast-mode .order-summary h3,
+body.high-contrast-mode .order-summary #summaryDrinkName,
+body.high-contrast-mode .order-summary #summaryIceLevel,
+body.high-contrast-mode .order-summary #summarySugarLevel,
+body.high-contrast-mode .order-summary #summaryToppings,
+body.high-contrast-mode .order-summary #summaryBasePrice,
+body.high-contrast-mode .order-summary #summaryToppingsPrice,
+body.high-contrast-mode .order-summary #summaryTotalPrice {
+    color: #000000 !important;
+}
+
+body.high-contrast-mode .search-container input {
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode .search-container input::placeholder {
+    color: #999999 !important;
+}
+
+body.high-contrast-mode .search-container input:focus {
+    border-color: #ffff00 !important;
+    outline: 2px solid #ffff00;
+}
+
+body.high-contrast-mode #translateBtn {
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.high-contrast-mode #translateBtn:hover {
+    background: #404040 !important;
+    border-color: #ffff00 !important;
 }
 
 /* Weather Button Styling */
