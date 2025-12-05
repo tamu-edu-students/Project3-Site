@@ -23,18 +23,6 @@
           <!-- Weather badge (same element ID/class pattern as manager.ejs) -->
           <a id="weatherBadge" class="nav-btn weather-btn" aria-live="polite">Loading…</a>
 
-          <% if (user && (user.role === 'manager')) { %>
-              <a href="/manager" class="nav-btn common">Manager Page</a>
-          <% } %>
-
-          <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
-              <a href="/cashier" class="nav-btn common">Cashier Page</a>
-          <% } %>
-
-          <% if (user && (user.role === 'manager' || user.role === 'cashier')) { %>
-              <a href="/customer" class="nav-btn common">Customer Page</a>
-          <% } %>
-
           <a href="/logout" class="nav-btn logout">Logout</a>
       </div>
   </div>
@@ -67,7 +55,7 @@
             aria-label="Increase text size"
             title="Increase text size"
           >
-            🔠
+            aA
           </button>
           <div class="cart-icon-container">
             <button class="cart-icon-btn" id="cartIconBtn">
