@@ -279,8 +279,16 @@
 
     // --- contrast toggle ---
     const contrastToggle = document.getElementById('contrastToggle');
+    // Always default to light mode when page loads - user must explicitly enable dark mode
     let highContrast = false;
-    try { highContrast = localStorage.getItem('vamsa_high_contrast') === 'true'; } catch {}
+    
+    // Only check localStorage if user explicitly wants to persist their choice
+    // For now, we default to light mode on every page load
+    // Uncomment below if you want to remember user's preference:
+    // try { 
+    //   const stored = localStorage.getItem('vamsa_high_contrast');
+    //   highContrast = stored === 'true';
+    // } catch {}
     
     function applyContrastState(isHighContrast) {
       document.body.classList.toggle('high-contrast-mode', isHighContrast);
@@ -290,7 +298,8 @@
       contrastToggle.title = isHighContrast ? "Disable high contrast mode" : "Enable high contrast mode";
     }
     
-    applyContrastState(highContrast);
+    // Always start in light mode (highContrast = false)
+    applyContrastState(false);
     contrastToggle.addEventListener('click', () => {
       highContrast = !highContrast;
       applyContrastState(highContrast);

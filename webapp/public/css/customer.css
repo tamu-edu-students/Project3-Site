@@ -977,6 +977,10 @@ body {
     flex-shrink: 0;
 }
 
+.summary-buttons .btn-cancel {
+    color: #ffffff !important;
+}
+
 .btn-cancel,
 .btn-add-to-cart {
     padding: 16px 30px;
@@ -991,12 +995,13 @@ body {
 
 .btn-cancel {
     background: #ddd;
-    color: #333;
+    color: #ffffff !important;
     order: 2;
 }
 
 .btn-cancel:hover {
     background: #bbb;
+    color: #ffffff !important;
 }
 
 .btn-add-to-cart {
@@ -1182,7 +1187,10 @@ body {
 .cart-item-price-value {
     font-size: 1.2rem;
     font-weight: bold;
-    color: #000000;
+    color: #ffffff;
+    background: #333333;
+    padding: 4px 12px;
+    border-radius: 6px;
 }
 
 .btn-remove-item {
@@ -1377,7 +1385,7 @@ body {
 .cart-item-name{margin:0 0 6px;font-size:1.05rem;color:#3d2a19;}
 .cart-item-details{display:flex;flex-wrap:wrap;gap:10px;color:#000000;font-size:.92rem;}
 .cart-item-right{display:grid;gap:8px;justify-items:end;}
-.cart-item-price-value{font-weight:800;color:#000000;}
+.cart-item-price-value{font-weight:800;color:#ffffff;background:#333333;padding:4px 12px;border-radius:6px;}
 
 /* Qty steppers */
 .qty-wrap{
@@ -1787,6 +1795,22 @@ body.high-contrast-mode .btn-cancel:hover,
 body.high-contrast-mode .btn-clear-cart:hover {
     background: #404040 !important;
     border-color: #ffff00 !important;
+    color: #ffffff !important;
+}
+
+/* Ensure cancel button in order summary is white even in high contrast mode */
+body.high-contrast-mode .order-summary .btn-cancel,
+body.high-contrast-mode .summary-buttons .btn-cancel {
+    color: #ffffff !important;
+    background: #2d2d2d !important;
+    border: 2px solid #ffffff !important;
+}
+
+body.high-contrast-mode .order-summary .btn-cancel:hover,
+body.high-contrast-mode .summary-buttons .btn-cancel:hover {
+    color: #ffffff !important;
+    background: #404040 !important;
+    border-color: #ffff00 !important;
 }
 
 body.high-contrast-mode .cart-item {
@@ -1824,19 +1848,18 @@ body.high-contrast-mode .order-summary {
 }
 
 body.high-contrast-mode .order-summary,
-body.high-contrast-mode .order-summary *,
 body.high-contrast-mode .order-summary .summary-label,
 body.high-contrast-mode .order-summary .summary-value,
 body.high-contrast-mode .order-summary .summary-item,
-body.high-contrast-mode .order-summary .summary-item *,
+body.high-contrast-mode .order-summary .summary-item *:not(button),
 body.high-contrast-mode .order-summary .summary-content,
-body.high-contrast-mode .order-summary .summary-content *,
+body.high-contrast-mode .order-summary .summary-content *:not(button),
 body.high-contrast-mode .order-summary .price-breakdown,
-body.high-contrast-mode .order-summary .price-breakdown *,
+body.high-contrast-mode .order-summary .price-breakdown *:not(button),
 body.high-contrast-mode .order-summary .price-line,
-body.high-contrast-mode .order-summary .price-line *,
+body.high-contrast-mode .order-summary .price-line *:not(button),
 body.high-contrast-mode .order-summary .total-price,
-body.high-contrast-mode .order-summary .total-price *,
+body.high-contrast-mode .order-summary .total-price *:not(button),
 body.high-contrast-mode .order-summary h3,
 body.high-contrast-mode .order-summary #summaryDrinkName,
 body.high-contrast-mode .order-summary #summaryIceLevel,
@@ -1846,6 +1869,15 @@ body.high-contrast-mode .order-summary #summaryBasePrice,
 body.high-contrast-mode .order-summary #summaryToppingsPrice,
 body.high-contrast-mode .order-summary #summaryTotalPrice {
     color: #000000 !important;
+}
+
+/* Ensure buttons in order summary are white in high contrast mode */
+body.high-contrast-mode .order-summary button,
+body.high-contrast-mode .order-summary .btn-cancel,
+body.high-contrast-mode .order-summary .btn-add-to-cart,
+body.high-contrast-mode .summary-buttons button,
+body.high-contrast-mode .summary-buttons .btn-cancel {
+    color: #ffffff !important;
 }
 
 body.high-contrast-mode .search-container input {
