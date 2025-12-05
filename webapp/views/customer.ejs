@@ -100,23 +100,37 @@
         </div>
       </section>
 
-      
-
       <section class="drinks-section">
         <h2 class="section-title">Our Signature Drinks</h2>
 
-       
         <div class="search-container">
-          <input type="text" id="searchInput" placeholder="Search drinks..." data-original-placeholder="Search drinks...">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search drinks..."
+            data-original-placeholder="Search drinks..."
+          >
         </div>
 
         <div class="drinks-grid">
           <% menuItems.forEach(item => { %>
-            <div class="drink-card" data-drink="<%= item.itemname %>" data-description="<%= item.itemdescription || '' %>">
+            <div class="drink-card"
+                 data-drink="<%= item.itemname %>"
+                 data-description="<%= item.itemdescription || '' %>">
               <div class="drink-image classic"></div>
               <h3 class="drink-name"><%= item.itemname %></h3>
               <p class="drink-description"><%= item.itemdescription %></p>
-              <div class="price" data-price="<%= typeof item.itemprice === 'number' ? item.itemprice : parseFloat(String(item.itemprice).replace(',', '.')) || 0 %>">$<%= (typeof item.itemprice === 'number' ? item.itemprice : parseFloat(String(item.itemprice).replace(',', '.')) || 0).toFixed(2) %></div>
+              <div
+                class="price"
+                data-price="<%= typeof item.itemprice === 'number'
+                  ? item.itemprice
+                  : parseFloat(String(item.itemprice).replace(',', '.')) || 0 %>">
+                $<%= (
+                  typeof item.itemprice === 'number'
+                    ? item.itemprice
+                    : parseFloat(String(item.itemprice).replace(',', '.')) || 0
+                ).toFixed(2) %>
+              </div>
             </div>
           <% }) %>
         </div>
@@ -176,34 +190,73 @@
           <div class="customization-section">
             <h3>Ice Level</h3>
             <div class="option-group">
-              <label class="option-btn"><input type="radio" name="iceLevel" value="no ice"><span>No Ice</span></label>
-              <label class="option-btn"><input type="radio" name="iceLevel" value="light ice" checked><span>Light Ice</span></label>
-              <label class="option-btn"><input type="radio" name="iceLevel" value="regular"><span>Regular</span></label>
+              <label class="option-btn">
+                <input type="radio" name="iceLevel" value="no ice">
+                <span>No Ice</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="iceLevel" value="light ice" checked>
+                <span>Light Ice</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="iceLevel" value="regular">
+                <span>Regular</span>
+              </label>
             </div>
           </div>
 
           <div class="customization-section">
             <h3>Sugar Level</h3>
             <div class="option-group">
-              <label class="option-btn"><input type="radio" name="sugarLevel" value="25%"><span>25%</span></label>
-              <label class="option-btn"><input type="radio" name="sugarLevel" value="50%" checked><span>50%</span></label>
-              <label class="option-btn"><input type="radio" name="sugarLevel" value="75%"><span>75%</span></label>
-              <label class="option-btn"><input type="radio" name="sugarLevel" value="100%"><span>100%</span></label>
+              <label class="option-btn">
+                <input type="radio" name="sugarLevel" value="25%">
+                <span>25%</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="sugarLevel" value="50%" checked>
+                <span>50%</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="sugarLevel" value="75%">
+                <span>75%</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="sugarLevel" value="100%">
+                <span>100%</span>
+              </label>
             </div>
           </div>
 
           <div class="customization-section">
             <h3>Toppings</h3>
             <div class="toppings-grid">
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Boba Pearls"><span>Boba Pearls</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Pudding"><span>Pudding</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Grass Jelly"><span>Grass Jelly</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Aloe Vera"><span>Aloe Vera</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Lychee Jelly"><span>Lychee Jelly</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Mango Popping"><span>Mango Popping</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Strawberry Popping"><span>Strawberry Popping</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Coffee Jelly"><span>Coffee Jelly</span></label>
-              <label class="topping-checkbox"><input type="checkbox" name="toppings" value="Crystal Boba"><span>Crystal Boba</span></label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Boba Pearls"><span>Boba Pearls</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Pudding"><span>Pudding</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Grass Jelly"><span>Grass Jelly</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Aloe Vera"><span>Aloe Vera</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Lychee Jelly"><span>Lychee Jelly</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Mango Popping"><span>Mango Popping</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Strawberry Popping"><span>Strawberry Popping</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Coffee Jelly"><span>Coffee Jelly</span>
+              </label>
+              <label class="topping-checkbox">
+                <input type="checkbox" name="toppings" value="Crystal Boba"><span>Crystal Boba</span>
+              </label>
             </div>
           </div>
         </div>
@@ -211,22 +264,42 @@
         <div class="order-summary">
           <h3>Order Summary</h3>
           <div class="summary-content">
-            <div class="summary-item"><span class="summary-label">Drink:</span><span id="summaryDrinkName" class="summary-value">-</span></div>
-            <div class="summary-item"><span class="summary-label">Ice Level:</span><span id="summaryIceLevel" class="summary-value">-</span></div>
-            <div class="summary-item"><span class="summary-label">Sugar Level:</span><span id="summarySugarLevel" class="summary-value">-</span></div>
-            <div class="summary-item"><span class="summary-label">Toppings:</span><span id="summaryToppings" class="summary-value">None</span></div>
+            <div class="summary-item">
+              <span class="summary-label">Drink:</span>
+              <span id="summaryDrinkName" class="summary-value">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Ice Level:</span>
+              <span id="summaryIceLevel" class="summary-value">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Sugar Level:</span>
+              <span id="summarySugarLevel" class="summary-value">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Toppings:</span>
+              <span id="summaryToppings" class="summary-value">None</span>
+            </div>
             <div class="summary-item toppings-list" id="toppingsList" style="display:none;">
               <ul id="toppingsListItems"></ul>
             </div>
             <div class="summary-divider"></div>
             <div class="summary-item price-breakdown">
-              <div class="price-line"><span class="summary-label">Base Price:</span><span id="summaryBasePrice" class="summary-value">$0.00</span></div>
+              <div class="price-line">
+                <span class="summary-label">Base Price:</span>
+                <span id="summaryBasePrice" class="summary-value">$0.00</span>
+              </div>
               <div class="price-line" id="toppingsPriceLine" style="display:none;">
-                <span class="summary-label">Toppings (<span id="toppingCount">0</span> × $1.00):</span>
+                <span class="summary-label">
+                  Toppings (<span id="toppingCount">0</span> × $1.00):
+                </span>
                 <span id="summaryToppingsPrice" class="summary-value">$0.00</span>
               </div>
             </div>
-            <div class="summary-item total-price"><span class="summary-label">Total:</span><span id="summaryTotalPrice" class="summary-value total">$0.00</span></div>
+            <div class="summary-item total-price">
+              <span class="summary-label">Total:</span>
+              <span id="summaryTotalPrice" class="summary-value total">$0.00</span>
+            </div>
           </div>
           <div class="summary-buttons">
             <button class="btn-cancel">Cancel</button>
@@ -237,6 +310,53 @@
       <div class="modal-footer"></div>
     </div>
   </div>
+
+  <!-- Status / Notice Modal -->
+  <div id="statusModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="statusTitle">Notice</h2>
+        <span class="close status-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p id="statusMessage"></p>
+        <div id="statusDetails"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="statusOkBtn" class="btn-checkout">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Status modal helpers ---
+    const statusModal   = document.getElementById('statusModal');
+    const statusTitle   = document.getElementById('statusTitle');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusDetails = document.getElementById('statusDetails');
+    const statusOkBtn   = document.getElementById('statusOkBtn');
+    const statusClose   = document.querySelector('.status-close');
+
+    function showStatus({ title = 'Notice', message = '', detailsHtml = '' }) {
+      statusTitle.textContent = title;
+      statusMessage.textContent = message;
+      statusDetails.innerHTML = detailsHtml;
+      statusModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideStatus() {
+      statusModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      statusDetails.innerHTML = '';
+    }
+
+    statusOkBtn?.addEventListener('click', hideStatus);
+    statusClose?.addEventListener('click', hideStatus);
+    window.addEventListener('click', (e) => {
+      if (e.target === statusModal) hideStatus();
+    });
+  </script>
 
   <script>
     // --- config / money ---
@@ -279,17 +399,8 @@
 
     // --- contrast toggle ---
     const contrastToggle = document.getElementById('contrastToggle');
-    // Always default to light mode when page loads - user must explicitly enable dark mode
     let highContrast = false;
-    
-    // Only check localStorage if user explicitly wants to persist their choice
-    // For now, we default to light mode on every page load
-    // Uncomment below if you want to remember user's preference:
-    // try { 
-    //   const stored = localStorage.getItem('vamsa_high_contrast');
-    //   highContrast = stored === 'true';
-    // } catch {}
-    
+
     function applyContrastState(isHighContrast) {
       document.body.classList.toggle('high-contrast-mode', isHighContrast);
       contrastToggle.classList.toggle('is-active', isHighContrast);
@@ -297,8 +408,7 @@
       contrastToggle.textContent = '🎨';
       contrastToggle.title = isHighContrast ? "Disable high contrast mode" : "Enable high contrast mode";
     }
-    
-    // Always start in light mode (highContrast = false)
+
     applyContrastState(false);
     contrastToggle.addEventListener('click', () => {
       highContrast = !highContrast;
@@ -310,8 +420,15 @@
     let cart = [];
 
     // open/close cart
-    const openCart = async () => { cartModal.style.display = 'block'; document.body.style.overflow = 'hidden'; await updateCartDisplay(); };
-    const closeCart = () => { cartModal.style.display = 'none'; document.body.style.overflow = 'auto'; };
+    const openCart = async () => {
+      cartModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      await updateCartDisplay();
+    };
+    const closeCart = () => {
+      cartModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    };
     cartIconBtn.addEventListener('click', openCart);
     cartCloseBtn.addEventListener('click', closeCart);
     window.addEventListener('click', (e) => { if (e.target === cartModal) closeCart(); });
@@ -330,7 +447,13 @@
 
     // checkout -> POST /customer/checkout
     checkoutBtn.addEventListener('click', async () => {
-      if (!cart.length) return alert('Your cart is empty!');
+      if (!cart.length) {
+        return showStatus({
+          title: 'Cart empty',
+          message: 'Your cart is empty!'
+        });
+      }
+
       try {
         const payload = {
           cart: cart.map(({ drink, toppings, qty, iceLevel, sugarLevel }) => ({
@@ -341,25 +464,104 @@
             sugarLevel
           }))
         };
+
         const res = await fetch('/customer/checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
+        // ----- failure path -----
         if (!res.ok) {
           const text = await res.text();
-          return alert(`Checkout failed: ${res.status} ${text}`);
+          try {
+            const err = JSON.parse(text);
+            const detailsHtml =
+              Array.isArray(err.shortages) && err.shortages.length
+                ? '<ul>' +
+                  err.shortages
+                    .map(
+                      (s) =>
+                        `<li>${s.ingredient}: need ${s.need}, have ${s.have}</li>`
+                    )
+                    .join('') +
+                  '</ul>'
+                : '';
+            showStatus({
+              title: 'Checkout failed',
+              message: err.message || 'Request failed.',
+              detailsHtml
+            });
+          } catch {
+            showStatus({
+              title: 'Checkout failed',
+              message: `HTTP ${res.status} ${text}`
+            });
+          }
+          return;
         }
 
+        // ----- success path -----
         const data = await res.json();
-        alert(`Order placed! Your order ID is ${data.orderId}.`);
+
+        // Build final order summary HTML BEFORE clearing the cart
+        const orderSummaryHtml = `
+          <div class="status-order-layout">
+            <div class="status-order-id">
+              <p>Your order ID is <strong>${data.orderId}</strong>.</p>
+            </div>
+            <div class="status-order-summary">
+              <h3>Order Summary</h3>
+              <ul class="status-order-items">
+                ${cart
+                  .map((item) => {
+                    const qty = item.qty || 1;
+                    const toppingsText =
+                      item.toppings && item.toppings.length
+                        ? item.toppings.join(', ')
+                        : 'No toppings';
+                    return `
+                      <li class="status-order-item">
+                        <div class="status-item-name">
+                          <strong>${qty}× ${item.drink}</strong>
+                        </div>
+                        <div class="status-item-meta">
+                          Ice: ${item.iceLevel} •
+                          Sugar: ${item.sugarLevel} •
+                          Toppings: ${toppingsText}
+                        </div>
+                      </li>
+                    `;
+                  })
+                  .join('')}
+              </ul>
+              <div class="status-order-totals">
+                <p>Subtotal: <strong>${cartSubtotalEl.textContent}</strong></p>
+                <p>Tax: <strong>${cartTaxEl.textContent}</strong></p>
+                <p class="status-order-total-row">
+                  Total: <strong>${cartTotalEl.textContent}</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        showStatus({
+          title: 'Order placed!',
+          message: '',
+          detailsHtml: orderSummaryHtml
+        });
+
+        // Clear cart after showing summary
         cart = [];
         updateCartBadge();
-        await updateCartDisplay();
+        updateCartDisplay();
       } catch (err) {
         console.error(err);
-        alert('Checkout failed');
+        showStatus({
+          title: 'Checkout failed',
+          message: 'Unexpected error. Please try again.'
+        });
       }
     });
 
@@ -369,7 +571,11 @@
       cartBadge.textContent = count;
       cartBadge.style.display = count > 0 ? 'flex' : 'none';
     }
-    async function removeFromCart(i){ cart.splice(i,1); updateCartBadge(); await updateCartDisplay(); }
+    async function removeFromCart(i){
+      cart.splice(i,1);
+      updateCartBadge();
+      await updateCartDisplay();
+    }
 
     async function updateCartDisplay() {
       if (!cart.length) {
@@ -384,21 +590,20 @@
 
       const isSpanish = window.shouldTranslateToSpanish && window.shouldTranslateToSpanish();
       let html = '', subtotal = 0;
-      
-      // Translate drink names and other text if needed
+
       for (let i = 0; i < cart.length; i++) {
         const item = cart[i];
         const qty = item.qty || 1;
         const line = item.totalPrice * qty;
         subtotal += line;
-        
+
         let displayDrinkName = item.drink;
         let displayIceLevel = item.iceLevel;
         let displaySugarLevel = item.sugarLevel;
         let displayToppings = item.toppings.join(', ');
-        
+
         if (isSpanish) {
-          // Translate drink name
+          // Drink name
           try {
             const drinkRes = await fetch("/translate", {
               method: "POST",
@@ -417,9 +622,9 @@
           } catch (e) {
             console.warn("Failed to translate drink name:", e);
           }
-          
-          // Translate ice level
-          const iceLevelText = item.iceLevel.split(' ').map(word => 
+
+          // Ice level
+          const iceLevelText = item.iceLevel.split(' ').map(word =>
             word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
           ).join(' ');
           try {
@@ -440,8 +645,8 @@
           } catch (e) {
             console.warn("Failed to translate ice level:", e);
           }
-          
-          // Translate toppings if any
+
+          // Toppings
           if (item.toppings.length > 0) {
             try {
               const toppingsRes = await fetch("/translate", {
@@ -454,7 +659,8 @@
               });
               if (toppingsRes.ok) {
                 const toppingsData = await toppingsRes.json();
-                if (toppingsData.translations && toppingsData.translations.length === item.toppings.length) {
+                if (toppingsData.translations &&
+                    toppingsData.translations.length === item.toppings.length) {
                   displayToppings = toppingsData.translations.join(', ');
                 }
               }
@@ -463,7 +669,7 @@
             }
           }
         }
-        
+
         html += `
           <div class="cart-item">
             <div class="cart-item-info">
@@ -471,7 +677,9 @@
               <div class="cart-item-details">
                 <span>Ice: ${displayIceLevel}</span>
                 <span>• Sugar: ${displaySugarLevel}</span>
-                ${item.toppings.length ? `<span>• Toppings: ${displayToppings}</span>` : ''}
+                ${item.toppings.length
+                  ? `<span>• Toppings: ${displayToppings}</span>`
+                  : ''}
               </div>
             </div>
             <div class="cart-item-price cart-item-right">
@@ -504,7 +712,8 @@
           const action = b.dataset.action;
           const curr = cart[i].qty || 1;
           cart[i].qty = action === 'inc' ? curr + 1 : Math.max(1, curr - 1);
-          updateCartBadge(); await updateCartDisplay();
+          updateCartBadge();
+          await updateCartDisplay();
         });
       });
     }
@@ -512,42 +721,35 @@
     // drink card -> open customizer
     const customizationModal = document.getElementById('customizationModal');
     const modalDrinkNameEl = document.getElementById('modalDrinkName');
-    let currentOriginalDrinkName = ''; // Store original drink name to avoid translation issues
-    
+    let currentOriginalDrinkName = '';
+
     document.querySelectorAll('.drink-card').forEach(card => {
       card.addEventListener('click', async () => {
         const drink = card.getAttribute('data-drink');
-        currentOriginalDrinkName = drink; // Store original English name
+        currentOriginalDrinkName = drink;
         const priceElement = card.querySelector('.price');
-        // Get price from data attribute if available, otherwise parse from text (handling both comma and period)
-        const priceValue = priceElement.getAttribute('data-price') || priceElement.textContent.replace('$','').replace(',','.');
+        const priceValue =
+          priceElement.getAttribute('data-price') ||
+          priceElement.textContent.replace('$','').replace(',','.');
         basePrice = parseFloat(priceValue) || 0;
-        
-        // Store original text before setting content
+
         modalDrinkNameEl.dataset.originalText = drink;
         modalDrinkNameEl.textContent = drink;
-        
-        // Ensure default values are selected
+
         const defaultIceLevel = document.querySelector('input[name="iceLevel"][value="light ice"]');
         const defaultSugarLevel = document.querySelector('input[name="sugarLevel"][value="50%"]');
-        if (defaultIceLevel && !defaultIceLevel.checked) {
-          defaultIceLevel.checked = true;
-        }
-        if (defaultSugarLevel && !defaultSugarLevel.checked) {
-          defaultSugarLevel.checked = true;
-        }
-        
+        if (defaultIceLevel && !defaultIceLevel.checked) defaultIceLevel.checked = true;
+        if (defaultSugarLevel && !defaultSugarLevel.checked) defaultSugarLevel.checked = true;
+
         customizationModal.style.display = 'block';
         document.body.style.overflow = 'hidden';
-        
-        // Update summary first (this will translate the summary values if needed)
+
         await updateSummary();
-        
-        // Translate the modal labels/headers if page is in Spanish (but not the summary values which are already translated)
-        if (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish() && window.translateNewContent) {
-          // Only translate the modal structure, not the summary content which is already translated
+
+        if (window.shouldTranslateToSpanish &&
+            window.shouldTranslateToSpanish() &&
+            window.translateNewContent) {
           setTimeout(() => {
-            // Translate modal headers and labels, but skip the order-summary section
             const modalHeader = customizationModal.querySelector('.modal-header');
             const customizationsColumn = customizationModal.querySelector('.customizations-column');
             if (modalHeader) window.translateNewContent(modalHeader);
@@ -574,17 +776,13 @@
     const summaryToppingsPrice = document.getElementById('summaryToppingsPrice');
     const summaryTotalPrice    = document.getElementById('summaryTotalPrice');
 
-    // Helper function to translate text if page is in Spanish
     async function translateTextIfNeeded(text, element) {
       if (!window.shouldTranslateToSpanish || !window.shouldTranslateToSpanish()) {
         return text;
       }
-      
-      // Store original text
       if (element && !element.dataset.originalText) {
         element.dataset.originalText = text;
       }
-      
       try {
         const res = await fetch("/translate", {
           method: "POST",
@@ -594,7 +792,6 @@
             texts: [text]
           })
         });
-        
         if (res.ok) {
           const data = await res.json();
           if (data.translations && data.translations.length > 0) {
@@ -604,58 +801,53 @@
       } catch (e) {
         console.warn("Translation failed for:", text, e);
       }
-      
       return text;
     }
 
     async function updateSummary(){
-      // Use the stored original drink name instead of textContent which might be translated
-      const drinkName = currentOriginalDrinkName || modalDrinkNameEl.dataset.originalText || modalDrinkNameEl.textContent;
+      const drinkName = currentOriginalDrinkName ||
+                        modalDrinkNameEl.dataset.originalText ||
+                        modalDrinkNameEl.textContent;
       const iceLevelInput = document.querySelector('input[name="iceLevel"]:checked');
       const sugarLevelInput = document.querySelector('input[name="sugarLevel"]:checked');
-      
-      // Get values, with proper defaults
+
       let iceLevel = iceLevelInput?.value || 'light ice';
       let sugarLevel = sugarLevelInput?.value || '50%';
-      const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked')).map(cb => cb.value);
+      const selectedToppings =
+        Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
+          .map(cb => cb.value);
 
-      // Capitalize ice level properly (handle "light ice" -> "Light Ice")
-      const iceLevelText = iceLevel.split(' ').map(word => 
+      const iceLevelText = iceLevel.split(' ').map(word =>
         word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
       ).join(' ');
-      
+
       const toppingsText = selectedToppings.length ? `${selectedToppings.length} selected` : 'None';
-      
-      // Store original text FIRST before any translation
+
       summaryDrinkName.dataset.originalText = drinkName;
       summaryIceLevel.dataset.originalText = iceLevelText;
       summaryToppings.dataset.originalText = toppingsText;
-      
-      // Set text content (will be in English initially, or translated if page is Spanish)
+
       const isSpanish = window.shouldTranslateToSpanish && window.shouldTranslateToSpanish();
-      
+
       if (isSpanish) {
-        // Translate immediately if page is in Spanish
         const translatedDrinkName = await translateTextIfNeeded(drinkName, summaryDrinkName);
         const translatedIceLevel = await translateTextIfNeeded(iceLevelText, summaryIceLevel);
         const translatedToppings = await translateTextIfNeeded(toppingsText, summaryToppings);
-        
+
         summaryDrinkName.textContent = translatedDrinkName;
         summaryIceLevel.textContent = translatedIceLevel;
         summaryToppings.textContent = translatedToppings;
       } else {
-        // Set English text
         summaryDrinkName.textContent = drinkName;
         summaryIceLevel.textContent = iceLevelText;
         summaryToppings.textContent = toppingsText;
       }
-      
+
       summarySugarLevel.textContent = sugarLevel;
 
       if (selectedToppings.length){
         toppingsList.style.display = 'block';
         if (isSpanish && toppingsListItems) {
-          // Translate topping names in the list
           try {
             const res = await fetch("/translate", {
               method: "POST",
@@ -665,23 +857,28 @@
                 texts: selectedToppings
               })
             });
-            
             if (res.ok) {
               const data = await res.json();
-              if (data.translations && data.translations.length === selectedToppings.length) {
-                toppingsListItems.innerHTML = data.translations.map(t => `<li>${t}</li>`).join('');
+              if (data.translations &&
+                  data.translations.length === selectedToppings.length) {
+                toppingsListItems.innerHTML =
+                  data.translations.map(t => `<li>${t}</li>`).join('');
               } else {
-                toppingsListItems.innerHTML = selectedToppings.map(t => `<li>${t}</li>`).join('');
+                toppingsListItems.innerHTML =
+                  selectedToppings.map(t => `<li>${t}</li>`).join('');
               }
             } else {
-              toppingsListItems.innerHTML = selectedToppings.map(t => `<li>${t}</li>`).join('');
+              toppingsListItems.innerHTML =
+                selectedToppings.map(t => `<li>${t}</li>`).join('');
             }
           } catch (e) {
             console.warn("Failed to translate toppings:", e);
-            toppingsListItems.innerHTML = selectedToppings.map(t => `<li>${t}</li>`).join('');
+            toppingsListItems.innerHTML =
+              selectedToppings.map(t => `<li>${t}</li>`).join('');
           }
         } else {
-          toppingsListItems.innerHTML = selectedToppings.map(t => `<li>${t}</li>`).join('');
+          toppingsListItems.innerHTML =
+            selectedToppings.map(t => `<li>${t}</li>`).join('');
         }
       } else {
         toppingsList.style.display = 'none';
@@ -701,9 +898,15 @@
       summaryTotalPrice.textContent = money(totalPrice);
     }
 
-    document.querySelectorAll('input[name="iceLevel"]').forEach(r => r.addEventListener('change', updateSummary));
-    document.querySelectorAll('input[name="sugarLevel"]').forEach(r => r.addEventListener('change', updateSummary));
-    document.querySelectorAll('input[name="toppings"]').forEach(c => c.addEventListener('change', updateSummary));
+    document.querySelectorAll('input[name="iceLevel"]').forEach(r =>
+      r.addEventListener('change', updateSummary)
+    );
+    document.querySelectorAll('input[name="sugarLevel"]').forEach(r =>
+      r.addEventListener('change', updateSummary)
+    );
+    document.querySelectorAll('input[name="toppings"]').forEach(c =>
+      c.addEventListener('change', updateSummary)
+    );
 
     const resetModal = () => {
       document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
@@ -711,21 +914,34 @@
       document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
     };
 
-    closeBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
-    cancelBtn.addEventListener('click', () => { customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal(); });
+    closeBtn.addEventListener('click', () => {
+      customizationModal.style.display='none';
+      document.body.style.overflow='auto';
+      resetModal();
+    });
+    cancelBtn.addEventListener('click', () => {
+      customizationModal.style.display='none';
+      document.body.style.overflow='auto';
+      resetModal();
+    });
 
     window.addEventListener('click', (e) => {
       if (e.target === customizationModal) {
-        customizationModal.style.display='none'; document.body.style.overflow='auto'; resetModal();
+        customizationModal.style.display='none';
+        document.body.style.overflow='auto';
+        resetModal();
       }
     });
 
     addToCartBtn.addEventListener('click', async () => {
-      // Use the stored original drink name instead of textContent which might be translated
-      const drinkName = currentOriginalDrinkName || modalDrinkNameEl.dataset.originalText || modalDrinkNameEl.textContent;
+      const drinkName = currentOriginalDrinkName ||
+                        modalDrinkNameEl.dataset.originalText ||
+                        modalDrinkNameEl.textContent;
       const iceLevel  = document.querySelector('input[name="iceLevel"]:checked').value;
       const sugarLevel= document.querySelector('input[name="sugarLevel"]:checked').value;
-      const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked')).map(cb => cb.value);
+      const selectedToppings =
+        Array.from(document.querySelectorAll('input[name="toppings"]:checked'))
+          .map(cb => cb.value);
       const toppingsPrice = selectedToppings.length * 1.00;
       const totalPrice = basePrice + toppingsPrice;
 
@@ -751,9 +967,8 @@
       const badge = document.getElementById('weatherBadge');
       if (!badge) return;
 
-      const url = `/api/weather`; // new backend proxy
+      const url = `/api/weather`;
 
-      // Basic WMO weather code descriptions
       const weatherDescriptions = {
         0: "Clear sky",
         1: "Mainly clear",
@@ -775,33 +990,30 @@
         99: "Thunderstorm w/ heavy hail"
       };
 
-      // Function to categorize drinks as milky or fruity
       function categorizeDrink(drinkName, description) {
         const name = (drinkName || '').toLowerCase();
         const desc = (description || '').toLowerCase();
         const combined = `${name} ${desc}`;
 
-        // Keywords for milky drinks
-        const milkyKeywords = ['milk', 'cream', 'latte', 'cappuccino', 'mocha', 'vanilla', 'caramel', 
-                               'chocolate', 'matcha latte', 'taro', 'coconut milk', 'almond milk', 
-                               'oat milk', 'smoothie', 'milkshake', 'frappe', 'white', 'creamy'];
-        
-        // Keywords for fruity drinks
-        const fruityKeywords = ['fruit', 'fruity', 'mango', 'strawberry', 'pineapple', 'watermelon', 
-                                'peach', 'lychee', 'passion', 'citrus', 'lemon', 'lime', 'orange', 
-                                'berry', 'blueberry', 'raspberry', 'kiwi', 'grape', 'apple', 'cherry',
-                                'pomegranate', 'dragon fruit', 'guava', 'papaya', 'coconut water'];
+        const milkyKeywords = [
+          'milk','cream','latte','cappuccino','mocha','vanilla','caramel',
+          'chocolate','matcha latte','taro','coconut milk','almond milk',
+          'oat milk','smoothie','milkshake','frappe','white','creamy'
+        ];
+        const fruityKeywords = [
+          'fruit','fruity','mango','strawberry','pineapple','watermelon',
+          'peach','lychee','passion','citrus','lemon','lime','orange',
+          'berry','blueberry','raspberry','kiwi','grape','apple','cherry',
+          'pomegranate','dragon fruit','guava','papaya','coconut water'
+        ];
 
-        const isMilky = milkyKeywords.some(keyword => combined.includes(keyword));
-        const isFruity = fruityKeywords.some(keyword => combined.includes(keyword));
-
+        const isMilky = milkyKeywords.some(k => combined.includes(k));
+        const isFruity = fruityKeywords.some(k => combined.includes(k));
         if (isMilky && !isFruity) return 'milky';
         if (isFruity && !isMilky) return 'fruity';
-        // If both or neither, default based on name length/description
         return isFruity ? 'fruity' : 'milky';
       }
 
-      // Function to get all drinks from the page (excluding recommended cards)
       function getAllDrinks() {
         const drinkCards = document.querySelectorAll('.drink-card:not(.recommended-drink-card)');
         return Array.from(drinkCards).map(card => ({
@@ -810,6 +1022,7 @@
           element: card
         }));
       }
+
       function displayRecommendations(tempF, drinks, category) {
         const section = document.getElementById('recommendationSection');
         const grid = document.getElementById('recommendedDrinksGrid');
@@ -819,9 +1032,8 @@
 
         if (!section || !grid || !titleText || !subtitle || !icon) return;
 
-        // Filter drinks by category
-        const recommendedDrinks = drinks.filter(drink =>
-          categorizeDrink(drink.name, drink.description) === category
+        const recommendedDrinks = drinks.filter(d =>
+          categorizeDrink(d.name, d.description) === category
         );
 
         if (recommendedDrinks.length === 0) {
@@ -829,7 +1041,6 @@
           return;
         }
 
-        // Set default English text based on category
         let titleEnglish, subtitleEnglish;
         if (category === 'milky') {
           icon.textContent = '🥛';
@@ -841,23 +1052,22 @@
           subtitleEnglish = `It's ${tempF}°F outside - cool down with our refreshing, fruity drinks!`;
         }
 
-        // Store original English text for translation toggles
         titleText.dataset.originalText = titleEnglish;
         subtitle.dataset.originalText = subtitleEnglish;
 
-        // Determine session language
-        const lang = window.pageLang || (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish() ? 'es' : 'en') || sessionStorage.getItem('vamsa_page_language') || 'en';
+        const lang =
+          window.pageLang ||
+          (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish() ? 'es' : 'en') ||
+          sessionStorage.getItem('vamsa_page_language') ||
+          'en';
 
-        // Set visible text based on session language
         if (lang === 'en') {
           titleText.textContent = titleEnglish;
           subtitle.textContent = subtitleEnglish;
         } else {
-          // Insert English temporarily (needed for translator)
           titleText.textContent = titleEnglish;
           subtitle.textContent = subtitleEnglish;
 
-          // Translate to session language
           const translateLater = () => {
             if (window.translateNewContent) {
               window.translateNewContent(section);
@@ -866,24 +1076,17 @@
             }
           };
           setTimeout(translateLater, 0);
-          // Also try again after a longer delay to ensure translator is ready
           setTimeout(() => {
-            if (window.translateNewContent) {
-              window.translateNewContent(section);
-            }
+            if (window.translateNewContent) window.translateNewContent(section);
           }, 1000);
         }
 
-        // Display recommended drinks (limit to 4)
         const displayDrinks = recommendedDrinks.slice(0, 4);
         grid.innerHTML = '';
-
         displayDrinks.forEach(drink => {
           const card = drink.element.cloneNode(true);
           card.classList.add('recommended-drink-card');
           card.style.cursor = 'pointer';
-
-          // Trigger original card click
           card.addEventListener('click', e => {
             e.stopPropagation();
             const drinkName = card.getAttribute('data-drink');
@@ -892,13 +1095,11 @@
             );
             if (originalCard) originalCard.click();
           });
-
           grid.appendChild(card);
         });
 
         section.style.display = 'block';
 
-        // Translate the newly added content if page is in Spanish
         if (lang === 'es' && window.translateNewContent) {
           setTimeout(() => {
             window.translateNewContent(section);
@@ -906,98 +1107,12 @@
         }
       }
 
-
-      // Function to display recommendations
-      // function displayRecommendations(tempF, drinks, category) {
-      //   const section = document.getElementById('recommendationSection');
-      //   const grid = document.getElementById('recommendedDrinksGrid');
-      //   const titleText = document.getElementById('recommendationText');
-      //   const subtitle = document.getElementById('recommendationSubtitle');
-      //   const icon = document.getElementById('recommendationIcon');
-
-      //   if (!section || !grid || !titleText || !subtitle || !icon) return;
-
-      //   // Filter drinks by category
-      //   const recommendedDrinks = drinks.filter(drink =>
-      //     categorizeDrink(drink.name, drink.description) === category
-      //   );
-
-      //   if (recommendedDrinks.length === 0) {
-      //     section.style.display = 'none';
-      //     return;
-      //   }
-
-      //   // Set default English text based on category
-      //   let titleEnglish, subtitleEnglish;
-      //   if (category === 'milky') {
-      //     icon.textContent = '🥛';
-      //     titleEnglish = 'Perfect for Cooler Weather';
-      //     subtitleEnglish = `It's ${tempF}°F outside - warm up with our creamy, milky drinks!`;
-      //   } else {
-      //     icon.textContent = '🍹';
-      //     titleEnglish = 'Perfect for Warmer Weather';
-      //     subtitleEnglish = `It's ${tempF}°F outside - cool down with our refreshing, fruity drinks!`;
-      //   }
-
-      //   // Store original English text for translation toggles
-      //   titleText.dataset.originalText = titleEnglish;
-      //   subtitle.dataset.originalText = subtitleEnglish;
-
-      //   if (!titleText.dataset.originalText) {
-      //     titleText.dataset.originalText = titleEnglish;
-      //   }
-      //   if (!subtitle.dataset.originalText) {
-      //     subtitle.dataset.originalText = subtitleEnglish;
-      //   }
-
-      //   // Display the text in English by default
-      //   titleText.textContent = titleEnglish;
-      //   subtitle.textContent = subtitleEnglish;
-
-      //   // Display recommended drinks (limit to 4)
-      //   const displayDrinks = recommendedDrinks.slice(0, 4);
-      //   grid.innerHTML = '';
-
-      //   displayDrinks.forEach(drink => {
-      //     const card = drink.element.cloneNode(true);
-      //     card.classList.add('recommended-drink-card');
-      //     card.style.cursor = 'pointer';
-
-      //     // Trigger original card click
-      //     card.addEventListener('click', e => {
-      //       e.stopPropagation();
-      //       const drinkName = card.getAttribute('data-drink');
-      //       const originalCard = document.querySelector(`.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card)`);
-      //       if (originalCard) originalCard.click();
-      //     });
-
-      //     grid.appendChild(card);
-      //   });
-
-      //   section.style.display = 'block';
-
-      //   // --- Translation handling ---
-      //   const lang = window.pageLang || localStorage.getItem('vamsa_page_language') || 'en';
-
-      //   if (lang !== 'en') {
-      //     const translateLater = () => {
-      //       if (window.translateNewContent) {
-      //         window.translateNewContent(section);
-      //       } else {
-      //         setTimeout(translateLater, 50);
-      //       }
-      //     };
-      //     setTimeout(translateLater, 0);
-      //   }
-      // }
-
       async function loadWeather() {
         try {
           const res = await fetch(url);
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          
-          const data = await res.json();
 
+          const data = await res.json();
           const cw = data.current_weather;
           if (!cw) throw new Error("No weather data");
 
@@ -1005,47 +1120,39 @@
           const desc = weatherDescriptions[cw.weathercode] || "Weather";
 
           badge.textContent = `College Station: ${tempF}°F, ${desc}`;
-          
-          // Store original text for translation (store on the badge element itself)
           badge.dataset.originalText = badge.textContent;
-          
-          // Translate weather badge if page is in Spanish
+
           const translateWeather = () => {
-            if (window.translateNewContent && (window.pageLang === 'es' || (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()))) {
+            if (window.translateNewContent &&
+               (window.pageLang === 'es' ||
+                (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()))) {
               window.translateNewContent(badge);
             }
           };
-          
-          // Try immediately, and also after delays in case translator isn't ready yet
+
           translateWeather();
           setTimeout(translateWeather, 300);
           setTimeout(translateWeather, 1000);
           setTimeout(translateWeather, 2000);
 
-          // Determine recommendation based on temperature
-          // Below 70°F = milky drinks (colder weather)
-          // 70°F and above = fruity drinks (hotter weather)
           const TEMP_THRESHOLD = 70;
           const recommendationCategory = tempF < TEMP_THRESHOLD ? 'milky' : 'fruity';
-
-          // Get all drinks and display recommendations
           const allDrinks = getAllDrinks();
           displayRecommendations(tempF, allDrinks, recommendationCategory);
 
         } catch (e) {
           console.error("Weather client error:", e);
           badge.textContent = "Weather unavailable";
-          
-          // Store original text for translation
           badge.dataset.originalText = badge.textContent;
-          
-          // Translate error message if page is in Spanish
+
           const translateWeather = () => {
-            if (window.translateNewContent && (window.pageLang === 'es' || (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()))) {
+            if (window.translateNewContent &&
+               (window.pageLang === 'es' ||
+                (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()))) {
               window.translateNewContent(badge);
             }
           };
-          
+
           translateWeather();
           setTimeout(translateWeather, 300);
           setTimeout(translateWeather, 1000);
@@ -1064,9 +1171,9 @@
       const grid = document.getElementById('popularDrinksGrid');
       if (!section || !grid) return;
 
-      // Function to get all drinks from the page (excluding recommended cards)
       function getAllDrinks() {
-        const drinkCards = document.querySelectorAll('.drink-card:not(.recommended-drink-card):not(.popular-drink-card)');
+        const drinkCards =
+          document.querySelectorAll('.drink-card:not(.recommended-drink-card):not(.popular-drink-card)');
         return Array.from(drinkCards).map(card => ({
           name: card.getAttribute('data-drink'),
           description: card.getAttribute('data-description') || '',
@@ -1074,18 +1181,16 @@
         }));
       }
 
-      // Function to display popular drinks
       function displayPopularDrinks(popularDrinkNames) {
         if (!popularDrinkNames || popularDrinkNames.length === 0) {
           section.style.display = 'none';
           return;
         }
 
-        // Wait a bit to ensure all drink cards are rendered
         setTimeout(() => {
           const allDrinks = getAllDrinks();
-          const popularDrinks = allDrinks.filter(drink => 
-            popularDrinkNames.includes(drink.name)
+          const popularDrinks = allDrinks.filter(d =>
+            popularDrinkNames.includes(d.name)
           );
 
           if (popularDrinks.length === 0) {
@@ -1093,48 +1198,41 @@
             return;
           }
 
-          // Sort by popularity order (maintain the order from API)
-          const sortedPopularDrinks = popularDrinkNames
+          const sorted = popularDrinkNames
             .map(name => popularDrinks.find(d => d.name === name))
-            .filter(d => d !== undefined);
+            .filter(Boolean);
 
-          // Display only the most popular drink
-          const displayDrink = sortedPopularDrinks[0];
+          const displayDrink = sorted[0];
           if (!displayDrink) {
             section.style.display = 'none';
             return;
           }
-          
+
           grid.innerHTML = '';
           const card = displayDrink.element.cloneNode(true);
           card.classList.add('popular-drink-card');
           card.style.cursor = 'pointer';
-          
-          // Add click handler to trigger the original card's click
           card.addEventListener('click', (e) => {
             e.stopPropagation();
             const drinkName = card.getAttribute('data-drink');
-            const originalCard = document.querySelector(`.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card):not(.popular-drink-card)`);
-            if (originalCard) {
-              originalCard.click();
-            }
+            const originalCard = document.querySelector(
+              `.drink-card[data-drink="${drinkName}"]:not(.recommended-drink-card):not(.popular-drink-card)`
+            );
+            if (originalCard) originalCard.click();
           });
-          
           grid.appendChild(card);
 
           section.style.display = 'block';
 
-          // Translate the newly added content if page is in Spanish
-          const lang = window.pageLang || (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish() ? 'es' : 'en') || sessionStorage.getItem('vamsa_page_language') || 'en';
+          const lang =
+            window.pageLang ||
+            (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish() ? 'es' : 'en') ||
+            sessionStorage.getItem('vamsa_page_language') ||
+            'en';
           if (lang === 'es' && window.translateNewContent) {
+            setTimeout(() => { window.translateNewContent(section); }, 150);
             setTimeout(() => {
-              window.translateNewContent(section);
-            }, 150);
-            // Also try again after a longer delay to ensure translator is ready
-            setTimeout(() => {
-              if (window.translateNewContent) {
-                window.translateNewContent(section);
-              }
+              if (window.translateNewContent) window.translateNewContent(section);
             }, 1000);
           }
         }, 100);
@@ -1144,10 +1242,8 @@
         try {
           const res = await fetch('/api/popular-drinks?limit=1');
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          
           const data = await res.json();
           const popularDrinkNames = data.drinks.map(d => d.name);
-          
           displayPopularDrinks(popularDrinkNames);
         } catch (e) {
           console.error("Popular drinks client error:", e);
@@ -1155,7 +1251,6 @@
         }
       }
 
-      // Load popular drinks after page loads
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadPopularDrinks);
       } else {

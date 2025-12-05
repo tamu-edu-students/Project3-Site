@@ -61,7 +61,9 @@
             <div class="drink-card" data-drink="<%= item.itemname %>">
               <h3 class="drink-name"><%= item.itemname %></h3>
               <p class="drink-description"><%= item.itemdescription %></p>
-              <div class="price" data-price="<%= typeof item.itemprice === 'number' ? item.itemprice : parseFloat(String(item.itemprice).replace(',', '.')) || 0 %>">$<%= (typeof item.itemprice === 'number' ? item.itemprice : parseFloat(String(item.itemprice).replace(',', '.')) || 0).toFixed(2) %></div>
+              <div class="price" data-price="<%= typeof item.itemprice === 'number' ? item.itemprice : parseFloat(String(item.itemprice).replace(',', '.')) || 0 %>">
+                $<%= (typeof item.itemprice === 'number' ? item.itemprice : parseFloat(String(item.itemprice).replace(',', '.')) || 0).toFixed(2) %>
+              </div>
             </div>
           <% }) %>
         </div>
@@ -177,6 +179,53 @@
     </div>
   </div>
 
+  <!-- Status / Notice Modal (same pattern as customer.ejs) -->
+  <div id="statusModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="statusTitle">Notice</h2>
+        <span class="close status-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p id="statusMessage"></p>
+        <div id="statusDetails"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="statusOkBtn" class="btn-checkout">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Status modal helpers ---
+    const statusModal   = document.getElementById('statusModal');
+    const statusTitle   = document.getElementById('statusTitle');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusDetails = document.getElementById('statusDetails');
+    const statusOkBtn   = document.getElementById('statusOkBtn');
+    const statusClose   = document.querySelector('.status-close');
+
+    function showStatus({ title = 'Notice', message = '', detailsHtml = '' }) {
+      statusTitle.textContent = title;
+      statusMessage.textContent = message;
+      statusDetails.innerHTML = detailsHtml;
+      statusModal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideStatus() {
+      statusModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      statusDetails.innerHTML = '';
+    }
+
+    statusOkBtn?.addEventListener('click', hideStatus);
+    statusClose?.addEventListener('click', hideStatus);
+    window.addEventListener('click', (e) => {
+      if (e.target === statusModal) hideStatus();
+    });
+  </script>
+
   <script>
     // --- config / money ---
     const TAX_RATE = 0.0825;
@@ -197,7 +246,6 @@
     const cartCountBadge = document.getElementById('cartCountBadge');
     const taxRateLabel = document.getElementById('taxRateLabel');
     taxRateLabel.textContent = `(${(TAX_RATE*100).toFixed(2)}%)`;
-
 
     let basePrice = 0;
     let cart = [];
@@ -234,7 +282,12 @@
 
     // checkout -> POST /cashier/checkout
     checkoutBtn.addEventListener('click', async () => {
-      if (!cart.length) return alert('Your cart is empty!');
+      if (!cart.length) {
+        return showStatus({
+          title: 'Cart empty',
+          message: 'Your cart is empty!'
+        });
+      }
       try {
         const payload = {
           cart: cart.map(({ drink, toppings, qty, iceLevel, sugarLevel }) => ({
@@ -253,17 +306,72 @@
 
         if (!res.ok) {
           const text = await res.text();
-          return alert(`Checkout failed: ${res.status} ${text}`);
+          return showStatus({
+            title: 'Checkout failed',
+            message: `HTTP ${res.status}`,
+            detailsHtml: `<p>${text}</p>`
+          });
         }
 
         const data = await res.json();
-        alert(`Order placed!`);
+
+        // Build summary BEFORE clearing cart
+        const orderSummaryHtml = `
+          <div class="status-order-layout">
+            <div class="status-order-id">
+              <p>Your order ID is <strong>${data.orderId || ''}</strong>.</p>
+            </div>
+            <div class="status-order-summary">
+              <h3>Order Summary</h3>
+              <ul class="status-order-items">
+                ${cart
+                  .map((item) => {
+                    const qty = item.qty || 1;
+                    const toppingsText =
+                      item.toppings && item.toppings.length
+                        ? item.toppings.join(', ')
+                        : 'No toppings';
+                    return `
+                      <li class="status-order-item">
+                        <div class="status-item-name">
+                          <strong>${qty}× ${item.drink}</strong>
+                        </div>
+                        <div class="status-item-meta">
+                          Ice: ${item.iceLevel} •
+                          Sugar: ${item.sugarLevel} •
+                          Toppings: ${toppingsText}
+                        </div>
+                      </li>
+                    `;
+                  })
+                  .join('')}
+              </ul>
+              <div class="status-order-totals">
+                <p>Subtotal: <strong>${cartSubtotalEl.textContent}</strong></p>
+                <p>Tax: <strong>${cartTaxEl.textContent}</strong></p>
+                <p class="status-order-total-row">
+                  Total: <strong>${cartTotalEl.textContent}</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        showStatus({
+          title: 'Order placed!',
+          message: '',
+          detailsHtml: orderSummaryHtml
+        });
+
         cart = [];
         updateCartBadge();
         await updateCartDisplay();
       } catch (err) {
         console.error(err);
-        alert('Checkout failed');
+        showStatus({
+          title: 'Checkout failed',
+          message: 'Unexpected error. Please try again.'
+        });
       }
     });
 
@@ -289,7 +397,6 @@
       const isSpanish = window.shouldTranslateToSpanish && window.shouldTranslateToSpanish();
       let html = '', subtotal = 0;
       
-      // Translate drink names and other text if needed
       for (let i = 0; i < cart.length; i++) {
         const item = cart[i];
         const qty = item.qty || 1;
@@ -422,15 +529,12 @@
         const drink = card.getAttribute('data-drink');
         currentOriginalDrinkName = drink; // Store original English name
         const priceElement = card.querySelector('.price');
-        // Get price from data attribute if available, otherwise parse from text (handling both comma and period)
         const priceValue = priceElement.getAttribute('data-price') || priceElement.textContent.replace('$','').replace(',','.');
         basePrice = parseFloat(priceValue) || 0;
         
-        // Store original text before setting content
         modalDrinkNameEl.dataset.originalText = drink;
         modalDrinkNameEl.textContent = drink;
         
-        // Ensure default values are selected
         const defaultIceLevel = document.querySelector('input[name="iceLevel"][value="light ice"]');
         const defaultSugarLevel = document.querySelector('input[name="sugarLevel"][value="50%"]');
         if (defaultIceLevel && !defaultIceLevel.checked) {
@@ -443,14 +547,10 @@
         customizationModal.style.display = 'block';
         document.body.style.overflow = 'hidden';
         
-        // Update summary first (this will translate the summary values if needed)
         await updateSummary();
         
-        // Translate the modal labels/headers if page is in Spanish (but not the summary values which are already translated)
         if (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish() && window.translateNewContent) {
-          // Only translate the modal structure, not the summary content which is already translated
           setTimeout(() => {
-            // Translate modal headers and labels, but skip the order-summary section
             const modalHeader = customizationModal.querySelector('.modal-header');
             const customizationsColumn = customizationModal.querySelector('.customizations-column');
             if (modalHeader) window.translateNewContent(modalHeader);
@@ -484,7 +584,6 @@
         return text;
       }
       
-      // Store original text
       if (element && !element.dataset.originalText) {
         element.dataset.originalText = text;
       }
@@ -513,33 +612,27 @@
     }
 
     async function updateSummary(){
-      // Use the stored original drink name instead of textContent which might be translated
       const drinkName = currentOriginalDrinkName || modalDrinkNameEl.dataset.originalText || modalDrinkNameEl.textContent;
       const iceLevelInput = document.querySelector('input[name="iceLevel"]:checked');
       const sugarLevelInput = document.querySelector('input[name="sugarLevel"]:checked');
       
-      // Get values, with proper defaults
       let iceLevel = iceLevelInput?.value || 'light ice';
       let sugarLevel = sugarLevelInput?.value || '50%';
       const selectedToppings = Array.from(document.querySelectorAll('input[name="toppings"]:checked')).map(cb => cb.value);
 
-      // Capitalize ice level properly (handle "light ice" -> "Light Ice")
       const iceLevelText = iceLevel.split(' ').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
       ).join(' ');
       
       const toppingsText = selectedToppings.length ? `${selectedToppings.length} selected` : 'None';
       
-      // Store original text FIRST before any translation
       summaryDrinkName.dataset.originalText = drinkName;
       summaryIceLevel.dataset.originalText = iceLevelText;
       summaryToppings.dataset.originalText = toppingsText;
       
-      // Set text content (will be in English initially, or translated if page is Spanish)
       const isSpanish = window.shouldTranslateToSpanish && window.shouldTranslateToSpanish();
       
       if (isSpanish) {
-        // Translate immediately if page is in Spanish
         const translatedDrinkName = await translateTextIfNeeded(drinkName, summaryDrinkName);
         const translatedIceLevel = await translateTextIfNeeded(iceLevelText, summaryIceLevel);
         const translatedToppings = await translateTextIfNeeded(toppingsText, summaryToppings);
@@ -548,7 +641,6 @@
         summaryIceLevel.textContent = translatedIceLevel;
         summaryToppings.textContent = translatedToppings;
       } else {
-        // Set English text
         summaryDrinkName.textContent = drinkName;
         summaryIceLevel.textContent = iceLevelText;
         summaryToppings.textContent = toppingsText;
@@ -559,7 +651,6 @@
       if (selectedToppings.length){
         toppingsList.style.display = 'block';
         if (isSpanish && toppingsListItems) {
-          // Translate topping names in the list
           try {
             const res = await fetch("/translate", {
               method: "POST",
@@ -625,7 +716,6 @@
     });
 
     addToCartBtn.addEventListener('click', async () => {
-      // Use the stored original drink name instead of textContent which might be translated
       const drinkName = currentOriginalDrinkName || modalDrinkNameEl.dataset.originalText || modalDrinkNameEl.textContent;
       const iceLevel  = document.querySelector('input[name="iceLevel"]:checked').value;
       const sugarLevel= document.querySelector('input[name="sugarLevel"]:checked').value;
@@ -657,7 +747,6 @@
 
       const url = `/api/weather`; // new backend proxy
 
-      // Basic WMO weather code descriptions
       const weatherDescriptions = {
         0: "Clear sky",
         1: "Mainly clear",
@@ -694,17 +783,14 @@
 
           badge.textContent = `College Station: ${tempF}°F, ${desc}`;
           
-          // Store original text for translation
           badge.dataset.originalText = badge.textContent;
           
-          // Translate weather badge if page is in Spanish
           const translateWeather = () => {
             if (window.translateNewContent && (window.pageLang === 'es' || (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()))) {
               window.translateNewContent(badge);
             }
           };
           
-          // Try immediately, and also after delays in case translator isn't ready yet
           translateWeather();
           setTimeout(translateWeather, 300);
           setTimeout(translateWeather, 1000);
@@ -713,10 +799,8 @@
           console.error("Weather client error:", e);
           badge.textContent = "Weather unavailable";
           
-          // Store original text for translation
           badge.dataset.originalText = badge.textContent;
           
-          // Translate error message if page is in Spanish
           const translateWeather = () => {
             if (window.translateNewContent && (window.pageLang === 'es' || (window.shouldTranslateToSpanish && window.shouldTranslateToSpanish()))) {
               window.translateNewContent(badge);
@@ -733,7 +817,6 @@
       loadWeather();
     })();
   </script>
-
 
   <script src="/js/translator.js"></script>
   <script src="/js/cashier.js"></script>

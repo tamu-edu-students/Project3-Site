@@ -1437,3 +1437,133 @@ body {
     border-color: #ff6b6b;
     box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15);
 }
+
+/* ---------- Status modal layout: smaller + centered ---------- */
+#statusModal .modal-content {
+    max-width: 520px;
+    margin: 10vh auto;
+  }
+  
+  /* Center header/footer text */
+  #statusModal .modal-header,
+  #statusModal .modal-footer {
+    text-align: center;
+  }
+  
+  /* Main message just above the cards */
+  #statusModal #statusMessage {
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Container for extra content: shortages OR order summary */
+  #statusModal #statusDetails {
+    margin-top: 0.35rem;
+  }
+  
+  /* Default shortage list styling (error case) */
+  #statusModal #statusDetails ul {
+    margin: 0.25rem auto 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  
+  #statusModal #statusDetails ul li::before {
+    content: "• ";
+  }
+  
+  /* ---------- Status modal OK button ---------- */
+  #statusModal .modal-footer {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0 2rem;
+  }
+  
+  #statusModal #statusOkBtn {
+    padding: 0.9rem 2.2rem;
+    font-size: 1.1rem;
+  }
+  
+  /* ---------- Order placed layout: stacked cards ---------- */
+  
+  .status-order-layout {
+    display: flex;
+    flex-direction: column;      /* stack top (ID) then bottom (summary) */
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Shared “card” look for ID + summary blocks */
+  .status-order-id,
+  .status-order-summary {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 0.85rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #f0f0f0;
+    background-color: #ffffff;
+  }
+  
+  /* Top card: order ID */
+  .status-order-id {
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  
+  .status-order-id p {
+    margin: 0;
+  }
+  
+  /* Bottom card: full order summary */
+  .status-order-summary {
+    text-align: left;
+  }
+  
+  /* Summary title */
+  .status-order-summary h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+  }
+  
+  /* REMOVE bullet from ORDER SUMMARY items */
+  .status-order-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+  }
+  
+  .status-order-items li::before {
+    content: none !important;   /* remove dot */
+  }
+  
+  .status-order-item + .status-order-item {
+    margin-top: 0.5rem;
+  }
+  
+  .status-item-name {
+    margin-bottom: 0.15rem;
+  }
+  
+  .status-item-meta {
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+  
+  /* Totals */
+  .status-order-totals p {
+    margin: 0.15rem 0;
+  }
+  
+  .status-order-total-row {
+    margin-top: 0.35rem;
+  }
+  
+  /* ---------- Responsive: keep it simple on small screens ---------- */
+  @media (max-width: 600px) {
+    #statusModal .modal-content {
+      max-width: 95vw;
+    }
+  }
+  
