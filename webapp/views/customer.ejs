@@ -39,16 +39,6 @@
         <div class="header-controls">
           <button
             type="button"
-            class="magnify-toggle-btn"
-            id="magnifyToggleBtn"
-            aria-pressed="false"
-            aria-label="Enable magnifier"
-            title="Enable magnifier"
-          >
-            🔍
-          </button>
-          <button
-            type="button"
             class="text-size-toggle"
             id="textSizeToggle"
             aria-pressed="false"
@@ -66,18 +56,6 @@
         </div>
       </div>
     </header>
-
-    <!-- Exit Magnify Button - always visible when magnify is active -->
-    <button
-      type="button"
-      class="exit-magnify-btn"
-      id="exitMagnifyBtn"
-      aria-label="Exit magnify mode"
-      title="Exit magnify mode"
-      style="display: none;"
-    >
-      ✕ Exit Magnify
-    </button>
 
     <main class="main-content">
       <!-- Weather-Based Recommendation Section -->
@@ -270,74 +248,6 @@
     const cartCountBadge = document.getElementById('cartCountBadge');
     const taxRateLabel = document.getElementById('taxRateLabel');
     taxRateLabel.textContent = `(${(TAX_RATE*100).toFixed(2)}%)`;
-
-    // --- magnify feature ---
-    const magnifyToggleBtn = document.getElementById('magnifyToggleBtn');
-    const exitMagnifyBtn = document.getElementById('exitMagnifyBtn');
-    let magnifyActive = false;
-    let currentHoveredElement = null;
-
-    function enableMagnify() {
-      magnifyActive = true;
-      document.body.classList.add('magnify-mode');
-      magnifyToggleBtn?.classList.add('is-active');
-      magnifyToggleBtn?.setAttribute('aria-pressed', 'true');
-      exitMagnifyBtn.style.display = 'block';
-    }
-
-    function disableMagnify() {
-      magnifyActive = false;
-      document.body.classList.remove('magnify-mode');
-      magnifyToggleBtn?.classList.remove('is-active');
-      magnifyToggleBtn?.setAttribute('aria-pressed', 'false');
-      exitMagnifyBtn.style.display = 'none';
-      
-      // Remove magnify from any currently hovered element
-      if (currentHoveredElement) {
-        currentHoveredElement.classList.remove('magnified');
-        currentHoveredElement = null;
-      }
-    }
-
-    // Use event delegation for better performance
-    document.addEventListener('mouseover', (e) => {
-      if (!magnifyActive) return;
-      
-      const target = e.target.closest('.drink-card, .cart-icon-btn, button:not(.exit-magnify-btn):not(.magnify-toggle-btn), a, .option-btn, .topping-checkbox, .drink-name, .drink-description, .price, .cart-item, .summary-item');
-      if (target && target !== currentHoveredElement) {
-        // Remove from previous element
-        if (currentHoveredElement) {
-          currentHoveredElement.classList.remove('magnified');
-        }
-        // Add to new element
-        currentHoveredElement = target;
-        target.classList.add('magnified');
-      }
-    }, { passive: true });
-
-    document.addEventListener('mouseout', (e) => {
-      if (!magnifyActive) return;
-      
-      const target = e.target.closest('.drink-card, .cart-icon-btn, button:not(.exit-magnify-btn):not(.magnify-toggle-btn), a, .option-btn, .topping-checkbox, .drink-name, .drink-description, .price, .cart-item, .summary-item');
-      if (target && target === currentHoveredElement) {
-        target.classList.remove('magnified');
-        currentHoveredElement = null;
-      }
-    }, { passive: true });
-
-    magnifyToggleBtn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (magnifyActive) {
-        disableMagnify();
-      } else {
-        enableMagnify();
-      }
-    });
-
-    exitMagnifyBtn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      disableMagnify();
-    });
 
     // --- text-size toggle ---
     const textSizeToggle = document.getElementById('textSizeToggle');
