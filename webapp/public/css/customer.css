@@ -1,6 +1,6 @@
 /* Boba Tea Shop Customer Interface Styles */
 html.big-text {
-    --customer-font-scale: 1.50;
+    --customer-font-scale: 1.60;
   }
 * {
     margin: 0;
@@ -15,7 +15,7 @@ html.big-text {
 /* customer font scale makes everything larger */
 html {
     font-size: calc(16px * var(--customer-font-scale));
-    transition: font-size 0.25s ease-in-out;
+    transition: font-size 0.27s ease-in-out;
 }
 
 body {
