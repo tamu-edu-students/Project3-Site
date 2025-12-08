@@ -27,10 +27,12 @@ router.post('/checkout', async (req, res) => {
     const cart = Array.isArray(req.body?.cart) ? req.body.cart : [];
     if (!cart.length) return res.status(400).json({ message: 'Cart is empty' });
 
-    const normalized = cart.map(({ drink, toppings, qty, quantity, iceLevel, sugarLevel }) => ({
+    const normalized = cart.map(({ drink, toppings, qty, quantity, size, temperature, iceLevel, sugarLevel }) => ({
       drink,
       toppings: Array.isArray(toppings) ? toppings : [],
       quantity: Number(quantity ?? qty ?? 1),
+      size,
+      temperature,
       iceLevel,
       sugarLevel
     }));
