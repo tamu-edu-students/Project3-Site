@@ -98,7 +98,7 @@ async function deleteRecipesByMenuItem(itemId) {
 
 // ====================================================================
 // NEW: Create order (+ orderitems) AND deduct inventory in one txn
-// cartItems: [{ drink, quantity, iceLevel, sugarLevel, toppings[] }]
+// cartItems: [{ drink, quantity, size, temperature, iceLevel, sugarLevel, toppings[] }]
 // toppings are charged $1 each for total calculation here (same as UI).
 // Writes into tables with quoted column names: "orders", "orderitems".
 // ====================================================================
@@ -210,26 +210,51 @@ async function createOrderAndDeductInventory(cartItems, { employeeId = 0, custom
 
       // orderitems columns:
       // "Order ID","Item ID","Quantity","Order Size",
-      // "Order Topping","Order Sugar Level","Order Ice Level"
+      // "Order Topping","Order Sugar Level","Order Ice Level","Order Temperature"
       const toppingsStr = Array.isArray(line.toppings) && line.toppings.length
         ? line.toppings.join(', ')
         : null;
 
-      await client.query(
-        `INSERT INTO public.orderitems
-          ("Order ID","Item ID","Quantity","Order Size",
-           "Order Topping","Order Sugar Level","Order Ice Level")
-         VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-        [
-          orderId,
-          rec.itemid,
-          qty,
-          null,                       
-          toppingsStr,
-          line.sugarLevel || null,
-          line.iceLevel || null
-        ]
-      );
+      // Try to insert with temperature column, fallback if column doesn't exist
+      try {
+        await client.query(
+          `INSERT INTO public.orderitems
+            ("Order ID","Item ID","Quantity","Order Size",
+             "Order Topping","Order Sugar Level","Order Ice Level","Order Temperature")
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+          [
+            orderId,
+            rec.itemid,
+            qty,
+            line.size || null,                       
+            toppingsStr,
+            line.sugarLevel || null,
+            line.iceLevel || null,
+            line.temperature || null
+          ]
+        );
+      } catch (err) {
+        // If temperature column doesn't exist, insert without it
+        if (err.message && err.message.includes('Order Temperature')) {
+          await client.query(
+            `INSERT INTO public.orderitems
+              ("Order ID","Item ID","Quantity","Order Size",
+               "Order Topping","Order Sugar Level","Order Ice Level")
+             VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+            [
+              orderId,
+              rec.itemid,
+              qty,
+              line.size || null,                       
+              toppingsStr,
+              line.sugarLevel || null,
+              line.iceLevel || null
+            ]
+          );
+        } else {
+          throw err;
+        }
+      }
     }
 
     // 6) Deduct inventory

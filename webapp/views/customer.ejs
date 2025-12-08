@@ -189,6 +189,38 @@
       <div class="modal-body">
         <div class="customizations-column">
           <div class="customization-section">
+            <h3>Size</h3>
+            <div class="option-group">
+              <label class="option-btn">
+                <input type="radio" name="orderSize" value="Small" checked>
+                <span>Small</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="orderSize" value="Medium">
+                <span>Medium</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="orderSize" value="Large">
+                <span>Large</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="customization-section">
+            <h3>Temperature</h3>
+            <div class="option-group">
+              <label class="option-btn">
+                <input type="radio" name="temperature" value="Hot" checked>
+                <span>Hot</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="temperature" value="Cold">
+                <span>Cold</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="customization-section">
             <h3>Ice Level</h3>
             <div class="option-group">
               <label class="option-btn">
@@ -210,6 +242,10 @@
             <h3>Sugar Level</h3>
             <div class="option-group">
               <label class="option-btn">
+                <input type="radio" name="sugarLevel" value="No Sugar">
+                <span>No Sugar</span>
+              </label>
+              <label class="option-btn">
                 <input type="radio" name="sugarLevel" value="25%">
                 <span>25%</span>
               </label>
@@ -224,6 +260,10 @@
               <label class="option-btn">
                 <input type="radio" name="sugarLevel" value="100%">
                 <span>100%</span>
+              </label>
+              <label class="option-btn">
+                <input type="radio" name="sugarLevel" value="120%">
+                <span>120% (Extra Sugar)</span>
               </label>
             </div>
           </div>
@@ -268,6 +308,14 @@
             <div class="summary-item">
               <span class="summary-label">Drink:</span>
               <span id="summaryDrinkName" class="summary-value">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Size:</span>
+              <span id="summarySize" class="summary-value">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Temperature:</span>
+              <span id="summaryTemperature" class="summary-value">-</span>
             </div>
             <div class="summary-item">
               <span class="summary-label">Ice Level:</span>
@@ -457,10 +505,12 @@
 
       try {
         const payload = {
-          cart: cart.map(({ drink, toppings, qty, iceLevel, sugarLevel }) => ({
+          cart: cart.map(({ drink, toppings, qty, size, temperature, iceLevel, sugarLevel }) => ({
             drink,
             toppings,
             quantity: qty || 1,
+            size,
+            temperature,
             iceLevel,
             sugarLevel
           }))
@@ -527,6 +577,8 @@
                           <strong>${qty}× ${item.drink}</strong>
                         </div>
                         <div class="status-item-meta">
+                          Size: ${item.size || 'Small'} •
+                          Temp: ${item.temperature || 'Hot'} •
                           Ice: ${item.iceLevel} •
                           Sugar: ${item.sugarLevel} •
                           Toppings: ${toppingsText}
@@ -599,6 +651,8 @@
         subtotal += line;
 
         let displayDrinkName = item.drink;
+        let displaySize = item.size || 'Small';
+        let displayTemperature = item.temperature || 'Hot';
         let displayIceLevel = item.iceLevel;
         let displaySugarLevel = item.sugarLevel;
         let displayToppings = item.toppings.join(', ');
@@ -676,7 +730,9 @@
             <div class="cart-item-info">
               <h3 class="cart-item-name">${displayDrinkName}</h3>
               <div class="cart-item-details">
-                <span>Ice: ${displayIceLevel}</span>
+                <span>Size: ${displaySize}</span>
+                <span>• Temp: ${displayTemperature}</span>
+                <span>• Ice: ${displayIceLevel}</span>
                 <span>• Sugar: ${displaySugarLevel}</span>
                 ${item.toppings.length
                   ? `<span>• Toppings: ${displayToppings}</span>`
@@ -737,8 +793,12 @@
         modalDrinkNameEl.dataset.originalText = drink;
         modalDrinkNameEl.textContent = drink;
 
+        const defaultSize = document.querySelector('input[name="orderSize"][value="Small"]');
+        const defaultTemperature = document.querySelector('input[name="temperature"][value="Hot"]');
         const defaultIceLevel = document.querySelector('input[name="iceLevel"][value="light ice"]');
         const defaultSugarLevel = document.querySelector('input[name="sugarLevel"][value="50%"]');
+        if (defaultSize && !defaultSize.checked) defaultSize.checked = true;
+        if (defaultTemperature && !defaultTemperature.checked) defaultTemperature.checked = true;
         if (defaultIceLevel && !defaultIceLevel.checked) defaultIceLevel.checked = true;
         if (defaultSugarLevel && !defaultSugarLevel.checked) defaultSugarLevel.checked = true;
 
@@ -766,6 +826,8 @@
     const addToCartBtn = document.querySelector('.btn-add-to-cart');
 
     const summaryDrinkName = document.getElementById('summaryDrinkName');
+    const summarySize      = document.getElementById('summarySize');
+    const summaryTemperature = document.getElementById('summaryTemperature');
     const summaryIceLevel  = document.getElementById('summaryIceLevel');
     const summarySugarLevel= document.getElementById('summarySugarLevel');
     const summaryToppings  = document.getElementById('summaryToppings');
@@ -809,9 +871,13 @@
       const drinkName = currentOriginalDrinkName ||
                         modalDrinkNameEl.dataset.originalText ||
                         modalDrinkNameEl.textContent;
+      const sizeInput = document.querySelector('input[name="orderSize"]:checked');
+      const temperatureInput = document.querySelector('input[name="temperature"]:checked');
       const iceLevelInput = document.querySelector('input[name="iceLevel"]:checked');
       const sugarLevelInput = document.querySelector('input[name="sugarLevel"]:checked');
 
+      let size = sizeInput?.value || 'Small';
+      let temperature = temperatureInput?.value || 'Hot';
       let iceLevel = iceLevelInput?.value || 'light ice';
       let sugarLevel = sugarLevelInput?.value || '50%';
       const selectedToppings =
@@ -825,6 +891,8 @@
       const toppingsText = selectedToppings.length ? `${selectedToppings.length} selected` : 'None';
 
       summaryDrinkName.dataset.originalText = drinkName;
+      summarySize.textContent = size;
+      summaryTemperature.textContent = temperature;
       summaryIceLevel.dataset.originalText = iceLevelText;
       summaryToppings.dataset.originalText = toppingsText;
 
@@ -899,6 +967,12 @@
       summaryTotalPrice.textContent = money(totalPrice);
     }
 
+    document.querySelectorAll('input[name="orderSize"]').forEach(r =>
+      r.addEventListener('change', updateSummary)
+    );
+    document.querySelectorAll('input[name="temperature"]').forEach(r =>
+      r.addEventListener('change', updateSummary)
+    );
     document.querySelectorAll('input[name="iceLevel"]').forEach(r =>
       r.addEventListener('change', updateSummary)
     );
@@ -910,6 +984,8 @@
     );
 
     const resetModal = () => {
+      document.querySelector('input[name="orderSize"][value="Small"]').checked = true;
+      document.querySelector('input[name="temperature"][value="Hot"]').checked = true;
       document.querySelector('input[name="iceLevel"][value="light ice"]').checked = true;
       document.querySelector('input[name="sugarLevel"][value="50%"]').checked = true;
       document.querySelectorAll('input[name="toppings"]').forEach(cb => cb.checked = false);
@@ -938,6 +1014,8 @@
       const drinkName = currentOriginalDrinkName ||
                         modalDrinkNameEl.dataset.originalText ||
                         modalDrinkNameEl.textContent;
+      const size = document.querySelector('input[name="orderSize"]:checked').value;
+      const temperature = document.querySelector('input[name="temperature"]:checked').value;
       const iceLevel  = document.querySelector('input[name="iceLevel"]:checked').value;
       const sugarLevel= document.querySelector('input[name="sugarLevel"]:checked').value;
       const selectedToppings =
@@ -948,7 +1026,7 @@
 
       cart.push({
         drink: drinkName,
-        iceLevel, sugarLevel,
+        size, temperature, iceLevel, sugarLevel,
         toppings: selectedToppings,
         basePrice, toppingsPrice, totalPrice,
         qty: 1
